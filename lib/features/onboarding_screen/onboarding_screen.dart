@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../config/route/app_routes.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/extensions/extension.dart';
@@ -24,15 +25,14 @@ class OnboardingScreen extends StatelessWidget {
 
               // Title Section
               _buildTitleSection(),
+              SizedBox(height: 30.h,),
 
-              // Spacer to push content to center
-              const Spacer(flex: 2),
+              // Illustration Sectio_buildIllustrationSection(),
+              Image.asset("assets/images/signin_signup_image.png",
+                  width: 260,
+              height: 190),
 
-              // Illustration Section
-              _buildIllustrationSection(),
-
-              // Spacer
-              const Spacer(flex: 3),
+              SizedBox(height: 50.h,),
 
               // Buttons Section
               _buildButtonsSection(),
@@ -50,19 +50,12 @@ class OnboardingScreen extends StatelessWidget {
     return Column(
       children: [
         CommonText(
-          text: "HaircutMen",
-          fontSize: 32,
+          text: AppString.onboarding_text,
+          fontSize: 24,
           fontWeight: FontWeight.w600,
           color: AppColors.primaryColor,
           textAlign: TextAlign.center,
-        ),
-        8.height,
-        CommonText(
-          text: "Partner",
-          fontSize: 32,
-          fontWeight: FontWeight.w600,
-          color: AppColors.primaryColor,
-          textAlign: TextAlign.center,
+          maxLines: 2,
         ),
       ],
     );
@@ -128,13 +121,12 @@ class OnboardingScreen extends StatelessWidget {
           borderColor: AppColors.primaryColor,
           borderWidth: 2,
           buttonRadius: 4.r,
-          buttonHeight: 56.h,
-          titleSize: 16,
+          titleSize: 18,
           titleWeight: FontWeight.w600,
           onTap: () => Get.toNamed(AppRoutes.signIn),
         ),
 
-        20.height,
+        SizedBox(height: 26.h,),
 
         // Sign Up Button (Filled)
         CommonButton(
@@ -143,8 +135,7 @@ class OnboardingScreen extends StatelessWidget {
           buttonColor: AppColors.primaryColor,
           borderColor: AppColors.primaryColor,
           buttonRadius: 4.r,
-          buttonHeight: 56.h,
-          titleSize: 16,
+          titleSize: 18,
           titleWeight: FontWeight.w600,
           onTap: () => Get.toNamed(AppRoutes.signUp),
         ),

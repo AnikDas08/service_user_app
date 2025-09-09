@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../utils/constants/app_colors.dart';
 import '../image/common_image.dart';
 import '../text/common_text.dart';
@@ -35,7 +36,7 @@ class Item extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 10),
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(10),
@@ -53,22 +54,24 @@ class Item extends StatelessWidget {
               Container(
                 width: 40.w,
                 height: 40.h,
+                padding: EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: AppColors.black50,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child:
-                    disableIcon
-                        ? CommonImage(imageSrc: image)
-                        : Icon(icon, color: AppColors.black, size: 24),
+                    SvgPicture.asset(
+                        image,
+                      height: 24.h,
+                      width: 24.w,
+                    )
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: 10.w),
               CommonText(
                 text: title,
-                color: color,
-                fontWeight: FontWeight.w400,
-                fontSize: 18,
-                left: 16,
+                color: AppColors.black400,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
               ),
             ],
           ),

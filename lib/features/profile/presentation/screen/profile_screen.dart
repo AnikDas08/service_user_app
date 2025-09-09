@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/profile/presentation/screen/personal_information.dart';
 import 'package:haircutmen_user_app/services/storage/storage_keys.dart';
+import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
+import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../config/route/app_routes.dart';
 import '../../../../component/image/common_image.dart';
 import '../../../../component/other_widgets/item.dart';
@@ -16,82 +19,100 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// App Bar Section Starts here
-      appBar: AppBar(
-        centerTitle: true,
-        title: const CommonText(
-          text: AppString.profile,
-          fontWeight: FontWeight.w600,
-          fontSize: 24,
-        ),
-      ),
-
       /// Body Section Starts here
       body: GetBuilder<ProfileController>(
         builder: (controller) {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-            child: Column(
-              children: [
-                /// User Profile Image here
-                Center(
-                  child: CircleAvatar(
-                    radius: 85.sp,
-                    backgroundColor: Colors.transparent,
-                    child: const ClipOval(
-                      child: CommonImage(
-                        imageSrc: AppImages.profile,
-                        size: 170,
-                        defaultImage: AppImages.profile,
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  CustomAppBar(title: AppString.profile,showBackButton: false,),
+                  /// User Profile Image here
+                  Center(
+                    child: CircleAvatar(
+                      radius: 60.sp,
+                      backgroundColor: Colors.transparent,
+                      child: Image.asset(
+                        "assets/images/profile_image.png",
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 9,),
+                  /// User Name here
+                  const CommonText(
+                    text: "Sohidul Islam",
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  SizedBox(height: 6,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CommonText(
+                        text: "Hair Care",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      SizedBox(width: 6.w),
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 24.sp,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: "4.6",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: "(300)",
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.black200,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  /// Edit Profile item here
+                  Item(
+                    image: "assets/icons/profile.svg",
+                    title: AppString.personal_information,
+                    onTap: () => Get.toNamed(AppRoutes.personal_information),
+                  ),
 
-                /// User Name here
-                const CommonText(
-                  text: LocalStorageKeys.myName,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  top: 20,
-                  bottom: 24,
-                ),
+                  /// Setting item here
+                  Item(
+                    image: "assets/icons/services_icon.svg",
+                    title: AppString.service_information,
+                    onTap: () => Get.toNamed(AppRoutes.service_person_screen),
+                  ),
 
-                /// Edit Profile item here
-                Item(
-                  icon: Icons.person,
-                  title: AppString.personalInformation,
-                  onTap: () => Get.toNamed(AppRoutes.editProfile),
-                ),
+                  /// Language item here
+                  Item(
+                    image: "assets/icons/language_icon.svg",
+                    title: AppString.language,
+                    onTap: () => Get.toNamed(AppRoutes.language_screen),
+                  ),
 
-                /// Setting item here
-                Item(
-                  icon: Icons.wallet,
-                  title: AppString.myBalance,
-                  onTap: () => Get.toNamed(AppRoutes.setting),
-                ),
+                  /// Privacy Policy item here
+                  Item(
+                    image: "assets/icons/setting_icon.svg",
+                    title: AppString.setting,
+                    onTap: () => Get.toNamed(AppRoutes.setting),
+                  ),
 
-                /// Language item here
-                Item(
-                  icon: Icons.language,
-                  title: AppString.language,
-                  onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
-                ),
-
-                /// Privacy Policy item here
-                Item(
-                  icon: Icons.settings,
-                  title: AppString.settings,
-                  onTap: () => Get.toNamed(AppRoutes.setting),
-                ),
-
-                /// Terms of Service item here
-                Item(
-                  icon: Icons.headset,
-                  title: AppString.contactSupport,
-                  onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
-                ),
-              ],
+                  /// Terms of Service item here
+                  Item(
+                    image: "assets/icons/contract_icon.svg",
+                    title: AppString.contact_support,
+                    onTap: () => Get.toNamed(AppRoutes.contract_screen),
+                  ),
+                ],
+              ),
             ),
           );
         },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../../utils/extensions/extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -28,14 +29,13 @@ class SignUpScreen extends StatelessWidget {
               children: [
                 /// Logo text here
                 const CommonText(
-                  text: AppString.logoText,
+                  text: AppString.onboarding_text,
                   fontSize: 24,
                   color: AppColors.primaryColor,
                   fontWeight: FontWeight.w600,
                   maxLines: 2,
-                  bottom: 20,
                 ).center,
-
+                SizedBox(height: 12,),
                 /// Sign Up Container here
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -60,12 +60,13 @@ class SignUpScreen extends StatelessWidget {
                       children: [
                         /// Sign UP Instructions here
                         const CommonText(
-                          text: AppString.signUp,
-                          fontSize: 24,
+                          text: AppString.signup_text,
+                          fontSize: 18,
                           color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w400,
-                          bottom: 20,
+                          fontWeight: FontWeight.w500,
                         ).center,
+
+                        SizedBox(height: 20,),
 
                         /// All Text Filed here
                         SignUpAllField(controller: controller),
@@ -74,9 +75,9 @@ class SignUpScreen extends StatelessWidget {
 
                         /// Submit Button Here
                         CommonButton(
-                          titleText: AppString.confirm,
+                          titleText: AppString.continue_button,
                           isLoading: controller.isLoading,
-                          onTap: controller.signUpUser,
+                          onTap: ()=>Get.toNamed(AppRoutes.complete_profile_screen),
                         ),
                         24.height,
 

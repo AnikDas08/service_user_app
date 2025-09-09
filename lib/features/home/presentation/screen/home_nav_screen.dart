@@ -1,111 +1,109 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/component/image/common_image.dart';
 import 'package:haircutmen_user_app/component/text/common_text.dart';
-import 'package:haircutmen_user_app/features/appointment/presentation/screen/appointment_screen.dart';
-import 'package:haircutmen_user_app/features/favorite/presentation/screen/favorite_screen.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/home_nav_controller.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/home_screen.dart';
+import 'package:haircutmen_user_app/features/message/presentation/screen/chat_screen.dart';
+import 'package:haircutmen_user_app/features/overview/presentation/screen/overview_screen.dart';
 import 'package:haircutmen_user_app/features/scan/presentation/screen/scan_screen.dart';
-import 'package:haircutmen_user_app/utils/constants/app_icons.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../profile/presentation/screen/profile_screen.dart';
 
-List<Widget> _pages = [
-  const HomeScreen(),
-  const AppointmentScreen(),
-  const ScanScreen(),
-  const FavoriteScreen(),
-  const ProfileScreen(),
-];
-
-List<String> _icons = [
-  AppIcons.home,
-  AppIcons.appointment,
-  AppIcons.scan,
-  AppIcons.favorite,
-  AppIcons.profile,
-];
-
 class HomeNavScreen extends StatelessWidget {
-  HomeNavScreen({super.key});
+  HomeNavScreen({super.key}) {
+    // Initialize the controller when the widget is created
+    Get.put(HomeNavController());
+  }
 
-  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey =
-      GlobalKey<CurvedNavigationBarState>();
+  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey<CurvedNavigationBarState>();
+
+  final List<Map<String, String>> _navItems = [
+    {"icon": "assets/icons/home.svg", "label": "Home"},
+    {"icon": "assets/icons/overview_icon.svg", "label": "Overview"},
+    {"icon": "assets/icons/scan_icon.svg", "label": "QR Code"},
+    {"icon": "assets/icons/message_icon.svg", "label": "Message"},
+    {"icon": "assets/icons/profile.svg", "label": "Profile"},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<HomeNavController>(
-      init: HomeNavController(),
-      builder: (controller) {
-        return Scaffold(
-          body: IndexedStack(index: controller.selectedIndex, children: _pages),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CurvedNavigationBar(
-                key: _bottomNavigationKey,
-                index: controller.selectedIndex,
-                backgroundColor: AppColors.transparent,
-                buttonBackgroundColor: AppColors.primaryColor,
-                color: AppColors.primaryColor,
-                items: List.generate(_icons.length, (index) {
-                  return CommonImage(
-                    imageSrc: _icons[index],
-                    imageColor: Colors.white,
-                    size: 24,
-                  );
-                }),
-                onTap: controller.changeIndex,
+    final controller = Get.find<HomeNavController>();
+    return Obx(
+      ()=>Scaffold(
+        body: IndexedStack(
+                index: controller.selectedIndex.value,
+                children: [
+                  const HomeScreen(),
+                  const OverviewScreen(),
+                  // Lazy load only when QR tab selected
+                  controller.selectedIndex == 2
+                      ? const ScanScreen()
+                      : Container(),
+                  const ChatListScreen(),
+                  const ProfileScreen(),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-                width: double.infinity,
-                height: 30.h,
-                color: AppColors.primaryColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CommonText(
-                      text: "Home",
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    CommonText(
-                      text: "Appointment",
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    CommonText(
-                      text: "Scan",
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    CommonText(
-                      text: "Favorite",
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    CommonText(
-                      text: "Profile",
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Curved Navigation Bar
+            CurvedNavigationBar(
+              key: _bottomNavigationKey,
+              index: controller.selectedIndex.value,
+              backgroundColor: AppColors.transparent,
+              buttonBackgroundColor: AppColors.primaryColor,
+              color: AppColors.primaryColor,
+              height: 50,
+              animationCurve: Curves.easeInOut,
+              animationDuration: const Duration(milliseconds: 600),
+              items: List.generate(_navItems.length, (index) {
+                return SvgPicture.asset(
+                  _navItems[index]["icon"]!,
+                  width: 24,
+                  height: 24,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                );
+              }),
+              onTap: controller.changeIndex,
+            ),
+            // Static text labels below
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 5.w),
+              width: double.infinity,
+              color: AppColors.primaryColor,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: List.generate(_navItems.length, (index) {
+                      return Expanded(
+                        child: Center(
+                          child: CommonText(
+                            text: _navItems[index]["label"]!,
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: controller.selectedIndex == index
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  SizedBox(height: 20.h,),
+                ],
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

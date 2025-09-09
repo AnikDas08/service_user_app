@@ -30,7 +30,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 children: [
                   /// Logo text here
                   const CommonText(
-                    text: AppString.logoText,
+                    text: AppString.onboarding_text,
                     fontSize: 24,
                     color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
@@ -62,33 +62,40 @@ class ForgotPasswordScreen extends StatelessWidget {
                         children: [
                           /// OTP Title here
                           CommonText(
-                            text: AppString.forgotPassword,
+                            text: AppString.forget_password_text,
                             fontSize: 18,
                             bottom: 10,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             color: AppColors.primaryColor,
                           ).center,
 
                           /// subtitle here
                           CommonText(
-                            text: AppString.enterYourEmailToResetPassword,
+                            text: AppString.forget_password_details_text,
                             fontSize: 14,
                             bottom: 20,
+                            maxLines: 2,
                             fontWeight: FontWeight.w400,
                           ).center,
 
                           /// forget password take email for reset Password
-                          const CommonText(text: AppString.email, bottom: 8),
+                          const CommonText(
+                              text: AppString.email,
+                              bottom: 8,
+                            fontSize: 14,
+                            color: AppColors.black400,
+                            fontWeight: FontWeight.w500,
+                          ),
                           CommonTextField(
                             controller: controller.emailController,
-                            hintText: AppString.email,
+                            hintText: AppString.hint_email_text,
                             validator: OtherHelper.emailValidator,
                           ),
                           20.height,
 
                           /// Submit Button here
                           CommonButton(
-                            titleText: AppString.verifyNow,
+                            titleText: AppString.verify_button,
                             isLoading: controller.isLoadingEmail,
                             onTap: () {
                               if (formKey.currentState!.validate()) {

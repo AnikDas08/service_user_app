@@ -1,128 +1,451 @@
+// screens/message_screen.dart
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../../../component/image/common_image.dart';
-import '../../../../component/text/common_text.dart';
-import '../../../../component/text_field/common_text_field.dart';
-import '../../data/model/chat_message_model.dart';
-import '../../../../../utils/extensions/extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import '../../../../component/text/common_text.dart';
+import '../../../../utils/constants/app_colors.dart';
+import '../../data/model/chat_message_model.dart';
 import '../controller/message_controller.dart';
-import '../../../../../utils/constants/app_string.dart';
-import '../widgets/chat_bubble_message.dart';
 
-class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key});
-
-  @override
-  State<MessageScreen> createState() => _MessageScreenState();
-}
-
-class _MessageScreenState extends State<MessageScreen> {
-  String chatId = Get.parameters["chatId"] ?? "";
-  String name = Get.parameters["name"] ?? "";
-  String image = Get.parameters["image"] ?? "";
-
-  @override
-  void initState() {
-    MessageController.instance.name = name;
-    MessageController.instance.chatId = chatId;
-    MessageController.instance.getMessageRepo();
-    super.initState();
-  }
-
+class MessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MessageController>(
-      builder: (controller) {
-        return Scaffold(
-          /// App Bar Section starts here
-          appBar: AppBar(
-            leading: Padding(
-              padding: EdgeInsets.only(left: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  /// participant image here
-                  CircleAvatar(
-                    radius: 30.sp,
-                    backgroundColor: Colors.transparent,
-                    child: ClipOval(
-                      child: CommonImage(imageSrc: image, size: 60),
-                    ),
-                  ),
-                  12.width,
+    final ChatControllers controller = Get.put(ChatControllers());
 
-                  /// participant Name here
-                  CommonText(
-                    text: name,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
+    // Initialize chat data
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: _buildAppBar(),
+      body: Column(
+        children: [
+          // Messages List
+          Expanded(
+            child: Obx(() {
+              if (controller.messages.isEmpty) {
+                return Center(
+                  child: CommonText(
+                    text: "No messages yet\nStart a conversation!",
+                    fontSize: 16,
+                    color: AppColors.black400,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
                   ),
-                ],
-              ),
-            ),
-            leadingWidth: Get.width,
+                );
+              }
+
+              return ListView.builder(
+                controller: controller.scrollController,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                itemCount: controller.messages.length,
+                itemBuilder: (context, index) {
+                  final message = controller.messages[index];
+                  return _buildMessageBubble(message, controller);
+                },
+              );
+            }),
           ),
 
-          /// Body Section starts here
-          body:
-              controller.isLoading
-                  /// Loading bar here
-                  ? const Center(child: CircularProgressIndicator())
-                  /// Show data  here
-                  : ListView.builder(
-                    reverse: true,
-                    controller: controller.scrollController,
-                    itemCount:
-                        controller.isMoreLoading
-                            ? controller.messages.length + 1
-                            : controller.messages.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      /// Message item here
-                      if (index < controller.messages.length) {
-                        ChatMessageModel message = controller.messages[index];
-                        return ChatBubbleMessage(
-                          index: index,
-                          image: message.image,
-                          time: message.time,
-                          text: message.text,
-                          isMe: message.isMe,
-                          onTap: () {},
-                        );
-                      } else {
-                        /// More data loading bar
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
+          // Message Input Area
+          _buildMessageInput(controller),
+        ],
+      ),
+    );
+  }
 
-          /// bottom Navigation Bar Section starts here
-          bottomNavigationBar: AnimatedPadding(
-            padding: MediaQuery.of(context).viewInsets,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.decelerate,
-            child: Padding(
-              padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 24.h),
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: AppColors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: Icon(
+          CupertinoIcons.back,
+          size: 24.sp,
+          color: AppColors.textColor,
+        ),
+        onPressed: () => Get.back(),
+      ),
+      title: Row(
+        children: [
+          // Profile Picture
+          ClipOval(
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: AppColors.black50,
+                shape: BoxShape.circle,
+              ),
+              child:Image.asset("assets/images/profile_image.png")
+              )
+            ),
 
-              /// Send message text filed here
-              child: CommonTextField(
-                hintText: AppString.messageHere,
-                suffixIcon: GestureDetector(
-                  onTap: controller.addNewMessage,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.sp),
-                    child: const Icon(Icons.send),
+          SizedBox(width: 12.w),
+
+          // Contact Name
+          Expanded(
+            child: CommonText(
+              text: "Joey Dhon",
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textColor,
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(ChatMessage message, ChatControllers controller) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      child: Row(
+        mainAxisAlignment: message.isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!message.isMe) ...[
+            // Other person's avatar
+            ClipOval(
+              child: Container(
+                width: 25.w,
+                height: 25.w,
+                decoration: BoxDecoration(
+                  color: AppColors.black50,
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset("assets/images/profile_image.png")
+              ),
+            ),
+            SizedBox(width: 8.w),
+          ],
+
+          // Message Content
+          Flexible(
+            child: Column(
+              crossAxisAlignment: message.isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onLongPress: () => _showMessageOptions(message, controller),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: Get.width * 0.75,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: message.isMe
+                          ? AppColors.primaryColor
+                          : AppColors.black50,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.r),
+                        topRight: Radius.circular(20.r),
+                        bottomLeft: Radius.circular(message.isMe ? 20.r : 4.r),
+                        bottomRight: Radius.circular(message.isMe ? 4.r : 20.r),
+                      ),
+                    ),
+                    child: _buildMessageContent(message),
                   ),
                 ),
-                borderColor: Colors.white,
-                borderRadius: 8,
+
+                SizedBox(height: 4.h),
+
+                // Timestamp
+                CommonText(
+                  text: _formatTime(message.timestamp),
+                  fontSize: 12,
+                  color: AppColors.black400,
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
+          ),
+
+          if (message.isMe) SizedBox(width: 8.w),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageContent(ChatMessage message) {
+    switch (message.type) {
+      case MessageType.text:
+        return CommonText(
+          text: message.message,
+          fontSize: 16,
+          color: message.isMe ? Colors.white : AppColors.textColor,
+          textAlign: TextAlign.left,
+          maxLines: 100,
+        );
+
+      case MessageType.image:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: Image.file(
+                File(message.imagePaths!.first),
+                width: 200.w,
+                height: 200.w,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 200.w,
+                    height: 200.w,
+                    color: AppColors.black50,
+                    child: Icon(
+                      CupertinoIcons.photo,
+                      size: 40.sp,
+                      color: AppColors.black400,
+                    ),
+                  );
+                },
+              ),
+            ),
+            if (message.message.isNotEmpty) ...[
+              SizedBox(height: 8.h),
+              CommonText(
+                text: message.message,
+                fontSize: 16,
+                color: message.isMe ? Colors.white : AppColors.textColor,
+                textAlign: TextAlign.left,
+                maxLines: 100,
+              ),
+            ],
+          ],
+        );
+
+      case MessageType.multiImage:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image Grid
+            Container(
+              width: 220.w,
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: message.imagePaths!.length > 1 ? 2 : 1,
+                  crossAxisSpacing: 4.w,
+                  mainAxisSpacing: 4.h,
+                  childAspectRatio: 1,
+                ),
+                itemCount: message.imagePaths!.length > 4 ? 4 : message.imagePaths!.length,
+                itemBuilder: (context, index) {
+                  return Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: Image.file(
+                          File(message.imagePaths![index]),
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: AppColors.black50,
+                              child: Icon(
+                                CupertinoIcons.photo,
+                                size: 30.sp,
+                                color: AppColors.black400,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      // Show +X overlay for additional images
+                      if (index == 3 && message.imagePaths!.length > 4)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '+${message.imagePaths!.length - 4}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            if (message.message.isNotEmpty) ...[
+              SizedBox(height: 8.h),
+              CommonText(
+                text: message.message,
+                fontSize: 16,
+                color: message.isMe ? Colors.white : AppColors.textColor,
+                textAlign: TextAlign.left,
+                maxLines: 100,
+              ),
+            ],
+          ],
+        );
+    }
+  }
+
+  Widget _buildMessageInput(ChatControllers controller) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border(
+          top: BorderSide(
+            color: AppColors.black50,
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Attachment button
+
+
+          // Text Input
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: AppColors.black50,
+                borderRadius: BorderRadius.circular(25.r),
+              ),
+              child: TextField(
                 controller: controller.messageController,
-                onSubmitted: (p0) => controller.addNewMessage(),
+                decoration: InputDecoration(
+                  hintText: "Type......",
+                  hintStyle: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppColors.black400,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 14.h),
+                ),
+                onSubmitted: (text) => controller.sendTextMessage(),
+                textInputAction: TextInputAction.send,
+                maxLines: null,
+                minLines: 1,
               ),
             ),
           ),
-        );
-      },
+
+          SizedBox(width: 12.w),
+
+          GestureDetector(
+            onTap: () => controller.showImageSourceDialog(),
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: AppColors.black50,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(
+                CupertinoIcons.photo,
+                size: 20.sp,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+
+          SizedBox(width: 12.w),
+
+          // Send button
+          GestureDetector(
+            onTap: () => controller.sendTextMessage(),
+            child: Container(
+              width: 40.w,
+              height: 40.w,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Icon(
+                CupertinoIcons.arrow_up,
+                size: 20.sp,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  void _showMessageOptions(ChatMessage message, ChatControllers controller) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            ListTile(
+              leading: Icon(Icons.delete, color: Colors.red),
+              title: Text('Delete Message'),
+              onTap: () {
+                Get.back();
+                controller.deleteMessage(message.id);
+              },
+            ),
+            if (message.type != MessageType.text) ...[
+              ListTile(
+                leading: Icon(Icons.download, color: AppColors.primaryColor),
+                title: Text('Save Image'),
+                onTap: () {
+                  Get.back();
+                  // Implement save image functionality
+                  Get.snackbar(
+                    'Success',
+                    'Image saved to gallery',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: AppColors.primaryColor,
+                    colorText: Colors.white,
+                  );
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatTime(DateTime dateTime) {
+    final hour = dateTime.hour == 0 ? 12 : (dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour);
+    final amPm = dateTime.hour >= 12 ? 'Pm' : 'Am';
+    return '${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
   }
 }

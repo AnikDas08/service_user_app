@@ -18,7 +18,7 @@ class AppColors {
 
   // Red Color Palette
   static const Color red50 = Color(0xFFFFF5F5);
-  static const Color red100 = Color(0xFFFED7D7);
+  static const Color red100 = Color(0xFFFFD5DA);
   static const Color red200 = Color(0xFFFEB2B2);
   static const Color red300 = Color(0xFFFC8181);
   static const Color red400 = Color(0xFFF56565);
@@ -45,10 +45,10 @@ class AppColors {
 
   // Black Color Palette
   static const Color black50 = Color(0xFFe6e6e6);
-  static const Color black100 = Color(0xFFE1E1E1);
-  static const Color black200 = Color(0xFFCFCFCF);
-  static const Color black300 = Color(0xFFB1B1B1);
-  static const Color black400 = Color(0xFF9E9E9E);
+  static const Color black100 = Color(0xFFB0B0B0);
+  static const Color black200 = Color(0xFF8A8A8A);
+  static const Color black300 = Color(0xFF545454);
+  static const Color black400 = Color(0xFF333333);
   static const Color black500 = Color(0xFF7E7E7E);
   static const Color black600 = Color(0xFF626262);
   static const Color black700 = Color(0xFF515151);

@@ -18,25 +18,10 @@ class AlreadyAccountRichText extends StatelessWidget {
         children: [
           /// Already Have Account
           TextSpan(
-            text: AppString.alreadyHaveAccount,
+            text: AppString.already_have_account_chair,
             style: GoogleFonts.plusJakartaSans(
               color: AppColors.primaryColor,
               fontSize: 14,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-
-          /// Sign In Button Here
-          TextSpan(
-            text: AppString.signIn,
-            recognizer:
-                TapGestureRecognizer()
-                  ..onTap = () {
-                    Get.toNamed(AppRoutes.signIn);
-                  },
-            style: GoogleFonts.plusJakartaSans(
-              color: AppColors.primaryColor,
-              fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),

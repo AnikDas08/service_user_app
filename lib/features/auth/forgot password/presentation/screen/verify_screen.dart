@@ -41,7 +41,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 children: [
                   /// Logo text here
                   const CommonText(
-                    text: AppString.logoText,
+                    text: AppString.onboarding_text,
                     fontSize: 24,
                     color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
@@ -74,10 +74,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         children: [
                           /// OTP Title here
                           CommonText(
-                            text: AppString.otpTitle,
+                            text: AppString.verify_email_text,
                             fontSize: 18,
                             bottom: 10,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             color: AppColors.primaryColor,
                           ),
 
@@ -85,11 +85,12 @@ class _VerifyScreenState extends State<VerifyScreen> {
                           Center(
                             child: CommonText(
                               text:
-                                  "${AppString.codeHasBeenSendTo} ${controller.emailController.text}",
-                              fontSize: 14,
+                                  AppString.verify_email_details,
+                              fontSize: 12,
                               bottom: 20,
                               maxLines: 2,
                               fontWeight: FontWeight.w400,
+                              color: AppColors.black300,
                             ),
                           ),
 

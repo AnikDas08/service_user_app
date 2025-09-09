@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/component/pop_up/common_pop_menu.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../../utils/extensions/extension.dart';
 import '../../../../../component/button/common_button.dart';
@@ -30,7 +31,7 @@ class CreatePassword extends StatelessWidget {
               children: [
                 /// Logo text here
                 const CommonText(
-                  text: AppString.logoText,
+                  text: AppString.onboarding_text,
                   fontSize: 24,
                   color: AppColors.primaryColor,
                   fontWeight: FontWeight.w600,
@@ -63,46 +64,49 @@ class CreatePassword extends StatelessWidget {
                       children: [
                         /// OTP Title here
                         CommonText(
-                          text: AppString.createNewPassword,
+                          text: AppString.create_password_text,
                           fontSize: 18,
                           bottom: 10,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           color: AppColors.primaryColor,
                         ).center,
 
                         /// subtitle here
                         CommonText(
-                          text: AppString.createYourNewPassword,
-                          fontSize: 14,
+                          text: AppString.create_password_details_text,
+                          fontSize: 12,
                           bottom: 20,
                           fontWeight: FontWeight.w400,
+                          color: AppColors.black300,
+                          maxLines: 5,
                         ).center,
 
                         /// New Password here
                         CommonText(
-                          text: AppString.newPassword,
+                          text: AppString.new_passowrd_text,
                           fontSize: 14,
                           bottom: 8,
                           fontWeight: FontWeight.w400,
                         ),
                         CommonTextField(
                           controller: controller.passwordController,
-                          hintText: AppString.password,
+                          hintText: AppString.hint_new_password,
                           isPassword: true,
                           validator: OtherHelper.passwordValidator,
+                          hintTextColor: AppColors.black100,
                         ),
                         10.height,
 
                         /// Confirm Password here
                         CommonText(
-                          text: AppString.confirmPassword,
+                          text: AppString.confirm_password_text,
                           fontSize: 14,
                           bottom: 8,
                           fontWeight: FontWeight.w400,
                         ),
                         CommonTextField(
                           controller: controller.confirmPasswordController,
-                          hintText: AppString.confirmPassword,
+                          hintText: AppString.hint_confirm_password,
                           validator:
                               (value) => OtherHelper.confirmPasswordValidator(
                                 value,
@@ -114,12 +118,11 @@ class CreatePassword extends StatelessWidget {
 
                         /// Submit Button here
                         CommonButton(
-                          titleText: AppString.continues,
+                          titleText: AppString.confirm_button,
+                          titleSize: 18.sp,
                           isLoading: controller.isLoadingReset,
                           onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              controller.resetPasswordRepo();
-                            }
+                            simpleDialog();
                           },
                         ),
                       ],

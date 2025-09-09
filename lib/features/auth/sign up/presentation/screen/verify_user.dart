@@ -28,147 +28,142 @@ class _VerifyUserState extends State<VerifyUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// App Bar Section starts here
-      appBar: AppBar(
-        title: const CommonText(
-          text: AppString.otpVerify,
-          fontWeight: FontWeight.w700,
-          fontSize: 24,
-        ),
-      ),
-
-      /// Body Section starts here
       body: GetBuilder<SignUpController>(
         builder: (controller) {
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
-            child: Column(
-              children: [
-                /// Logo text here
-                const CommonText(
-                  text: AppString.logoText,
-                  fontSize: 24,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.w600,
-                  maxLines: 2,
-                  bottom: 20,
-                ).center,
+            child: SafeArea(
+              child: Column(
+                children: [
+                  /// Logo text here
+                  const CommonText(
+                    text: AppString.logoText,
+                    fontSize: 24,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 2,
+                    bottom: 20,
+                  ).center,
 
-                /// Verify User Container here
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 10.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: AppColors.black50),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x408E8E8E),
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
+                  SizedBox(height: 100.h,),
+                  /// Verify User Container here
+                  Center(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 10.h,
                       ),
-                    ],
-                  ),
-
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        /// OTP Title here
-                        CommonText(
-                          text: AppString.otpTitle,
-                          fontSize: 18,
-                          bottom: 10,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryColor,
-                        ),
-
-                        /// instruction how to get OTP
-                        Center(
-                          child: CommonText(
-                            text:
-                                "${AppString.codeHasBeenSendTo} ${controller.emailController.text}",
-                            fontSize: 14,
-                            bottom: 20,
-                            maxLines: 2,
-                            fontWeight: FontWeight.w400,
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(color: AppColors.black50),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x408E8E8E),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
                           ),
-                        ),
+                        ],
+                      ),
 
-                        /// OTP Filed here
-                        Flexible(
-                          flex: 0,
-                          child: PinCodeTextField(
-                            controller: controller.otpController,
-                            autoDisposeControllers: false,
-                            cursorColor: AppColors.primaryColor,
-                            appContext: (context),
-                            autoFocus: true,
-                            pinTheme: PinTheme(
-                              shape: PinCodeFieldShape.box,
-                              borderRadius: BorderRadius.circular(4.r),
-                              fieldHeight: 60.h,
-                              fieldWidth: 60.w,
-                              activeFillColor: AppColors.transparent,
-                              selectedFillColor: AppColors.transparent,
-                              inactiveFillColor: AppColors.transparent,
-                              borderWidth: 0.5.w,
-                              selectedColor: AppColors.black50,
-                              activeColor: AppColors.black50,
-                              inactiveColor: AppColors.black50,
+                      child: Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            /// OTP Title here
+                            CommonText(
+                              text: AppString.otpTitle,
+                              fontSize: 18,
+                              bottom: 10,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
                             ),
-                            length: 6,
-                            keyboardType: TextInputType.number,
-                            autovalidateMode: AutovalidateMode.disabled,
-                            enableActiveFill: true,
-                            validator: (value) {
-                              if (value != null && value.length == 6) {
-                                return null;
-                              } else {
-                                return AppString.otpIsInValid;
-                              }
-                            },
-                          ),
-                        ),
 
-                        /// Resent OTP or show Timer
-                        GestureDetector(
-                          onTap:
-                              controller.time == '00:00'
-                                  ? () {
-                                    controller.startTimer();
-                                    controller.signUpUser();
+                            /// instruction how to get OTP
+                            Center(
+                              child: CommonText(
+                                text:
+                                    "${AppString.codeHasBeenSendTo} ${controller.emailController.text}",
+                                fontSize: 14,
+                                bottom: 20,
+                                maxLines: 2,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+
+                            /// OTP Filed here
+                            Flexible(
+                              flex: 0,
+                              child: PinCodeTextField(
+                                controller: controller.otpController,
+                                autoDisposeControllers: false,
+                                cursorColor: AppColors.primaryColor,
+                                appContext: (context),
+                                autoFocus: true,
+                                pinTheme: PinTheme(
+                                  shape: PinCodeFieldShape.box,
+                                  borderRadius: BorderRadius.circular(4.r),
+                                  fieldHeight: 60.h,
+                                  fieldWidth: 60.w,
+                                  activeFillColor: AppColors.transparent,
+                                  selectedFillColor: AppColors.transparent,
+                                  inactiveFillColor: AppColors.transparent,
+                                  borderWidth: 0.5.w,
+                                  selectedColor: AppColors.black50,
+                                  activeColor: AppColors.black50,
+                                  inactiveColor: AppColors.black50,
+                                ),
+                                length: 6,
+                                keyboardType: TextInputType.number,
+                                autovalidateMode: AutovalidateMode.disabled,
+                                enableActiveFill: true,
+                                validator: (value) {
+                                  if (value != null && value.length == 6) {
+                                    return null;
+                                  } else {
+                                    return AppString.otpIsInValid;
                                   }
-                                  : () {},
-                          child: CommonText(
-                            text:
-                                controller.time == '00:00'
-                                    ? AppString.resendCode
-                                    : "${AppString.resendCodeIn} ${controller.time} ${AppString.minute}",
-                            fontSize: 14,
-                            bottom: 20,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
+                                },
+                              ),
+                            ),
 
-                        ///  Submit Button here
-                        CommonButton(
-                          titleText: AppString.continues,
-                          isLoading: controller.isLoadingVerify,
-                          onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              controller.verifyOtpRepo();
-                            }
-                          },
+                            /// Resent OTP or show Timer
+                            GestureDetector(
+                              onTap:
+                                  controller.time == '00:00'
+                                      ? () {
+                                        controller.startTimer();
+                                        controller.signUpUser();
+                                      }
+                                      : () {},
+                              child: CommonText(
+                                text:
+                                    controller.time == '00:00'
+                                        ? AppString.resendCode
+                                        : "${AppString.resendCodeIn} ${controller.time} ${AppString.minute}",
+                                fontSize: 14,
+                                bottom: 20,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+
+                            ///  Submit Button here
+                            CommonButton(
+                              titleText: AppString.continues,
+                              isLoading: controller.isLoadingVerify,
+                              onTap: () {
+                                if (formKey.currentState!.validate()) {
+                                  controller.verifyOtpRepo();
+                                }
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

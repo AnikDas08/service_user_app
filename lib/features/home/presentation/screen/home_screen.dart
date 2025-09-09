@@ -1,14 +1,17 @@
+// home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import '../../../../component/image/common_image.dart';
-import '../../../../component/text/common_text.dart';
-import '../../../../component/text_field/common_text_field.dart';
+import 'package:haircutmen_user_app/component/text/common_text.dart';
+import 'package:haircutmen_user_app/config/route/app_routes.dart';
+import 'package:haircutmen_user_app/features/home/data/model/booking_model.dart';
+import 'package:table_calendar/table_calendar.dart';
+
 import '../../../../utils/constants/app_colors.dart';
-import '../../../../utils/constants/app_icons.dart';
+import '../../../../utils/constants/app_string.dart';
+import '../../widget/home_custom_button.dart';
 import '../controller/home_controller.dart';
-import '../widgets/service_category_item.dart';
-import '../widgets/service_provider_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -18,216 +21,336 @@ class HomeScreen extends StatelessWidget {
     return GetBuilder<HomeController>(
       init: HomeController(),
       builder: (controller) {
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+        return SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Column(
+              children: [
+                // Header with profile and online status
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      // Profile Image
+                      CircleAvatar(
+                        radius: 24.r,
+                        child: Image.asset("assets/images/profile_image.png"),
+                      ),
+                      SizedBox(width: 12.w),
+                      // Profile Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CommonText(
+                              text: 'Social Jasim',
+                              fontSize: 12.sp,
+                              color: Colors.grey[600]!,
+                            ),
+                            CommonText(
+                              text: AppString.welcome_text,
+                              fontSize: 16.sp,
+                              maxLines: 2,
+                              textAlign: TextAlign.start,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Online Status Toggle
+                      Row(
+                        children: [
+                          CommonText(
+                            text: AppString.online_voew,
+                            fontSize: 14.sp,
+                            color: controller.isOnline ? AppColors.primaryColor : Colors.grey[600]!,
+                          ),
+                          SizedBox(width: 8.w),
+                          Switch(
+                            value: controller.isOnline,
+                            onChanged: (val) => controller.toggleOnlineStatus(),
+                            activeColor: AppColors.primaryColor,
+                            activeTrackColor: AppColors.primaryColor.withOpacity(0.3),
+                            inactiveThumbColor: Colors.grey[400],
+                            inactiveTrackColor: Colors.grey[300],
+                            trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Calendar
+                Container(
+                  margin: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: TableCalendar<Event>(
+                    firstDay: DateTime.utc(2020, 1, 1),
+                    lastDay: DateTime.utc(2030, 12, 31),
+                    focusedDay: controller.focusedDay,
+                    selectedDayPredicate: (day) {
+                      return isSameDay(controller.selectedDay, day);
+                    },
+                    calendarFormat: CalendarFormat.week,
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
+                    onDaySelected: controller.onDaySelected,
+                    onPageChanged: (focusedDay) {
+                      controller.onPageChanged(focusedDay);
+                    },
+                    calendarStyle: CalendarStyle(
+                      outsideDaysVisible: false,
+                      selectedDecoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      todayDecoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      defaultTextStyle: TextStyle(fontSize: 14.sp),
+                      weekendTextStyle: TextStyle(fontSize: 14.sp),
+                      selectedTextStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    headerStyle: HeaderStyle(
+                      formatButtonVisible: false,
+                      titleCentered: true,
+                      leftChevronVisible: true,
+                      rightChevronVisible: true,
+                      titleTextStyle: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Filter Buttons
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomButton(
+                          text: AppString.upcoming_button,
+                          fontSize: 12,
+                          height: 34,
+                          isSelected: controller.selectedFilter == 0,
+                          onTap: () => controller.changeFilter(0),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: CustomButton(
+                          text: AppString.pending_button,
+                          fontSize: 12,
+                          height: 34,
+                          isSelected: controller.selectedFilter == 1,
+                          onTap: () => controller.changeFilter(1),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: CustomButton(
+                          text: AppString.Cancel_button,
+                          fontSize:12,
+                          height: 34,
+                          isSelected: controller.selectedFilter == 2,
+                          onTap: () => controller.changeFilter(2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 16.h),
+
+                // Booking List
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    itemCount: controller.getFilteredBookings().length,
+                    itemBuilder: (context, index) {
+                      final booking = controller.getFilteredBookings()[index];
+                      return _buildBookingCard(booking, controller);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBookingCard(BookingModel booking, HomeController controller) {
+    return GestureDetector(
+      onTap: (){
+        if(controller.selectedFilter==0){
+          Get.toNamed(AppRoutes.upcomingdetail_sscreen);
+        }
+        else if(controller.selectedFilter==1) {
+          Get.toNamed(AppRoutes.view_detail_pending);
+        }
+        else{
+          Get.toNamed(AppRoutes.canceldetails_screen);
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 76.w,
+              height: 87.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.zero, // no rounding
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.zero, // ensure no clipping to circle
+                child: Image.asset(
+                  "assets/images/item_image.png",
+                  fit: BoxFit.cover, // fills the container
+                ),
+              ),
+            ),
+
+            SizedBox(width: 12.w),
+            // Booking Details
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20.h),
-
-                  // Header Section
-                  _buildHeader(),
-
-                  SizedBox(height: 24.h),
-
-                  // Search Bar
-                  _buildSearchBar(),
-
-                  SizedBox(height: 24.h),
-
-                  // Service Categories
-                  _buildServiceCategories(),
-
-                  SizedBox(height: 32.h),
-
-                  // Service Providers Grid
-                  _buildServiceProviders(),
-
-                  SizedBox(height: 20.h),
+                  CommonText(
+                    text: booking.customerName,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.black400,
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/icons/propetion_icon.svg",
+                        width: 16.w,
+                        height: 16.h,
+                        color: AppColors.black400,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: booking.service,
+                        fontSize: 14.sp,
+                        color: AppColors.black400,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/icons/day_icon.svg",
+                        width: 16.w,
+                        height: 16.h,
+                        color: AppColors.black200,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: booking.date,
+                        fontSize: 12.sp,
+                        color: AppColors.black200,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      SizedBox(width: 12.w),
+                      SvgPicture.asset(
+                        "assets/icons/time_icon.svg",
+                        width: 16.w,
+                        height: 16.h,
+                        color: AppColors.black200,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: booking.time,
+                        fontSize: 12.sp,
+                        color: AppColors.black200,
+                        fontWeight: FontWeight.w400
+                        ,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      CommonText(
+                        text: 'Booking ID: ${booking.bookingId}',
+                        fontSize: 12.sp,
+                        color: AppColors.black300,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      SizedBox(width: 12.w),
+                      CommonText(
+                        text: 'RSD: ${booking.price}',
+                        fontSize: 12.sp,
+                        color: AppColors.black400,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        // Profile Image
-        Container(
-          width: 50.w,
-          height: 50.w,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.primaryColor, width: 2),
-          ),
-          child: ClipOval(
-            child: CommonImage(
-              imageSrc: "https://via.placeholder.com/50",
-              size: 46.w,
-              fill: BoxFit.cover,
-            ),
-          ),
-        ),
-
-        SizedBox(width: 12.w),
-
-        // Welcome Text
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CommonText(
-                text: "Md Kamran Khan",
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textColor,
-                textAlign: TextAlign.left,
-              ),
-              SizedBox(height: 2.h),
-              CommonText(
-                text: "Welcome To Veldora",
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: AppColors.black600,
-                textAlign: TextAlign.left,
-              ),
-            ],
-          ),
-        ),
-
-        // Menu Icon
-        Container(
-          width: 40.w,
-          height: 40.w,
-          decoration: BoxDecoration(
-            color: AppColors.red50,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: Center(
-            child: CommonImage(
-              imageSrc: AppIcons.burger,
-              size: 20.w,
-              imageColor: AppColors.primaryColor,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return GetBuilder<HomeController>(
-      builder: (controller) {
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(12.r),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: CommonTextField(
-            controller: controller.searchController,
-            hintText: "Any Treatment",
-            prefixIconData: Icons.search,
-            borderRadius: 12.r,
-            fillColor: AppColors.white,
-            borderColor: AppColors.transparent,
-            onSubmitted: (value) => controller.searchProviders(value),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildServiceCategories() {
-    final categories = [
-      {"icon": AppIcons.haircut, "label": "Haircut"},
-      {"icon": AppIcons.massage, "label": "Massage"},
-      {"icon": AppIcons.nailCare, "label": "Nail Care"},
-      {"icon": AppIcons.skinCare, "label": "Skin Care"},
-      {"icon": AppIcons.makeup, "label": "Makeup"},
-    ];
-
-    return GetBuilder<HomeController>(
-      builder: (controller) {
-        return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children:
-                  categories.map((category) {
-                    return ServiceCategoryItem(
-                      icon: category["icon"]!,
-                      label: category["label"]!,
-                      onTap:
-                          () => controller.onServiceCategoryTap(
-                            category["label"]!,
-                          ),
-                    );
-                  }).toList(),
+            // View Button
+            CustomButton(
+              text: AppString.view_button,
+              isSelected: true,
+              onTap: () => controller.viewBookingDetails(booking),
+              isSmall: true,
+              height: 24,
+              //fontSize: 14,
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
+}
 
-  Widget _buildServiceProviders() {
-    return GetBuilder<HomeController>(
-      builder: (controller) {
-        return Obx(() {
-          final providers = controller.filteredProviders;
 
-          if (providers.isEmpty) {
-            return Center(
-              child: CommonText(
-                text: "No service providers found",
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.black600,
-              ),
-            );
-          }
+// Event class for table_calendar
+class Event {
+  final String title;
+  Event(this.title);
 
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16.w,
-              mainAxisSpacing: 16.h,
-              childAspectRatio: 0.75,
-            ),
-            itemCount: providers.length,
-            itemBuilder: (context, index) {
-              final provider = providers[index];
-              return ServiceProviderCard(
-                name: provider["name"]!,
-                service: provider["service"]!,
-                distance: provider["distance"]!,
-                rating: provider["rating"]!,
-                reviews: provider["reviews"]!,
-                price: provider["price"]!,
-                imageUrl: provider["image"]!,
-                onTap: () => controller.onProviderTap(provider),
-                onFavorite: () => controller.onFavoriteTap(provider),
-              );
-            },
-          );
-        });
-      },
-    );
-  }
+  @override
+  String toString() => title;
 }

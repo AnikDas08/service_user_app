@@ -1,144 +1,210 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+// controllers/chat_controller.dart
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../../../../utils/constants/app_colors.dart';
 import '../../data/model/chat_message_model.dart';
-import '../../data/model/message_model.dart';
 
-import '../../../../services/api/api_service.dart';
-import '../../../../services/socket/socket_service.dart';
-import '../../../../config/api/api_end_point.dart';
-import '../../../../services/storage/storage_services.dart';
-import '../../../../utils/app_utils.dart';
-import '../../../../utils/enum/enum.dart';
+class ChatControllers extends GetxController {
+  final TextEditingController messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  final ImagePicker imagePicker = ImagePicker();
 
-class MessageController extends GetxController {
-  bool isLoading = false;
-  bool isMoreLoading = false;
-  String? video;
+  final RxList<ChatMessage> messages = <ChatMessage>[].obs;
+  final RxBool isLoading = false.obs;
+  final RxBool isTyping = false.obs;
+  final RxString contactName = ''.obs;
+  final RxString contactAvatar = ''.obs;
 
-  List messages = [];
-
-  String chatId = "";
-  String name = "";
-
-  int page = 1;
-  int currentIndex = 0;
-  Status status = Status.completed;
-
-  bool isMessage = false;
-  bool isInputField = false;
-
-  ScrollController scrollController = ScrollController();
-  TextEditingController messageController = TextEditingController();
-
-  static MessageController get instance => Get.put(MessageController());
-
-  MessageModel messageModel = MessageModel.fromJson({});
-
-  Future<void> getMessageRepo() async {
-    return;
-    if (page == 1) {
-      messages.clear();
-      status = Status.loading;
-      update();
-    }
-
-    var response = await ApiService.get(
-      "${ApiEndPoint.messages}?chatId=$chatId&page=$page&limit=15",
-    );
-
-    if (response.statusCode == 200) {
-      var data = response.data['data']['attributes']['messages'];
-
-      for (var messageData in data) {
-        messageModel = MessageModel.fromJson(messageData);
-
-        messages.add(
-          ChatMessageModel(
-            time: messageModel.createdAt.toLocal(),
-            text: messageModel.message,
-            image: messageModel.sender.image,
-            isNotice: messageModel.type == "notice" ? true : false,
-            isMe: LocalStorage.userId == messageModel.sender.id ? true : false,
-          ),
-        );
-      }
-
-      page = page + 1;
-      status = Status.completed;
-      update();
-    } else {
-      Utils.errorSnackBar(response.statusCode.toString(), response.message);
-      status = Status.error;
-      update();
-    }
+  @override
+  void onInit() {
+    super.onInit();
+    // Start with empty messages - no predefined messages
   }
 
-  addNewMessage() async {
-    isMessage = true;
-    update();
+  @override
+  void onClose() {
+    messageController.dispose();
+    scrollController.dispose();
+    super.onClose();
+  }
 
-    messages.insert(
-      0,
-      ChatMessageModel(
-        time: DateTime.now(),
-        text: messageController.text,
-        image: LocalStorage.myImage,
-        isMe: true,
-      ),
+  void initializeChat({
+    required String name,
+    String? avatar,
+  }) {
+    contactName.value = name;
+    contactAvatar.value = avatar ?? '';
+  }
 
-      // ChatMessageModel(
-      //     currentTime.format(context).toString(),
-      //     controller.messageController.text,
-      //     true),
+  void sendTextMessage() {
+    if (messageController.text.trim().isEmpty) return;
+
+    final message = ChatMessage.text(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      message: messageController.text.trim(),
+      isMe: true,
     );
 
-    isMessage = false;
-    update();
-
-    var body = {
-      "chat": chatId,
-      "message": messageController.text,
-      "sender": LocalStorage.userId,
-    };
-
+    messages.add(message);
     messageController.clear();
+    _scrollToBottom();
 
-    SocketServices.emitWithAck("add-new-message", body, (data) {
-      if (kDebugMode) {
-        print(
-          "===============================================================> Received acknowledgment: $data",
-        );
-      }
-    });
+    // Don't simulate automatic responses - only show what user sends
   }
 
-  listenMessage(String chatId) async {
-    SocketServices.on('new-message::$chatId', (data) {
-      status = Status.loading;
-      update();
-
-      var time = data['createdAt'].toLocal();
-      messages.insert(
-        0,
-        ChatMessageModel(
-          isNotice: data['messageType'] == "notice" ? true : false,
-          time: time,
-          text: data['message'],
-          image: data['sender']['image'],
-          isMe: false,
-        ),
+  Future<void> pickAndSendImage() async {
+    try {
+      final XFile? image = await imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
       );
 
-      status = Status.completed;
-      update();
+      if (image != null) {
+        final message = ChatMessage.image(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          imagePath: image.path,
+          isMe: true,
+        );
+
+        messages.add(message);
+        _scrollToBottom();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> pickAndSendMultipleImages() async {
+    try {
+      final List<XFile> images = await imagePicker.pickMultiImage(
+        imageQuality: 80,
+      );
+
+      if (images.isNotEmpty) {
+        final imagePaths = images.map((image) => image.path).toList();
+
+        final message = ChatMessage.multiImage(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          imagePaths: imagePaths,
+          isMe: true,
+        );
+
+        messages.add(message);
+        _scrollToBottom();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to pick images: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> takePicture() async {
+    try {
+      final XFile? image = await imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 80,
+      );
+
+      if (image != null) {
+        final message = ChatMessage.image(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          imagePath: image.path,
+          isMe: true,
+        );
+
+        messages.add(message);
+        _scrollToBottom();
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to take picture: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  void _scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
-  void isEmoji(int index) {
-    currentIndex = index;
-    isInputField = isInputField;
-    update();
+  void showImageSourceDialog() {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: AppColors.primaryColor),
+              title: Text('Gallery'),
+              onTap: () {
+                Get.back();
+                pickAndSendImage();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library_outlined, color: AppColors.primaryColor),
+              title: Text('Multiple Images'),
+              onTap: () {
+                Get.back();
+                pickAndSendMultipleImages();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: AppColors.primaryColor),
+              title: Text('Camera'),
+              onTap: () {
+                Get.back();
+                takePicture();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void deleteMessage(String messageId) {
+    messages.removeWhere((message) => message.id == messageId);
+  }
+
+  void clearAllMessages() {
+    messages.clear();
   }
 }

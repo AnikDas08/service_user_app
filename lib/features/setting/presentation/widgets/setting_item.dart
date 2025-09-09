@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../component/text/common_text.dart';
 
@@ -7,15 +8,17 @@ class SettingItem extends StatelessWidget {
   const SettingItem({
     super.key,
     required this.title,
-    required this.iconDate,
+    this.iconDate,
     this.iconColor,
     this.titleColor,
+    this.image="",
   });
 
   final String title;
-  final IconData iconDate;
+  final IconData? iconDate;
   final Color? iconColor;
   final Color? titleColor;
+  final String image;
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +43,24 @@ class SettingItem extends StatelessWidget {
           Container(
             width: 40.w,
             height: 40.h,
+            padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: AppColors.black50,
               borderRadius: BorderRadius.circular(100),
             ),
-            child: Icon(iconDate, color: iconColor ?? AppColors.secondary),
+            child: SvgPicture.asset(
+              image,
+              height: 24,
+              width: 24,
+            ),
           ),
 
           /// show Title here
           CommonText(
             text: title,
             color: titleColor ?? AppColors.secondary,
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
             left: 12,
           ),
         ],

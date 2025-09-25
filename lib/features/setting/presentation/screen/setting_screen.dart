@@ -56,6 +56,14 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
 
+                  InkWell(
+                    onTap: () => Get.toNamed(AppRoutes.service_provider_policy),
+                    child: const SettingItem(
+                      title: "Service Provider Usage Policy",
+                      image: "assets/icons/service_provider_policy.svg",
+                    ),
+                  ),
+
 
                   InkWell(
                     onTap: () => logoutDialog(onConfirm: (){}),

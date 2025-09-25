@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/pop_up/common_pop_menu.dart';
+import 'package:haircutmen_user_app/features/auth/change_password/widget/popup_dialog.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../../utils/extensions/extension.dart';
 import '../../../../../component/button/common_button.dart';
@@ -13,8 +14,7 @@ import '../../../../../../utils/helpers/other_helper.dart';
 
 class CreatePassword extends StatelessWidget {
   CreatePassword({super.key});
-
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class CreatePassword extends StatelessWidget {
                           titleSize: 18.sp,
                           isLoading: controller.isLoadingReset,
                           onTap: () {
-                            simpleDialog();
+                           simpleDialog();
                           },
                         ),
                       ],

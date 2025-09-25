@@ -19,7 +19,6 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// Body Section Starts here
       body: GetBuilder<ProfileController>(
         builder: (controller) {
           return SafeArea(

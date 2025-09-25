@@ -4,6 +4,19 @@ import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+
+
+class ServicePair {
+  TextEditingController serviceController = TextEditingController();
+  TextEditingController serviceTypeController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+
+  void dispose() {
+    serviceController.dispose();
+    serviceTypeController.dispose();
+  }
+}
+
 class EditServiceController extends GetxController {
   // Text Controllers
   final TextEditingController aboutMeController = TextEditingController();
@@ -20,6 +33,37 @@ class EditServiceController extends GetxController {
   RxList<String> uploadedImages = <String>[].obs;
   Rx<File?> profileImage = Rx<File?>(null);
 
+  // Add this in your CompleteProfileController class
+  RxList<ServicePair> servicePairs = <ServicePair>[].obs;
+  RxList<String> selectedLanguages=<String>[].obs;
+  bool isLanguageSelected(String language) {
+    return selectedLanguages.contains(language);
+  }
+
+// Method to toggle language selection
+  void toggleLanguageSelection(String language) {
+    if (selectedLanguages.contains(language)) {
+      selectedLanguages.remove(language);
+    } else {
+      selectedLanguages.add(language);
+    }
+
+    // Update the language controller text to show selected languages
+    languageController.text = selectedLanguages.join(', ');
+
+    update();
+  }
+
+// Method to handle language dropdown selection (replace existing selectFromDropdown for language)
+  void selectLanguageFromDropdown(String language) {
+    toggleLanguageSelection(language);
+  }
+
+// Add this method
+  void addService() {
+    servicePairs.add(ServicePair());
+  }
+
   // Asset images (can be modified/removed)
   RxList<String> assetImages = <String>[
     "assets/images/item_image.png",
@@ -32,22 +76,24 @@ class EditServiceController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   // Static data
-  final List<String> serviceTypes = [
-    'Hair Cut',
-    'Beard Trim',
-    'Hair Styling',
-    'Hair Wash',
-    'Facial',
-    'Massage'
-  ];
+  final Map<String, List<String>> serviceWithTypes = {
+    'Hair Cut': ['Classic Cut', 'Fade Cut', 'Buzz Cut', 'Crew Cut', 'Undercut'],
+    'Beard Trim': ['Full Beard Trim', 'Goatee Trim', 'Mustache Trim', 'Beard Shaping'],
+    'Hair Styling': ['Blow Dry', 'Hair Gel Styling', 'Pomade Styling', 'Wax Styling'],
+    'Hair Wash': ['Basic Wash', 'Deep Cleansing', 'Scalp Treatment'],
+    'Facial': ['Basic Facial', 'Deep Cleansing Facial', 'Anti-Aging Facial'],
+    'Massage': ['Head Massage', 'Neck Massage', 'Shoulder Massage']
+  };
+  List<String> get serviceNames => serviceWithTypes.keys.toList();
+  // Add this method to get service types for a specific service
+  List<String> getServiceTypes(String service) {
+    return serviceWithTypes[service] ?? [];
+  }
 
   final List<String> languages = [
     'English',
-    'Spanish',
-    'French',
-    'German',
-    'Arabic',
-    'Bengali'
+    'Russian',
+    'Serbian'
   ];
 
   @override
@@ -55,6 +101,7 @@ class EditServiceController extends GetxController {
     super.onInit();
     // Initialize default values if needed
     languageController.text = "English";
+    servicePairs.add(ServicePair()); // Add first service pair
   }
 
   @override
@@ -68,6 +115,10 @@ class EditServiceController extends GetxController {
     priceController.dispose();
     pricePerHourController.dispose();
     super.onClose();
+  }
+
+  void togglePrivacyAcceptance() {
+    isPrivacyAccepted.value = !isPrivacyAccepted.value;
   }
 
   // Get total count of all images (asset + uploaded)
@@ -103,13 +154,19 @@ class EditServiceController extends GetxController {
     serviceDistance.value = value;
   }
 
-  void togglePrivacyAcceptance() {
-    isPrivacyAccepted.value = !isPrivacyAccepted.value;
-  }
 
   void selectFromDropdown(TextEditingController controller, String value) {
     controller.text = value;
-    update(); // Update UI
+
+    // Clear service type when service changes
+    for (var pair in servicePairs) {
+      if (pair.serviceController == controller) {
+        pair.serviceTypeController.clear();
+        break;
+      }
+    }
+
+    update();
   }
 
   // Remove asset image
@@ -299,7 +356,7 @@ class EditServiceController extends GetxController {
   }
 
   bool validateForm() {
-    if (aboutMeController.text.trim().isEmpty) {
+   /* if (aboutMeController.text.trim().isEmpty) {
       Get.snackbar("Error", "Please fill About Me field");
       return false;
     }
@@ -318,7 +375,7 @@ class EditServiceController extends GetxController {
     if (pricePerHourController.text.trim().isEmpty) {
       Get.snackbar("Error", "Please fill Price Per Hour field");
       return false;
-    }
+    }*/
     return true;
   }
 
@@ -367,7 +424,7 @@ class EditServiceController extends GetxController {
       };
 
       Get.offAllNamed(AppRoutes.homeNav,arguments: {
-        "index":1
+        "index":0
       });
 
       // Store the profile data for next screen or API call

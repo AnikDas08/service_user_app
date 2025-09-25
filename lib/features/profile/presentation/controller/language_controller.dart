@@ -72,12 +72,12 @@ class LanguageController extends GetxController {
 
     // Show confirmation with proper language name
     String languageName = _getLanguageName(langCode);
-    Get.snackbar(
+    /*Get.snackbar(
       'Language Changed',
       'Language changed to $languageName',
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
-    );
+    );*/
   }
 
   String _getLanguageName(String langCode) {

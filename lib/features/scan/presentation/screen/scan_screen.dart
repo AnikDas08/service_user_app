@@ -25,7 +25,7 @@ class ScanScreen extends StatelessWidget {
                   CustomAppBar(title: AppString.qr_text,),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center, // image center এ থাকবে
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CommonText(
@@ -35,23 +35,33 @@ class ScanScreen extends StatelessWidget {
                           color: AppColors.primaryColor,
                         ),
                         SizedBox(height: 25.h),
+                        // 👇 Image Center এ থাকবে
                         Image.asset(
                           "assets/images/scan_image.png",
-                          height: 235.h, // Change this value
-                          width: 235.w,  // Change this value
-                          fit: BoxFit.fill, // or BoxFit.fill to stretch
+                          height: 235.h,
+                          width: 235.w,
+                          fit: BoxFit.fill,
                         ),
                         SizedBox(height: 20.h),
-                        CommonText(
-                          text: AppString.qr_name,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        SizedBox(height: 10.h,),
-                        CommonText(
-                          text: "${AppString.qr_id} 485945",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                        // 👇 Name & ID image এর width এর সাথে align হবে এবং left এ শুরু হবে
+                        SizedBox(
+                          width: 235.w, // image এর width এর সমান
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CommonText(
+                                text: AppString.qr_name,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              SizedBox(height: 10.h),
+                              CommonText(
+                                text: "${AppString.qr_id} 485945",
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

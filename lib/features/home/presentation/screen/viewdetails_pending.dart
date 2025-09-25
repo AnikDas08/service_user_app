@@ -119,7 +119,7 @@ class ViewDetailsPending extends StatelessWidget {
                                     ),
                                     SizedBox(width: 4.w),
                                     CommonText(
-                                      text: "10:00 AM",
+                                      text: "10:00",
                                       fontSize: 12.sp,
                                       color: AppColors.black300,
                                       fontWeight: FontWeight.w400
@@ -168,7 +168,7 @@ class ViewDetailsPending extends StatelessWidget {
                       ),
                     ),
                   ),
-
+                  SizedBox(height: 10.h,),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -182,7 +182,7 @@ class ViewDetailsPending extends StatelessWidget {
                             onTap: () => controller.changeFilter(1),
                           ),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: 12.w),
                         Expanded(
                           child: CustomButton(
                             text: AppString.confirm_button,
@@ -197,14 +197,6 @@ class ViewDetailsPending extends StatelessWidget {
                   ),
 
                   SizedBox(height: 30.h,),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: CustomButton(text: AppString.contact_now_button,
-                        isSelected: true,
-                        onTap: () {
-
-                        }),
-                  )
                 ],
               );
           }

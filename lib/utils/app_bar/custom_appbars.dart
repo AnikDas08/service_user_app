@@ -55,7 +55,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 padding: const EdgeInsets.only(),
                 child: GestureDetector(
                   onTap: (){
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: Container(
                     padding: EdgeInsets.all(5),

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'dart:io';
 import '../../../../../utils/constants/app_colors.dart';
+import '../../../home/widget/home_custom_button.dart';
 
 class EditServiceScreen extends StatelessWidget {
   const EditServiceScreen({super.key});
@@ -250,10 +251,10 @@ class EditServiceScreen extends StatelessWidget {
       children: [
         // About Me
         _buildFieldWithLabel(
-          label: AppString.about_me,
+          label: AppString.aboutMe,
           child: CommonTextField(
             controller: controller.aboutMeController,
-            hintText: AppString.type_profile,
+            hintText: AppString.hint_type_here,
             maxLines: 3,
             borderColor: AppColors.black50,
             textAlign: TextAlign.start,
@@ -262,41 +263,170 @@ class EditServiceScreen extends StatelessWidget {
 
         SizedBox(height: 16.h),
 
-        // Service Type
-        _buildFieldWithLabel(
-          label: AppString.service_type,
-          child: _buildDropdownField(
-            controller: controller,
-            textController: controller.serviceTypeController,
-            hintText: AppString.service_hint,
-            items: controller.serviceTypes,
+        // Dynamic Service Section
+        Obx(() => Column(
+          children: [
+            // Generate service pairs dynamically
+            ...controller.servicePairs.asMap().entries.map((entry) {
+              int index = entry.key;
+              ServicePair pair = entry.value;
+
+              return Column(
+                children: [
+                  // Service dropdown
+                  _buildFieldWithLabel(
+                    label: index == 0 ? "Service " : "Service ${index + 1}",
+                    child: _buildDropdownField(
+                      controller: controller,
+                      textController: pair.serviceController,
+                      hintText: AppString.service_hint,
+                      items: controller.serviceNames,
+                    ),
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  // Service Type dropdown (depends on selected service)
+                  _buildFieldWithLabel(
+                    label: index == 0 ? "Service Type" : "Service Type ${index + 1}",
+                    child: GetBuilder<EditServiceController>(
+                      builder: (controller) => _buildDropdownField(
+                        controller: controller,
+                        textController: pair.serviceTypeController,
+                        hintText: "Select Service Type",
+                        items: pair.serviceController.text.isNotEmpty
+                            ? controller.getServiceTypes(pair.serviceController.text)
+                            : [],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h,),
+
+                  _buildFieldWithLabel(
+                    label: index == 0 ? AppString.price_text : "${AppString.price_text} ${index + 1}",
+                    child: CommonTextField(
+                      controller: pair.priceController, // Use the service pair's price controller
+                      hintText: AppString.price_hints,
+                      keyboardType: TextInputType.number,
+                      height: 44,
+                      borderColor: AppColors.black50,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+
+                  if (index < controller.servicePairs.length - 1) SizedBox(height: 16.h),
+                ],
+              );
+            }).toList(),
+          ],
+        )),
+
+        SizedBox(height: 16.h),
+
+        // Add Service Button
+        Align(
+          alignment: Alignment.topRight,
+          child: IntrinsicWidth(
+            child: CustomButton(
+              text: "  Add Service  ",
+              isSelected: true,
+              height: 44.h,
+              onTap: controller.addService,
+            ),
           ),
         ),
 
         SizedBox(height: 16.h),
 
-        // Additional Service Type
-        _buildFieldWithLabel(
-          label: AppString.additional_service_text,
-          child: CommonTextField(
-            controller: controller.additionalServiceController,
-            hintText: AppString.additional_service_hints,
-            height: 44,
-            borderColor: AppColors.black50,
-            textAlign: TextAlign.start,
-          ),
-        ),
-
-        SizedBox(height: 16.h),
-
-        // Add Service Language
+        // REPLACE THIS SECTION: Add Service Language - Multiple Selection
         _buildFieldWithLabel(
           label: AppString.add_service_language,
-          child: _buildDropdownField(
-            controller: controller,
-            textController: controller.languageController,
-            hintText: "English",
-            items: controller.languages,
+          child: Column(
+            children: [
+              // Display field showing selected languages
+              GestureDetector(
+                onTap: () => _showLanguageSelectionBottomSheet(controller),
+                child: Container(
+                  height: 44.h,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.black50),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Obx(() => CommonText(
+                            text: controller.selectedLanguages.isEmpty
+                                ? "Select Languages"
+                                : controller.selectedLanguages.join(', '),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: controller.selectedLanguages.isEmpty
+                                ? AppColors.textFiledColor
+                                : AppColors.black,
+                            textAlign: TextAlign.start,
+                            maxLines: 2,
+                          )),
+                        ),
+                      ),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppColors.textFiledColor,
+                        size: 20.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Show selected languages as chips
+              Obx(() => controller.selectedLanguages.isNotEmpty
+                  ? Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(top: 8.h),
+                child: Wrap(
+                  spacing: 8.w,
+                  runSpacing: 4.h,
+                  children: controller.selectedLanguages.map((language) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: AppColors.primaryColor.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CommonText(
+                            text: language,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryColor,
+                            textAlign: TextAlign.start,
+                          ),
+                          SizedBox(width: 4.w),
+                          GestureDetector(
+                            onTap: () => controller.toggleLanguageSelection(language),
+                            child: Icon(
+                              Icons.close,
+                              size: 16.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+                  : SizedBox.shrink()),
+            ],
           ),
         ),
 
@@ -308,7 +438,7 @@ class EditServiceScreen extends StatelessWidget {
           child: CommonTextField(
             height: 44,
             controller: controller.locationController,
-            hintText: AppString.primary_location_hint,
+            hintText: AppString.hint_type_here,
             borderColor: AppColors.black50,
             textAlign: TextAlign.start,
           ),
@@ -324,18 +454,6 @@ class EditServiceScreen extends StatelessWidget {
 
         SizedBox(height: 16.h),
 
-        // Price
-        _buildFieldWithLabel(
-          label: AppString.price_text,
-          child: CommonTextField(
-            controller: controller.priceController,
-            hintText: AppString.price_hints,
-            keyboardType: TextInputType.number,
-            height: 44,
-            borderColor: AppColors.black50,
-            textAlign: TextAlign.start,
-          ),
-        ),
 
         SizedBox(height: 16.h),
 
@@ -352,6 +470,120 @@ class EditServiceScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+// Add this method at the end of your EditServiceScreen class
+  void _showLanguageSelectionBottomSheet(EditServiceController controller) {
+    showModalBottomSheet(
+      context: Get.context!,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: AppColors.black50,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              CommonText(
+                text: "Select Languages",
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.black,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8.h),
+              CommonText(
+                text: "You can select multiple languages",
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColors.black400,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.h),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: controller.languages.map((language) {
+                      return Obx(() => GestureDetector(
+                        onTap: () => controller.toggleLanguageSelection(language),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: AppColors.black50,
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: CommonText(
+                                  text: language,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.black,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                              if (controller.isLanguageSelected(language))
+                                Icon(
+                                  Icons.check_circle,
+                                  color: controller.isLanguageSelected(language)?AppColors.primaryColor:AppColors.black200,
+                                  size: 20.sp,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ));
+                    }).toList(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              // Done button
+              Container(
+                width: double.infinity,
+                height: 48.h,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10.r),
+                    onTap: () => Navigator.pop(context),
+                    child: Center(
+                      child: CommonText(
+                        text: "Done",
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.white,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

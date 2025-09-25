@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/auth/sign%20up/presentation/screen/complete_profile_screen.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/canceldetails_screen.dart';
+import 'package:haircutmen_user_app/features/home/presentation/screen/service_details_screen.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/viewdetails_pending.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/viewdetailse_upcomming.dart';
 import 'package:haircutmen_user_app/features/overview/presentation/controller/overview_controller.dart';
@@ -11,6 +12,7 @@ import 'package:haircutmen_user_app/features/profile/presentation/screen/languag
 import 'package:haircutmen_user_app/features/profile/presentation/screen/person_service_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/personal_information.dart';
 import 'package:haircutmen_user_app/features/setting/presentation/screen/privacy_policy_screen.dart';
+import 'package:haircutmen_user_app/features/setting/presentation/screen/service_provider_policy.dart';
 import '../../features/auth/change_password/presentation/screen/change_password_screen.dart';
 import '../../features/auth/forgot password/presentation/screen/create_password.dart';
 import '../../features/auth/forgot password/presentation/screen/forgot_password.dart';
@@ -65,6 +67,7 @@ class AppRoutes {
   static const String language_screen = "/language_screen";
   static const String edit_service_screen = "/edit_service_screen";
   static const String contract_screen = "/contract_screen";
+  static const String service_provider_policy = "/service_provider_policy";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -77,7 +80,7 @@ class AppRoutes {
     GetPage(name: createPassword, page: () => CreatePassword()),
     GetPage(name: changePassword, page: () => ChangePasswordScreen()),
     GetPage(name: notifications, page: () => const NotificationScreen()),
-    GetPage(name: chat, page: () => const ChatListScreen()),
+    GetPage(name: chat, page: () =>  ChatListScreen()),
     GetPage(name: message, page: () => MessageScreen()),
     GetPage(name: profile, page: () => const ProfileScreen()),
     GetPage(name: editProfile, page: () => EditProfile()),
@@ -98,5 +101,6 @@ class AppRoutes {
     GetPage(name: language_screen, page: () =>  LanguageSelectionScreen()),
     GetPage(name: edit_service_screen, page: () =>  EditServiceScreen()),
     GetPage(name: contract_screen, page: () =>  ContractsScreen()),
+    GetPage(name: service_provider_policy, page: () =>  ServiceProviderPolicy()),
   ];
 }

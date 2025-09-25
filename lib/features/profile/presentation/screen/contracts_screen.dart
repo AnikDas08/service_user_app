@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/contract_controller.dart';
 import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
@@ -330,8 +331,15 @@ class ContractsScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
-                color: AppColors.black50,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(25.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.gray.withOpacity(0.6),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ]
               ),
               child: TextField(
                 controller: controller.messageController,
@@ -360,9 +368,17 @@ class ContractsScreen extends StatelessWidget {
             child: Container(
               width: 40.w,
               height: 40.w,
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.black50,
-                borderRadius: BorderRadius.circular(12.r),
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(100.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.gray.withOpacity(0.6),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ]
               ),
               child: Icon(
                 CupertinoIcons.photo,
@@ -380,14 +396,23 @@ class ContractsScreen extends StatelessWidget {
             child: Container(
               width: 40.w,
               height: 40.w,
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12.r),
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(100.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.gray.withOpacity(0.6),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ]
               ),
-              child: Icon(
-                CupertinoIcons.arrow_up,
-                size: 20.sp,
-                color: Colors.white,
+              child: SvgPicture.asset(
+                "assets/icons/send_icon.svg",
+                color: AppColors.primaryColor,
+                height: 24,
+                width: 24,
               ),
             ),
           ),

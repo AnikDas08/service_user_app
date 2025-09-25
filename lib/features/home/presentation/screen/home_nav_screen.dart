@@ -42,7 +42,7 @@ class HomeNavScreen extends StatelessWidget {
                   controller.selectedIndex == 2
                       ? const ScanScreen()
                       : Container(),
-                  const ChatListScreen(),
+                  ChatListScreen(),
                   const ProfileScreen(),
                 ],
               ),

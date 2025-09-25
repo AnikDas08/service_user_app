@@ -112,7 +112,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                               ),
                               SizedBox(width: 4.w),
                               CommonText(
-                                text: "10:00 AM",
+                                text: "10:00",
                                 fontSize: 12.sp,
                                 color: AppColors.black300,
                                 fontWeight: FontWeight.w400

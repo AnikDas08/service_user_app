@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../component/text/common_text.dart';
@@ -35,16 +36,39 @@ class MessageScreen extends StatelessWidget {
                   ),
                 );
               }
+              return Expanded(
+                child: Obx(() {
+                  return ListView.builder(
+                    controller: controller.scrollController,
+                    reverse: true, // 🔑 সবসময় নিচ থেকে শুরু
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    itemCount: controller.messages.isEmpty ? 1 : controller.messages.length,
+                    itemBuilder: (context, index) {
+                      // যখন লিস্ট ফাঁকা → Placeholder নিচে বসবে
+                      if (controller.messages.isEmpty) {
+                        return Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: Get.height * 0.7), // স্ক্রল করলে উপরে যাবে
+                            child: CommonText(
+                              text: "No messages yet\nStart a conversation!",
+                              fontSize: 16,
+                              color: AppColors.black400,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
 
-              return ListView.builder(
-                controller: controller.scrollController,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: controller.messages.length,
-                itemBuilder: (context, index) {
-                  final message = controller.messages[index];
-                  return _buildMessageBubble(message, controller);
-                },
+                      // যখন মেসেজ আছে → নিচ থেকে দেখাবে
+                      final message =
+                      controller.messages[controller.messages.length - 1 - index];
+                      return _buildMessageBubble(message, controller);
+                    },
+                  );
+                }),
               );
+
             }),
           ),
 
@@ -143,26 +167,24 @@ class MessageScreen extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: message.isMe
-                          ? AppColors.primaryColor
+                          ? AppColors.red50
                           : AppColors.black50,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20.r),
-                        topRight: Radius.circular(20.r),
-                        bottomLeft: Radius.circular(message.isMe ? 20.r : 4.r),
-                        bottomRight: Radius.circular(message.isMe ? 4.r : 20.r),
+                        topLeft: Radius.circular(6.r),
+                        topRight: Radius.circular(6.r),
+                        bottomLeft: Radius.circular(message.isMe ? 6.r : 0.r),
+                        bottomRight: Radius.circular(message.isMe ? 0.r : 6.r),
                       ),
                     ),
                     child: _buildMessageContent(message),
                   ),
                 ),
-
                 SizedBox(height: 4.h),
-
                 // Timestamp
                 CommonText(
                   text: _formatTime(message.timestamp),
                   fontSize: 12,
-                  color: AppColors.black400,
+                  color: AppColors.black100,
                   fontWeight: FontWeight.w400,
                 ),
               ],
@@ -174,18 +196,16 @@ class MessageScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildMessageContent(ChatMessage message) {
     switch (message.type) {
       case MessageType.text:
         return CommonText(
           text: message.message,
-          fontSize: 16,
-          color: message.isMe ? Colors.white : AppColors.textColor,
+          fontSize: 12,
+          color: message.isMe ? AppColors.black300 : AppColors.black300,
           textAlign: TextAlign.left,
           maxLines: 100,
         );
-
       case MessageType.image:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +243,6 @@ class MessageScreen extends StatelessWidget {
             ],
           ],
         );
-
       case MessageType.multiImage:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,8 +342,15 @@ class MessageScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
-                color: AppColors.black50,
+                color: AppColors.white,
                 borderRadius: BorderRadius.circular(25.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withOpacity(0.4),
+                    blurRadius: 2,
+                    offset: Offset(0, 1),
+                  )
+                ]
               ),
               child: TextField(
                 controller: controller.messageController,
@@ -347,19 +373,26 @@ class MessageScreen extends StatelessWidget {
           ),
 
           SizedBox(width: 12.w),
-
           GestureDetector(
             onTap: () => controller.showImageSourceDialog(),
             child: Container(
-              width: 40.w,
-              height: 40.w,
+              width: 44.w,
+              height: 44.w,
+              padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.black50,
-                borderRadius: BorderRadius.circular(12.r),
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(100.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withOpacity(0.4),
+                    blurRadius: 2,
+                    offset: Offset(0, 1),
+                  )
+                ]
               ),
               child: Icon(
                 CupertinoIcons.photo,
-                size: 20.sp,
+                size: 24.sp,
                 color: AppColors.primaryColor,
               ),
             ),
@@ -371,16 +404,25 @@ class MessageScreen extends StatelessWidget {
           GestureDetector(
             onTap: () => controller.sendTextMessage(),
             child: Container(
-              width: 40.w,
-              height: 40.w,
+              padding: EdgeInsets.all(10.w),
+              width: 44.w,
+              height: 44.w,
               decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12.r),
+                color: AppColors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.gray.withOpacity(0.6),
+                    blurRadius: 2,
+                    offset: Offset(0, 1),
+                  ),
+                ]
               ),
-              child: Icon(
-                CupertinoIcons.arrow_up,
-                size: 20.sp,
-                color: Colors.white,
+              child: SvgPicture.asset(
+                "assets/icons/send_icon.svg",
+                color: AppColors.primaryColor,
+                height: 24,
+                width: 24,
               ),
             ),
           ),
@@ -388,7 +430,6 @@ class MessageScreen extends StatelessWidget {
       ),
     );
   }
-
   void _showMessageOptions(ChatMessage message, ChatControllers controller) {
     Get.bottomSheet(
       Container(
@@ -434,6 +475,7 @@ class MessageScreen extends StatelessWidget {
                     backgroundColor: AppColors.primaryColor,
                     colorText: Colors.white,
                   );
+                  controller.contactAvatar.value.isNotEmpty ? controller.contactAvatar.value : controller.contactName.value;
                 },
               ),
             ],

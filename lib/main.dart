@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:haircutmen_user_app/utils/extensions/extension.dart';
 
 import 'app.dart';
@@ -12,6 +13,14 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await init.tryCatch();
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // Transparent বা app primary color
+      statusBarIconBrightness: Brightness.dark, // Android এর জন্য
+      statusBarBrightness: Brightness.light,    // iOS এর জন্য
+    ),
+  );
 
   runApp(const MyApp());
 }

@@ -190,17 +190,19 @@ deletePopUp({
                   ),
                 ),
                 CommonText(
-                  text: AppString.deleteDetails,
+                  text: "Give your password to confirm your account.",
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black,
-                  maxLines: 2,
+                  maxLines: 4,
                   bottom: 20.h,
                 ),
                 CommonTextField(
                   controller: controller,
-                  labelText: AppString.enterYouPassword,
+                  hintText: "Enter Your Password",
+                  isPassword: true,
                   validator: OtherHelper.validator,
+                  borderColor: AppColors.primaryColor,
                 ),
               ],
             ),
@@ -228,8 +230,8 @@ deletePopUp({
                     buttonHeight: 48.h,
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        Navigator.of(context).pop();
-                        onTap();
+                        Get.back();
+                        confirmDelete();
                       }
                     },
                   ),
@@ -242,6 +244,83 @@ deletePopUp({
     },
   );
 }
+confirmDelete({
+  bool isLoading = false,
+}) {
+  final formKey = GlobalKey<FormState>();
+  showDialog(
+    context: Get.context!,
+    builder: (context) {
+      return AnimationPopUp(
+        child: AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          contentPadding: const EdgeInsets.only(bottom: 12),
+          title: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: CommonText(
+                    text: "Do you want to Delete you Account?",
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black,
+                    maxLines: 2,
+                    bottom: 24.h,
+                  ),
+                ),
+                CommonText(
+                  text: "After 30 days your account will be deleted.All the data are remove from your account.",
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                  maxLines: 4,
+                  bottom: 20.h,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            Row(
+              children: [
+                Expanded(
+                  child: CommonButton(
+                    titleText: AppString.cancel,
+                    titleColor: AppColors.black,
+                    borderColor: AppColors.black,
+                    buttonColor: AppColors.transparent,
+                    buttonRadius: 4.r,
+                    buttonHeight: 48.h,
+                    onTap: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: CommonButton(
+                    titleText: "Confirm",
+                    titleColor: AppColors.white,
+                    buttonRadius: 4.r,
+                    buttonHeight: 48.h,
+                    onTap: () async {
+                      if (formKey.currentState!.validate()) {
+                        Get.back();
+
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 
 logOutPopUps() {
   showDialog(
@@ -290,7 +369,7 @@ logOutPopUps() {
   );
 }
 
-simpleDialog() async {
+/*simpleDialog() async {
   showDialog(
     context: Get.context!,
     barrierDismissible: false,
@@ -331,7 +410,7 @@ simpleDialog() async {
       );
     },
   );
-}
+}*/
 
 void logoutDialog({
   required VoidCallback onConfirm,

@@ -211,7 +211,7 @@ class HomeScreen extends StatelessWidget {
           Get.toNamed(AppRoutes.view_detail_pending);
         }
         else{
-          Get.toNamed(AppRoutes.canceldetails_screen);
+
         }
       },
       child: Container(

@@ -10,8 +10,7 @@ class AppString {
   static const String enterYouPassword = "Enter you password";
   static const String cancel = "Cancel";
   static const String done = "Done";
-  static const String deleteDetails =
-      "All your changes will be deleted and you will no longer be able to access them.";
+  static const String deleteDetails ="All your changes will be deleted and you will no longer be able to access them.";
 
   static const String someThingWrong = "Some Thing Wrong";
   static const String tryAgain = "Try Again";
@@ -142,16 +141,16 @@ class AppString {
   static const String complete_profile_text="Complete Profile";
   static const String about_me_text="About Me";
   static const String hint_type_here="Type Here...";
-  static const String service_text="Service Type";
+  static const String service_text="Service";
   static const String service_hint="Type of Service";
-  static const String additional_service_text="Additional Service Type";
-  static const String additional_service_hints="Type of Services";
+  static const String additional_service_text="Sub Category of Service Type";
+  static const String additional_service_hints="Type your Sub-Category";
   static const String add_service_language="Add Service Language";
   static const String primary_location_text="Primary Location";
   static const String primary_location_hint="Type Your Location";
   static const String service_distance="Service Distance";
   static const String price_text="Price";
-  static const String price_hints="Type Your Location";
+  static const String price_hints="Type Your Price";
   static const String price_hours="Price(per hour)";
   static const String add_new="Please Attach Your Work Photos (Not Mandatory) Maximum 10 Image";
   static const String upload_image_text="Upload Image";

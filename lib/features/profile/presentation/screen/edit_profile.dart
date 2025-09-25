@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/component/text_field/common_text_field.dart';
+import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/features/home/widget/home_custom_button.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/edit_profile_controller.dart';
 import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
@@ -103,15 +104,17 @@ class EditProfile extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.full_name, hintText: "Sohidul Islam",),
+                        EditPersonal(title: AppString.full_name, hintText: "Enter Your Full Name",),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.email, hintText: "sohidul@gmail.com",),
+                        EditPersonal(title: AppString.email, hintText: "Enter Email",),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.phone, hintText: "+880123456789",),
+                        EditPersonal(title: AppString.phone, hintText: "Enter Number",),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.location, hintText: "Dhaka Bangladesh",),
+                        EditPersonal(title: AppString.location, hintText: "Enter Your Location",),
                         SizedBox(height: 20.h,),
-                        CustomButton(text: AppString.edit_profile_button, isSelected: true, onTap: (){})
+                        CustomButton(text: "Submit For Approval", isSelected: true, onTap: (){
+                          Get.offNamed(AppRoutes.homeNav);
+                        })
                       ],
                     ),
                   ),

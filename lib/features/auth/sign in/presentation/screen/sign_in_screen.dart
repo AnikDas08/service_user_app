@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
 import '../../../../../../config/route/app_routes.dart';
 import '../../../../../../utils/extensions/extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,18 +6,21 @@ import 'package:get/get.dart';
 import '../../../../../component/button/common_button.dart';
 import '../../../../../component/text/common_text.dart';
 import '../../../../../component/text_field/common_text_field.dart';
+import '../../../../../utils/app_bar/custom_appbars.dart';
 import '../controller/sign_in_controller.dart';
 
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_string.dart';
 import '../../../../../../utils/helpers/other_helper.dart';
 import '../widgets/do_not_account.dart';
+import '../widgets/social_sign_in.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
       /// App Bar Sections Starts here
 
@@ -31,6 +33,7 @@ class SignInScreen extends StatelessWidget {
               child: Column(
                 children: [
                   CustomAppBar(showMessage: false),
+
                   /// Logo text here
                   const CommonText(
                     text: AppString.onboarding_text,
@@ -40,7 +43,7 @@ class SignInScreen extends StatelessWidget {
                     maxLines: 2,
                     bottom: 20,
                   ).center,
-              
+
                   /// Log In Container here
                   Container(
                     padding: EdgeInsets.symmetric(
@@ -60,7 +63,7 @@ class SignInScreen extends StatelessWidget {
                       ],
                     ),
                     child: Form(
-                      key: controller.formKey,
+                      key: formKey,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,16 +76,22 @@ class SignInScreen extends StatelessWidget {
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w500,
                           ).center,
-              
+
                           /// Account Email Input here
-                          const CommonText(text: AppString.email_text, bottom: 8, fontSize: 14, fontWeight: FontWeight.w400,color: AppColors.black400,),
+                          const CommonText(
+                            text: AppString.email_text,
+                            bottom: 8,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.black400,
+                          ),
                           CommonTextField(
                             controller: controller.emailController,
                             hintText: AppString.hint_email_text,
                             hintTextColor: AppColors.black100,
                             validator: OtherHelper.emailValidator,
                           ),
-              
+
                           /// Account Password Input here
                           const CommonText(
                             text: AppString.password_text,
@@ -99,12 +108,13 @@ class SignInScreen extends StatelessWidget {
                             hintTextColor: AppColors.black100,
                             validator: OtherHelper.passwordValidator,
                           ),
-              
+
                           /// Forget Password Button here
                           Align(
                             alignment: Alignment.centerLeft,
                             child: GestureDetector(
-                              onTap: () => Get.toNamed(AppRoutes.forgotPassword),
+                              onTap:
+                                  () => Get.toNamed(AppRoutes.forgotPassword),
                               child: const CommonText(
                                 text: AppString.forget_password_text,
                                 top: 10,
@@ -115,15 +125,21 @@ class SignInScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-              
+
                           /// Submit Button here
                           CommonButton(
                             titleText: AppString.login_text,
                             isLoading: controller.isLoading,
-                            onTap: controller.signInUser,
+                            onTap: () {
+                              if (formKey.currentState!.validate()) {
+                                controller.signInUser();
+                              }
+                            },
                           ),
                           30.height,
-              
+
+                          buildSocialIcon(),
+
                           /// Account Creating Instruction here
                           const DoNotHaveAccount().center,
                         ],

@@ -7,6 +7,7 @@ import '../../../utils/constants/app_colors.dart';
 import '../../../utils/extensions/extension.dart';
 import '../../component/button/common_button.dart';
 import '../../component/text/common_text.dart';
+import '../auth/sign in/presentation/widgets/social_sign_in.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -25,17 +26,22 @@ class OnboardingScreen extends StatelessWidget {
 
               // Title Section
               _buildTitleSection(),
-              SizedBox(height: 30.h,),
+              SizedBox(height: 30.h),
 
               // Illustration Sectio_buildIllustrationSection(),
-              Image.asset("assets/images/signin_signup_image.png",
-                  width: 260,
-              height: 190),
+              Image.asset(
+                "assets/images/signin_signup_image.png",
+                width: 260,
+                height: 190,
+              ),
 
-              SizedBox(height: 50.h,),
+              SizedBox(height: 50.h),
 
               // Buttons Section
               _buildButtonsSection(),
+
+              40.height,
+              buildSocialIcon(),
 
               // Bottom spacing
               40.height,
@@ -126,7 +132,7 @@ class OnboardingScreen extends StatelessWidget {
           onTap: () => Get.toNamed(AppRoutes.signIn),
         ),
 
-        SizedBox(height: 26.h,),
+        SizedBox(height: 26.h),
 
         // Sign Up Button (Filled)
         CommonButton(

@@ -139,7 +139,7 @@ class ChatControllers extends GetxController {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (scrollController.hasClients) {
         scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
+          scrollController.position.minScrollExtent, // 🔑 reverse:true হলে minScrollExtent ব্যবহার করতে হবে
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );

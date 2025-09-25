@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/component/text_field/common_text_field.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
+import 'package:haircutmen_user_app/features/home/widget/home_custom_button.dart';
 import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -87,7 +88,7 @@ class CompleteProfileScreen extends StatelessWidget {
               fit: BoxFit.cover,
             )
                 : Image.asset(
-              "assets/images/profile.png",
+              "assets/images/item_image.png",
               width: 120.w,
               height: 120.h,
               fit: BoxFit.cover,
@@ -137,41 +138,173 @@ class CompleteProfileScreen extends StatelessWidget {
 
         SizedBox(height: 16.h),
 
-        // Service Type
-        _buildFieldWithLabel(
-          label: AppString.service_text,
-          child: _buildDropdownField(
-            controller: controller,
-            textController: controller.serviceTypeController,
-            hintText: AppString.service_hint,
-            items: controller.serviceTypes,
+        // Dynamic Service Section
+        Obx(() => Column(
+          children: [
+            // Generate service pairs dynamically
+            ...controller.servicePairs.asMap().entries.map((entry) {
+              int index = entry.key;
+              ServicePair pair = entry.value;
+
+              return Column(
+                children: [
+                  // Service dropdown
+                  _buildFieldWithLabel(
+                    label: index == 0 ? "Service " : "Service ${index + 1}",
+                    child: _buildDropdownField(
+                      controller: controller,
+                      textController: pair.serviceController,
+                      hintText: AppString.service_hint,
+                      items: controller.serviceNames,
+                    ),
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  // Service Type dropdown (depends on selected service)
+                  _buildFieldWithLabel(
+                    label: index == 0 ? "Service Type" : "Service Type ${index + 1}",
+                    child: GetBuilder<CompleteProfileController>(
+                      builder: (controller) => _buildDropdownField(
+                        controller: controller,
+                        textController: pair.serviceTypeController,
+                        hintText: "Select Service Type",
+                        items: pair.serviceController.text.isNotEmpty
+                            ? controller.getServiceTypes(pair.serviceController.text)
+                            : [],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  // Price field for each service (UPDATED)
+                  _buildFieldWithLabel(
+                    label: index == 0 ? AppString.price_text : "${AppString.price_text} ${index + 1}",
+                    child: CommonTextField(
+                      controller: pair.priceController, // Use the service pair's price controller
+                      hintText: AppString.price_hints,
+                      keyboardType: TextInputType.number,
+                      height: 44,
+                      borderColor: AppColors.black50,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+
+                  if (index < controller.servicePairs.length - 1) SizedBox(height: 16.h),
+                ],
+              );
+            }).toList(),
+          ],
+        )),
+
+        SizedBox(height: 16.h),
+
+        // Add Service Button
+        Align(
+          alignment: Alignment.topRight,
+          child: IntrinsicWidth(
+            child: CustomButton(
+              text: "  Add Service  ",
+              isSelected: true,
+              height: 44.h,
+              onTap: controller.addService,
+            ),
           ),
         ),
 
         SizedBox(height: 16.h),
+        //_buildServiceTable(controller),
 
-        // Additional Service Type
-        _buildFieldWithLabel(
-          label: AppString.additional_service_text,
-          child: CommonTextField(
-            controller: controller.additionalServiceController,
-            hintText: AppString.additional_service_hints,
-            height: 44,
-            borderColor: AppColors.black50,
-            textAlign: TextAlign.start,
-          ),
-        ),
-
-        SizedBox(height: 16.h),
-
-        // Add Service Language
+        // REPLACE THIS SECTION: Add Service Language - Multiple Selection
         _buildFieldWithLabel(
           label: AppString.add_service_language,
-          child: _buildDropdownField(
-            controller: controller,
-            textController: controller.languageController,
-            hintText: "English",
-            items: controller.languages,
+          child: Column(
+            children: [
+              // Display field showing selected languages
+              GestureDetector(
+                onTap: () => _showLanguageSelectionBottomSheet(controller),
+                child: Container(
+                  height: 44.h,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.black50),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Obx(() => CommonText(
+                            text: controller.selectedLanguages.isEmpty
+                                ? "Select Languages"
+                                : controller.selectedLanguages.join(', '),
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w400,
+                            color: controller.selectedLanguages.isEmpty
+                                ? AppColors.textFiledColor
+                                : AppColors.black,
+                            textAlign: TextAlign.start,
+                            maxLines: 2,
+                          )),
+                        ),
+                      ),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppColors.textFiledColor,
+                        size: 20.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Show selected languages as chips
+              Obx(() => controller.selectedLanguages.isNotEmpty
+                  ? Container(
+                width: double.infinity,
+                margin: EdgeInsets.only(top: 8.h),
+                child: Wrap(
+                  spacing: 8.w,
+                  runSpacing: 4.h,
+                  children: controller.selectedLanguages.map((language) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: AppColors.primaryColor.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CommonText(
+                            text: language,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryColor,
+                            textAlign: TextAlign.start,
+                          ),
+                          SizedBox(width: 4.w),
+                          GestureDetector(
+                            onTap: () => controller.toggleLanguageSelection(language),
+                            child: Icon(
+                              Icons.close,
+                              size: 16.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+                  : SizedBox.shrink()),
+            ],
           ),
         ),
 
@@ -200,17 +333,6 @@ class CompleteProfileScreen extends StatelessWidget {
         SizedBox(height: 16.h),
 
         // Price
-        _buildFieldWithLabel(
-          label: AppString.price_text,
-          child: CommonTextField(
-            controller: controller.priceController,
-            hintText:  AppString.price_hints,
-            keyboardType: TextInputType.number,
-            height: 44,
-            borderColor: AppColors.black50,
-            textAlign: TextAlign.start,
-          ),
-        ),
 
         SizedBox(height: 16.h),
 
@@ -227,6 +349,119 @@ class CompleteProfileScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+// Add this method at the end of your EditServiceScreen class
+  void _showLanguageSelectionBottomSheet(CompleteProfileController controller) {
+    showModalBottomSheet(
+      context: Get.context!,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: AppColors.black50,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              CommonText(
+                text: "Select Languages",
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.black,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8.h),
+              CommonText(
+                text: "You can select multiple languages",
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColors.black400,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16.h),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: controller.languages.map((language) {
+                      return Obx(() => GestureDetector(
+                        onTap: () => controller.toggleLanguageSelection(language),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                color: AppColors.black50,
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: CommonText(
+                                  text: language,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.black,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ),
+                                Icon(
+                                  Icons.check_circle,
+                                  color: controller.isLanguageSelected(language)?AppColors.primaryColor:AppColors.black200,
+                                  size: 20.sp,
+                                ),
+                            ],
+                          ),
+                        ),
+                      ));
+                    }).toList(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              // Done button
+              Container(
+                width: double.infinity,
+                height: 48.h,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10.r),
+                    onTap: () => Navigator.pop(context),
+                    child: Center(
+                      child: CommonText(
+                        text: "Done",
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.white,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -531,7 +766,7 @@ class CompleteProfileScreen extends StatelessWidget {
         )),
         Expanded(
           child: Padding(
-            padding: EdgeInsets.only(top: 12.h),
+            padding: EdgeInsets.only(top: 14.h),
             child: RichText(
               textAlign: TextAlign.start,
               text: TextSpan(
@@ -580,7 +815,7 @@ class CompleteProfileScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.r),
           onTap: (){
             controller.confirmProfile();
-            Get.toNamed(AppRoutes.verifyUser);
+            Get.offAllNamed(AppRoutes.homeNav);
           },
           child: Center(
             child: CommonText(
@@ -664,4 +899,273 @@ class CompleteProfileScreen extends StatelessWidget {
       },
     );
   }
+  /*Widget _buildServiceTable(CompleteProfileController controller) {
+    return Obx(() => controller.servicePairs.isEmpty
+        ? SizedBox.shrink()
+        : Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 16.h),
+
+        // Table Header
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8.r)),
+            border: Border.all(color: AppColors.black50),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: CommonText(
+                    text: "Service",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 20.h,
+                  color: AppColors.black50,
+                ),
+                Expanded(
+                  flex: 2,
+                  child: CommonText(
+                    text: "Service Type",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 20.h,
+                  color: AppColors.black50,
+                ),
+                Expanded(
+                  flex: 1,
+                  child: CommonText(
+                    text: "Price",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Container(
+                  width: 1,
+                  height: 20.h,
+                  color: AppColors.black50,
+                ),
+                Expanded(
+                  flex: 1,
+                  child: CommonText(
+                    text: "Action",
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Table Rows
+        ...controller.servicePairs.asMap().entries.map((entry) {
+          int index = entry.key;
+          ServicePair pair = entry.value;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                left: BorderSide(color: AppColors.black50),
+                right: BorderSide(color: AppColors.black50),
+                bottom: BorderSide(color: AppColors.black50),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+              child: Row(
+                children: [
+                  // Service Name
+                  Expanded(
+                    flex: 2,
+                    child: CommonText(
+                      text: pair.serviceController.text.isEmpty
+                          ? "-"
+                          : pair.serviceController.text,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w400,
+                      color: pair.serviceController.text.isEmpty
+                          ? AppColors.textFiledColor
+                          : AppColors.black,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                    ),
+                  ),
+
+                  Container(
+                    width: 1,
+                    height: 30.h,
+                    color: AppColors.black50,
+                  ),
+
+                  // Service Type
+                  Expanded(
+                    flex: 2,
+                    child: CommonText(
+                      text: pair.serviceTypeController.text.isEmpty
+                          ? "-"
+                          : pair.serviceTypeController.text,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w400,
+                      color: pair.serviceTypeController.text.isEmpty
+                          ? AppColors.textFiledColor
+                          : AppColors.black,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                    ),
+                  ),
+
+                  Container(
+                    width: 1,
+                    height: 30.h,
+                    color: AppColors.black50,
+                  ),
+
+                  // Price
+                  Expanded(
+                    flex: 1,
+                    child: CommonText(
+                      text: pair.priceController.text.isEmpty
+                          ? "-"
+                          : "${pair.priceController.text}RSD",
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w400,
+                      color: pair.priceController.text.isEmpty
+                          ? AppColors.textFiledColor
+                          : AppColors.black,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                  Container(
+                    width: 1,
+                    height: 30.h,
+                    color: AppColors.black50,
+                  ),
+
+                  // Action Buttons
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Edit Button
+                        GestureDetector(
+                          onTap: () => controller.editService(index),
+                          child: Container(
+                            padding: EdgeInsets.all(6.w),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              size: 16.sp,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(width: 8.w),
+
+                        // Delete Button
+                        GestureDetector(
+                          onTap: () => _showDeleteConfirmationDialog(controller, index),
+                          child: Container(
+                            padding: EdgeInsets.all(6.w),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: Icon(
+                              Icons.delete,
+                              size: 16.sp,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ],
+    ),
+    );
+  }*/
+
+// Add this method for delete confirmation dialog
+  void _showDeleteConfirmationDialog(CompleteProfileController controller, int index) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        title: CommonText(
+          text: "Delete Service",
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w600,
+          color: AppColors.black,
+          textAlign: TextAlign.center,
+        ),
+        content: CommonText(
+          text: "Are you sure you want to delete this service?",
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black400,
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: CommonText(
+              text: "Cancel",
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.black400,
+              textAlign: TextAlign.center,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              controller.deleteService(index);
+            },
+            child: CommonText(
+              text: "Delete",
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.red,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

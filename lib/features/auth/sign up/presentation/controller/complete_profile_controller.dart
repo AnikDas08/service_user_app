@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+
+
+class ServicePair {
+  TextEditingController serviceController = TextEditingController();
+  TextEditingController serviceTypeController = TextEditingController();
+  TextEditingController priceController = TextEditingController();
+
+  void dispose() {
+    serviceController.dispose();
+    serviceTypeController.dispose();
+    priceController.dispose();
+  }
+}
 
 class CompleteProfileController extends GetxController {
   // Text Controllers
@@ -10,7 +25,6 @@ class CompleteProfileController extends GetxController {
   final TextEditingController additionalServiceController = TextEditingController();
   final TextEditingController languageController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
   final TextEditingController pricePerHourController = TextEditingController();
 
   // Observable variables
@@ -19,26 +33,67 @@ class CompleteProfileController extends GetxController {
   RxList<String> uploadedImages = <String>[].obs;
   Rx<File?> profileImage = Rx<File?>(null);
 
+  // Add this in your CompleteProfileController class
+  RxList<ServicePair> servicePairs = <ServicePair>[].obs;
+  RxList<String> selectedLanguages=<String>[].obs;
+  bool isLanguageSelected(String language) {
+    return selectedLanguages.contains(language);
+  }
+
+// Method to toggle language selection
+  void toggleLanguageSelection(String language) {
+    if (selectedLanguages.contains(language)) {
+      selectedLanguages.remove(language);
+    } else {
+      selectedLanguages.add(language);
+    }
+
+    // Update the language controller text to show selected languages
+    languageController.text = selectedLanguages.join(', ');
+
+    update();
+  }
+
+// Method to handle language dropdown selection (replace existing selectFromDropdown for language)
+  void selectLanguageFromDropdown(String language) {
+    toggleLanguageSelection(language);
+  }
+
+// Add this method
+  void addService() {
+    servicePairs.add(ServicePair());
+  }
+
+  // Asset images (can be modified/removed)
+  RxList<String> assetImages = <String>[
+    "assets/images/item_image.png",
+    "assets/images/item_image.png",
+    "assets/images/item_image.png",
+    "assets/images/item_image.png",
+  ].obs;
+
   // Image picker instance
   final ImagePicker _picker = ImagePicker();
 
   // Static data
-  final List<String> serviceTypes = [
-    'Hair Cut',
-    'Beard Trim',
-    'Hair Styling',
-    'Hair Wash',
-    'Facial',
-    'Massage'
-  ];
+  final Map<String, List<String>> serviceWithTypes = {
+    'Hair Cut': ['Classic Cut', 'Fade Cut', 'Buzz Cut', 'Crew Cut', 'Undercut'],
+    'Beard Trim': ['Full Beard Trim', 'Goatee Trim', 'Mustache Trim', 'Beard Shaping'],
+    'Hair Styling': ['Blow Dry', 'Hair Gel Styling', 'Pomade Styling', 'Wax Styling'],
+    'Hair Wash': ['Basic Wash', 'Deep Cleansing', 'Scalp Treatment'],
+    'Facial': ['Basic Facial', 'Deep Cleansing Facial', 'Anti-Aging Facial'],
+    'Massage': ['Head Massage', 'Neck Massage', 'Shoulder Massage']
+  };
+  List<String> get serviceNames => serviceWithTypes.keys.toList();
+  // Add this method to get service types for a specific service
+  List<String> getServiceTypes(String service) {
+    return serviceWithTypes[service] ?? [];
+  }
 
   final List<String> languages = [
     'English',
-    'Spanish',
-    'French',
-    'German',
-    'Arabic',
-    'Bengali'
+    'Russian',
+    'Serbian'
   ];
 
   @override
@@ -46,6 +101,7 @@ class CompleteProfileController extends GetxController {
     super.onInit();
     // Initialize default values if needed
     languageController.text = "English";
+    servicePairs.add(ServicePair()); // Add first service pair
   }
 
   @override
@@ -56,9 +112,43 @@ class CompleteProfileController extends GetxController {
     additionalServiceController.dispose();
     languageController.dispose();
     locationController.dispose();
-    priceController.dispose();
     pricePerHourController.dispose();
+    for (var pair in servicePairs) {
+      pair.dispose();
+    }
     super.onClose();
+  }
+
+  void togglePrivacyAcceptance() {
+    isPrivacyAccepted.value = !isPrivacyAccepted.value;
+  }
+
+  // Get total count of all images (asset + uploaded)
+  int getTotalImageCount() {
+    return assetImages.length + uploadedImages.length;
+  }
+
+  // Get combined list of all images for confirmation
+  List<Map<String, dynamic>> getAllImages() {
+    List<Map<String, dynamic>> allImages = [];
+
+    // Add asset images
+    for (String assetPath in assetImages) {
+      allImages.add({
+        'type': 'asset',
+        'path': assetPath,
+      });
+    }
+
+    // Add uploaded images
+    for (String uploadedPath in uploadedImages) {
+      allImages.add({
+        'type': 'file',
+        'path': uploadedPath,
+      });
+    }
+
+    return allImages;
   }
 
   // Methods
@@ -66,13 +156,26 @@ class CompleteProfileController extends GetxController {
     serviceDistance.value = value;
   }
 
-  void togglePrivacyAcceptance() {
-    isPrivacyAccepted.value = !isPrivacyAccepted.value;
-  }
 
   void selectFromDropdown(TextEditingController controller, String value) {
     controller.text = value;
-    update(); // Update UI
+
+    // Clear service type when service changes
+    for (var pair in servicePairs) {
+      if (pair.serviceController == controller) {
+        pair.serviceTypeController.clear();
+        break;
+      }
+    }
+
+    update();
+  }
+
+  // Remove asset image
+  void removeAssetImage(int index) {
+    if (index >= 0 && index < assetImages.length) {
+      assetImages.removeAt(index);
+    }
   }
 
   // Handle profile image upload
@@ -217,10 +320,10 @@ class CompleteProfileController extends GetxController {
 
       if (pickedFiles.isNotEmpty) {
         // Check if total images don't exceed 10
-        if (uploadedImages.length + pickedFiles.length > 10) {
+        if (getTotalImageCount() + pickedFiles.length > 10) {
           Get.snackbar(
             "Error",
-            "Maximum 10 images allowed. You can add ${10 - uploadedImages.length} more images.",
+            "Maximum 10 images allowed. You can add ${10 - getTotalImageCount()} more images.",
             snackPosition: SnackPosition.BOTTOM,
           );
           return;
@@ -255,7 +358,7 @@ class CompleteProfileController extends GetxController {
   }
 
   bool validateForm() {
-    if (aboutMeController.text.trim().isEmpty) {
+    /*if (aboutMeController.text.trim().isEmpty) {
       Get.snackbar("Error", "Please fill About Me field");
       return false;
     }
@@ -274,16 +377,15 @@ class CompleteProfileController extends GetxController {
     if (pricePerHourController.text.trim().isEmpty) {
       Get.snackbar("Error", "Please fill Price Per Hour field");
       return false;
-    }
-    if (!isPrivacyAccepted.value) {
-      Get.snackbar("Error", "Please accept Privacy Policy and Terms & Conditions");
-      return false;
-    }
+    }*/
     return true;
   }
 
   void confirmProfile() {
     if (validateForm()) {
+      // Get all images (asset + uploaded)
+      List<Map<String, dynamic>> allImages = getAllImages();
+
       // Handle profile confirmation
       print("Profile confirmed successfully");
       print("About Me: ${aboutMeController.text}");
@@ -292,20 +394,89 @@ class CompleteProfileController extends GetxController {
       print("Language: ${languageController.text}");
       print("Location: ${locationController.text}");
       print("Service Distance: ${serviceDistance.value.round()} km");
-      print("Price: ${priceController.text}");
       print("Price Per Hour: ${pricePerHourController.text}");
       print("Profile Image: ${profileImage.value?.path ?? 'No image selected'}");
-      print("Work Photos: ${uploadedImages.length} images uploaded");
+
+      // Print all images with their types
+      print("=== ALL IMAGES (${allImages.length} total) ===");
+      for (int i = 0; i < allImages.length; i++) {
+        Map<String, dynamic> imageInfo = allImages[i];
+        print("Image ${i + 1}: ${imageInfo['type']} - ${imageInfo['path']}");
+      }
+
+      print("Asset Images: ${assetImages.length}");
+      print("Uploaded Images: ${uploadedImages.length}");
+
+      // Prepare data for API call or navigation
+      Map<String, dynamic> profileData = {
+        'about_me': aboutMeController.text,
+        'service_type': serviceTypeController.text,
+        'additional_service': additionalServiceController.text,
+        'language': languageController.text,
+        'location': locationController.text,
+        'service_distance': serviceDistance.value.round(),
+        'price_per_hour': pricePerHourController.text,
+        'profile_image': profileImage.value?.path,
+        'all_images': allImages,
+        'asset_images': assetImages.toList(),
+        'uploaded_images': uploadedImages.toList(),
+        'total_image_count': getTotalImageCount(),
+      };
+
+      Get.offAllNamed(AppRoutes.homeNav,arguments: {
+        "index":1
+      });
+
+      // Store the profile data for next screen or API call
+      //Get.arguments = profileData;
 
       Get.snackbar(
         "Success",
-        "Profile completed successfully!",
+        "Profile completed successfully with ${allImages.length} images!",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green[100],
       );
 
-      // Navigate to next screen or call API
-      // Get.toNamed('/next-screen');
+      // You can call your API here if needed
+      // await ApiService.updateProfile(profileData);
+    }
+  }
+  void editService(int index) {
+    if (index >= 0 && index < servicePairs.length) {
+      // You can add navigation to edit screen or show edit dialog here
+      // For now, we'll show a simple snackbar
+      Get.snackbar(
+        "Edit Service",
+        "Editing service at index $index",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  // Method to delete a service
+  void deleteService(int index) {
+    if (index >= 0 && index < servicePairs.length) {
+      // Don't allow deleting if it's the last service
+      if (servicePairs.length <= 1) {
+        Get.snackbar(
+          "Error",
+          "At least one service is required",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red[100],
+        );
+        return;
+      }
+
+      // Dispose the controllers before removing
+      servicePairs[index].dispose();
+      servicePairs.removeAt(index);
+
+      Get.snackbar(
+        "Success",
+        "Service deleted successfully",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green[100],
+      );
     }
   }
 }

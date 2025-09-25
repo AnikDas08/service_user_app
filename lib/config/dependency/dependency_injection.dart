@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/auth/sign%20up/presentation/controller/complete_profile_controller.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/service_details_controller.dart';
 import 'package:haircutmen_user_app/features/overview/presentation/controller/overview_controller.dart';
 
@@ -38,5 +39,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => ScanController(), fenix: true);
     Get.lazyPut(() => FavoriteController(), fenix: true);
     Get.lazyPut(() => ServiceDetailsController(), fenix: true);
+    Get.lazyPut(() => CompleteProfileController(), fenix: true);
   }
 }

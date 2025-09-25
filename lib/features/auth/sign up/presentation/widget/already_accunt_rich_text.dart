@@ -25,6 +25,21 @@ class AlreadyAccountRichText extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
+
+
+          TextSpan(
+            text: AppString.signIn,
+            recognizer:
+            TapGestureRecognizer()
+              ..onTap = () {
+                Get.offNamed(AppRoutes.signIn);
+              },
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.primaryColor,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
       textAlign: TextAlign.center,

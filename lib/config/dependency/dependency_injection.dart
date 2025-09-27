@@ -36,7 +36,7 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => HomeController(), fenix: true);
     Get.lazyPut(() => HomeNavController(), fenix: true);
     Get.lazyPut(() => OverviewController(), fenix: true);
-    Get.lazyPut(() => ScanController(), fenix: true);
+    Get.lazyPut(() => QRScannerController(), fenix: true);
     Get.lazyPut(() => FavoriteController(), fenix: true);
     Get.lazyPut(() => ServiceDetailsController(), fenix: true);
     Get.lazyPut(() => CompleteProfileController(), fenix: true);

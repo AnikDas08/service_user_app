@@ -6,7 +6,9 @@ import '../../../config/route/app_routes.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/extensions/extension.dart';
 import '../../component/button/common_button.dart';
+import '../../component/image/common_image.dart';
 import '../../component/text/common_text.dart';
+import '../../utils/constants/app_images.dart';
 import '../auth/sign in/presentation/widgets/social_sign_in.dart';
 
 class OnboardingScreen extends StatelessWidget {
@@ -41,7 +43,7 @@ class OnboardingScreen extends StatelessWidget {
               _buildButtonsSection(),
 
               40.height,
-              buildSocialIcon(),
+              _buildSocialIcon(),
 
               // Bottom spacing
               40.height,
@@ -148,4 +150,38 @@ class OnboardingScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _buildSocialIcon() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    spacing: 24,
+    children: [
+      Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.black50,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: CommonImage(imageSrc: AppImages.google, size: 24),
+      ),
+      Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.black50,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: CommonImage(imageSrc: AppImages.facebook, size: 24),
+      ),
+      Container(
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.black50,
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: CommonImage(imageSrc: AppImages.apple, size: 24),
+      ),
+    ],
+  );
 }

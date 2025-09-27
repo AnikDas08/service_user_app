@@ -138,8 +138,6 @@ class SignInScreen extends StatelessWidget {
                           ),
                           30.height,
 
-                          buildSocialIcon(),
-
                           /// Account Creating Instruction here
                           const DoNotHaveAccount().center,
                         ],

@@ -40,7 +40,7 @@ class HomeNavScreen extends StatelessWidget {
                   const OverviewScreen(),
                   // Lazy load only when QR tab selected
                   controller.selectedIndex == 2
-                      ? const ScanScreen()
+                      ? QRScannerScreen()
                       : Container(),
                   ChatListScreen(),
                   const ProfileScreen(),

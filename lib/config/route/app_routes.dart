@@ -90,7 +90,7 @@ class AppRoutes {
     GetPage(name: home, page: () => const HomeScreen()),
     GetPage(name: homeNav, page: () => HomeNavScreen()),
     GetPage(name: appointment, page: () => const OverviewScreen()),
-    GetPage(name: scan, page: () => const ScanScreen()),
+    GetPage(name: scan, page: () => QRScannerScreen()),
     GetPage(name: favorite, page: () => const FavoriteScreen()),
     GetPage(name: upcomingdetail_sscreen, page: () => const ViewDetailsUpcoming()),
     GetPage(name: view_detail_pending, page: () => const ViewDetailsPending()),

@@ -21,7 +21,6 @@ Future<void> main() async {
       statusBarBrightness: Brightness.light,    // iOS এর জন্য
     ),
   );
-
   runApp(const MyApp());
 }
 

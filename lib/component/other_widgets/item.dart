@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../utils/constants/app_colors.dart';
-import '../image/common_image.dart';
 import '../text/common_text.dart';
 
 class Item extends StatelessWidget {
@@ -16,7 +15,7 @@ class Item extends StatelessWidget {
     this.color = AppColors.black,
     this.vertical = 4,
     this.horizontal = 24,
-    this.disableIcon = false,
+    this.disableIcon = true,
   });
 
   final IconData? icon;
@@ -36,7 +35,7 @@ class Item extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(10),
@@ -52,26 +51,25 @@ class Item extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 40.w,
-                height: 40.h,
-                padding: EdgeInsets.all(6),
+                width: 33.w,
+                height: 33.h,
+                padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: AppColors.black50,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child:
-                    SvgPicture.asset(
-                        image,
-                      height: 24.h,
-                      width: 24.w,
-                    )
+                    disableIcon
+                        ? SvgPicture.asset(image, height: 24, width: 24)
+                        : Icon(icon, color: AppColors.black, size: 24),
               ),
-              SizedBox(width: 10.w),
+              SizedBox(width: 6.w),
               CommonText(
                 text: title,
-                color: AppColors.black400,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
+                color: color,
+                fontWeight: FontWeight.w400,
+                fontSize: 18,
+                left: 16,
               ),
             ],
           ),

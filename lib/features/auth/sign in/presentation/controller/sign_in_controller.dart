@@ -23,8 +23,8 @@ class SignInController extends GetxController {
   /// Sign in Api call here
 
   Future<void> signInUser() async {
-    Get.toNamed(AppRoutes.complete_profile_screen);
-    return;
+    //Get.toNamed(AppRoutes.complete_profile_screen);
+    //return;
 
     isLoading = true;
     update();
@@ -42,7 +42,8 @@ class SignInController extends GetxController {
     if (response.statusCode == 200) {
       var data = response.data;
 
-      LocalStorage.token = data['data']["accessToken"];
+
+     /* LocalStorage.token = data['data']["accessToken"];
       LocalStorage.userId = data['data']["attributes"]["_id"];
       LocalStorage.myImage = data['data']["attributes"]["image"];
       LocalStorage.myName = data['data']["attributes"]["fullName"];
@@ -55,7 +56,7 @@ class SignInController extends GetxController {
       LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
       LocalStorage.setString(LocalStorageKeys.myImage, LocalStorage.myImage);
       LocalStorage.setString(LocalStorageKeys.myName, LocalStorage.myName);
-      LocalStorage.setString(LocalStorageKeys.myEmail, LocalStorage.myEmail);
+      LocalStorage.setString(LocalStorageKeys.myEmail, LocalStorage.myEmail);*/
 
       // if (LocalStorage.myRole == 'consultant') {
       //   Get.offAllNamed(AppRoutes.doctorHome);
@@ -65,6 +66,9 @@ class SignInController extends GetxController {
 
       emailController.clear();
       passwordController.clear();
+
+      Get.toNamed(AppRoutes.homeNav);
+
     } else {
       Get.snackbar(response.statusCode.toString(), response.message);
     }

@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import '../../../../component/other_widgets/common_loader.dart';
 import '../../../../component/screen/error_screen.dart';
 import '../../../../component/text/common_text.dart';
-import '../../../../utils/app_bar/custom_appbars.dart';
-import '../../../../utils/constants/app_colors.dart';
 import '../controller/terms_of_services_controller.dart';
 import '../../../../../utils/constants/app_string.dart';
 import '../../../../../utils/enum/enum.dart';
@@ -16,24 +14,38 @@ class TermsOfServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Padding(
-        padding: const EdgeInsets.all(20),
-        child: SafeArea(
-          child: Column(
-            children: [
-              CustomAppBar(title: AppString.term_condition_text,),
-              SizedBox(height: 20,),
-              CommonText(
-                text: AppString.privacy_policy,
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
-                textAlign: TextAlign.start,
-                maxLines: 50,
-                color: AppColors.black300,
-              )
-            ],
-          ),
+      /// App Bar Section starts here
+      appBar: AppBar(
+        centerTitle: true,
+        title: CommonText(
+          text: AppString.termsOfServices,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
         ),
+      ),
+
+      /// Body Section starts here
+      body: GetBuilder<TermsOfServicesController>(
+        builder:
+            (controller) => switch (controller.status) {
+              /// Loading bar here
+              Status.loading => const CommonLoader(),
+
+              /// Error Handle here
+              Status.error => ErrorScreen(
+                onTap:
+                    TermsOfServicesController.instance.geTermsOfServicesRepo(),
+              ),
+
+              /// Show main data here
+              Status.completed => SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24,
+                  horizontal: 20,
+                ),
+                child: Html(data: controller.data.content),
+              ),
+            },
       ),
     );
   }

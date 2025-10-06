@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/component/pop_up/common_pop_menu.dart';
-import 'package:haircutmen_user_app/features/auth/change_password/widget/popup_dialog.dart';
-import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
 import 'package:haircutmen_user_app/utils/extensions/extension.dart';
 import '../../../../../component/button/common_button.dart';
 import '../../../../../component/text/common_text.dart';
 import '../../../../../component/text_field/common_text_field.dart';
+import '../../../../../utils/custom_appbar/custom_appbar.dart';
 import '../controller/change_password_controller.dart';
 import '../../../../../../utils/constants/app_colors.dart';
 import '../../../../../../utils/constants/app_string.dart';
@@ -26,7 +24,7 @@ class ChangePasswordScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 children: [
-                  CustomAppBar(title: AppString.change_password,),
+                  CustomAppBar(title: "Change Password",),
                   Column(
                     children: [
                       SizedBox(height: 100.h,),
@@ -52,7 +50,7 @@ class ChangePasswordScreen extends StatelessWidget {
                               children: [
                                 /// Logo text here
                                 const CommonText(
-                                  text: AppString.change_password,
+                                  text: AppString.changePassword,
                                   fontSize: 18,
 
                                   color: AppColors.primaryColor,
@@ -63,14 +61,14 @@ class ChangePasswordScreen extends StatelessWidget {
 
                                 /// current Password section
                                 CommonText(
-                                    text: AppString.old_password,
+                                  text: "Old Password",
                                   bottom: 8,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
                                 CommonTextField(
                                   controller: controller.currentPasswordController,
-                                  hintText: AppString.old_password_hint,
+                                  hintText: "Enter Old Password",
                                   hintTextColor: AppColors.black200,
                                   validator: OtherHelper.passwordValidator,
                                   isPassword: true,
@@ -79,13 +77,13 @@ class ChangePasswordScreen extends StatelessWidget {
 
                                 /// New Password section
                                 const CommonText(
-                                  text: AppString.new_passowrd_text,
+                                  text: AppString.newPassword,
                                   bottom: 8,
                                   top: 16,
                                 ),
                                 CommonTextField(
                                   controller: controller.newPasswordController,
-                                  hintText: AppString.hint_new_password,
+                                  hintText: AppString.newPassword,
                                   validator: OtherHelper.passwordValidator,
                                   isPassword: true,
                                   //prefixIcon: Icon(Icons.lock, size: 20.sp),
@@ -93,18 +91,18 @@ class ChangePasswordScreen extends StatelessWidget {
 
                                 /// confirm Password section
                                 const CommonText(
-                                  text: AppString.confirm_password_text,
+                                  text: AppString.confirmPassword,
                                   bottom: 8,
                                   top: 16,
                                 ),
                                 CommonTextField(
                                   controller: controller.confirmPasswordController,
-                                  hintText: AppString.hint_confirm_password,
+                                  hintText: AppString.confirmPassword,
                                   validator:
                                       (value) => OtherHelper.confirmPasswordValidator(
-                                        value,
-                                        controller.newPasswordController,
-                                      ),
+                                    value,
+                                    controller.newPasswordController,
+                                  ),
                                   isPassword: true,
                                   //prefixIcon: Icon(Icons.lock, size: 20.sp),
                                 ),
@@ -112,12 +110,11 @@ class ChangePasswordScreen extends StatelessWidget {
 
                                 /// submit Button
                                 CommonButton(
-                                  titleText: AppString.confirm_button,
-                                  isLoading: controller.isLoading,
-                                  onTap: (){
-                                   simpleDialog();
-
-                                  }
+                                    titleText: AppString.confirm_button,
+                                    isLoading: controller.isLoading,
+                                    onTap: () {
+                                      controller.changePasswordRepo();
+                                    }
                                 ),
                               ],
                             ),

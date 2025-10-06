@@ -17,7 +17,7 @@ class AppColors {
   static const Color gray = Color(0xff3a3a3a);
 
   // Red Color Palette
-  static const Color red50 = Color(0xFFFFF5F5);
+  static const Color red50 = Color(0xFFFFF2F3);
   static const Color red100 = Color(0xFFFFD5DA);
   static const Color red200 = Color(0xFFFEB2B2);
   static const Color red300 = Color(0xFFFC8181);

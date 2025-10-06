@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import 'package:haircutmen_user_app/utils/extensions/extension.dart';
 import '../../../../../component/button/common_button.dart';
 import '../../../../../component/text/common_text.dart';
@@ -21,144 +22,122 @@ class _VerifyUserState extends State<VerifyUser> {
 
   @override
   void initState() {
-    SignUpController.instance.startTimer();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// App Bar Section starts here
       body: GetBuilder<SignUpController>(
         builder: (controller) {
           return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SafeArea(
               child: Column(
                 children: [
+                  CustomAppBar(title: ""),
                   /// Logo text here
                   const CommonText(
-                    text: AppString.logoText,
+                    text: AppString.onboarding_text,
                     fontSize: 24,
                     color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
                     maxLines: 2,
                     bottom: 20,
                   ).center,
-
-                  SizedBox(height: 100.h,),
+              
                   /// Verify User Container here
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 10.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(color: AppColors.black50),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x408E8E8E),
-                            blurRadius: 6,
-                            offset: Offset(0, 2),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: AppColors.black50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x408E8E8E),
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+              
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        children: [
+                          /// OTP Title here
+                          CommonText(
+                            text: AppString.verify_email_text,
+                            fontSize: 18,
+                            bottom: 10,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primaryColor,
                           ),
-                        ],
-                      ),
-
-                      child: Form(
-                        key: formKey,
-                        child: Column(
-                          children: [
-                            /// OTP Title here
-                            CommonText(
-                              text: AppString.otpTitle,
-                              fontSize: 18,
-                              bottom: 10,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primaryColor,
+              
+                          /// instruction how to get OTP
+                          Center(
+                            child: CommonText(
+                              text:
+                                  AppString.verify_email_text,
+                              fontSize: 14,
+                              bottom: 20,
+                              maxLines: 2,
+                              fontWeight: FontWeight.w400,
                             ),
-
-                            /// instruction how to get OTP
-                            Center(
-                              child: CommonText(
-                                text:
-                                    "${AppString.codeHasBeenSendTo} ${controller.emailController.text}",
-                                fontSize: 14,
-                                bottom: 20,
-                                maxLines: 2,
-                                fontWeight: FontWeight.w400,
+                          ),
+              
+                          /// OTP Filed here
+                          Flexible(
+                            flex: 0,
+                            child: PinCodeTextField(
+                              controller: controller.otpController,
+                              autoDisposeControllers: false,
+                              cursorColor: AppColors.primaryColor,
+                              appContext: (context),
+                              autoFocus: true,
+                              pinTheme: PinTheme(
+                                shape: PinCodeFieldShape.box,
+                                borderRadius: BorderRadius.circular(4.r),
+                                fieldHeight: 60.h,
+                                fieldWidth: 60.w,
+                                activeFillColor: AppColors.transparent,
+                                selectedFillColor: AppColors.transparent,
+                                inactiveFillColor: AppColors.transparent,
+                                borderWidth: 0.5.w,
+                                selectedColor: AppColors.black50,
+                                activeColor: AppColors.black50,
+                                inactiveColor: AppColors.black50,
                               ),
-                            ),
-
-                            /// OTP Filed here
-                            Flexible(
-                              flex: 0,
-                              child: PinCodeTextField(
-                                controller: controller.otpController,
-                                autoDisposeControllers: false,
-                                cursorColor: AppColors.primaryColor,
-                                appContext: (context),
-                                autoFocus: true,
-                                pinTheme: PinTheme(
-                                  shape: PinCodeFieldShape.box,
-                                  borderRadius: BorderRadius.circular(4.r),
-                                  fieldHeight: 60.h,
-                                  fieldWidth: 60.w,
-                                  activeFillColor: AppColors.transparent,
-                                  selectedFillColor: AppColors.transparent,
-                                  inactiveFillColor: AppColors.transparent,
-                                  borderWidth: 0.5.w,
-                                  selectedColor: AppColors.black50,
-                                  activeColor: AppColors.black50,
-                                  inactiveColor: AppColors.black50,
-                                ),
-                                length: 6,
-                                keyboardType: TextInputType.number,
-                                autovalidateMode: AutovalidateMode.disabled,
-                                enableActiveFill: true,
-                                validator: (value) {
-                                  if (value != null && value.length == 6) {
-                                    return null;
-                                  } else {
-                                    return AppString.otpIsInValid;
-                                  }
-                                },
-                              ),
-                            ),
-
-                            /// Resent OTP or show Timer
-                            GestureDetector(
-                              onTap:
-                                  controller.time == '00:00'
-                                      ? () {
-                                        controller.startTimer();
-                                        controller.signUpUser();
-                                      }
-                                      : () {},
-                              child: CommonText(
-                                text:
-                                    controller.time == '00:00'
-                                        ? AppString.resendCode
-                                        : "${AppString.resendCodeIn} ${controller.time} ${AppString.minute}",
-                                fontSize: 14,
-                                bottom: 20,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-
-                            ///  Submit Button here
-                            CommonButton(
-                              titleText: AppString.continues,
-                              isLoading: controller.isLoadingVerify,
-                              onTap: () {
-                                if (formKey.currentState!.validate()) {
-                                  controller.verifyOtpRepo();
+                              length: 6,
+                              keyboardType: TextInputType.number,
+                              autovalidateMode: AutovalidateMode.disabled,
+                              enableActiveFill: true,
+                              validator: (value) {
+                                if (value != null && value.length == 6) {
+                                  return null;
+                                } else {
+                                  return AppString.otpIsInValid;
                                 }
                               },
                             ),
-                          ],
-                        ),
+                          ),
+              
+                          ///  Submit Button here
+                          CommonButton(
+                            titleText: AppString.continue_button,
+                            isLoading: controller.isLoadingVerify,
+                            onTap: () {
+                              if (formKey.currentState!.validate()) {
+                                controller.verifyOtpRepo();
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),

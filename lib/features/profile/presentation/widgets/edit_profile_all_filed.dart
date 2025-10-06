@@ -36,7 +36,7 @@ class EditProfileAllFiled extends StatelessWidget {
 
         /// User Phone number here
         const CommonText(
-          text: AppString.contact,
+          text: AppString.contact_text,
           fontWeight: FontWeight.w600,
           top: 20,
           bottom: 12,

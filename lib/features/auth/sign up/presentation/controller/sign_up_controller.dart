@@ -15,7 +15,6 @@ import '../../../../../utils/app_utils.dart';
 
 class SignUpController extends GetxController {
   /// Sign Up Form Key
-  final signUpFormKey = GlobalKey<FormState>();
 
   bool isPopUpOpen = false;
   bool isLoading = false;
@@ -79,25 +78,24 @@ class SignUpController extends GetxController {
   }
 
   signUpUser() async {
-    if (!signUpFormKey.currentState!.validate()) return;
-    Get.toNamed(AppRoutes.verifyUser);
-    return;
+    //Get.toNamed(AppRoutes.verifyUser);
+    //return;
     isLoading = true;
     update();
     Map<String, String> body = {
-      "fullName": nameController.text,
-      "email": emailController.text,
-      "phoneNumber": phoneNumberController.text,
-      "countryCode": countryCode,
-      "password": passwordController.text,
-      "role": selectRole.toLowerCase(),
+      "role":"USER",
+      "name":nameController.text,
+      "email":emailController.text,
+      "contact":phoneNumberController.text,
+      "location":locationController.text,
+      "password":passwordController.text,
+      "referralCode":"O-BQ7LRC"
     };
 
     var response = await ApiService.post(ApiEndPoint.signUp, body: body);
 
     if (response.statusCode == 200) {
       var data = response.data;
-      signUpToken = data['data']['signUpToken'];
       Get.toNamed(AppRoutes.verifyUser);
     } else {
       Utils.errorSnackBar(response.statusCode.toString(), response.message);
@@ -125,15 +123,15 @@ class SignUpController extends GetxController {
   }
 
   Future<void> verifyOtpRepo() async {
-    Get.offAllNamed(AppRoutes.signIn);
-    return;
+    //Get.offAllNamed(AppRoutes.signIn);
+    //return;
 
     isLoadingVerify = true;
     update();
-    Map<String, String> body = {"otp": otpController.text};
+    Map<String, String> body = {"email":emailController.text,"oneTimeCode": otpController.text};
     Map<String, String> header = {"SignUpToken": "signUpToken $signUpToken"};
     var response = await ApiService.post(
-      ApiEndPoint.verifyEmail,
+      ApiEndPoint.verifyUser,
       body: body,
       header: header,
     );
@@ -141,7 +139,7 @@ class SignUpController extends GetxController {
     if (response.statusCode == 200) {
       var data = response.data;
 
-      LocalStorage.token = data['data']["accessToken"];
+      /*LocalStorage.token = data['data']["accessToken"];
       LocalStorage.userId = data['data']["attributes"]["_id"];
       LocalStorage.myImage = data['data']["attributes"]["image"];
       LocalStorage.myName = data['data']["attributes"]["fullName"];
@@ -153,13 +151,15 @@ class SignUpController extends GetxController {
       LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
       LocalStorage.setString(LocalStorageKeys.myImage, LocalStorage.myImage);
       LocalStorage.setString(LocalStorageKeys.myName, LocalStorage.myName);
-      LocalStorage.setString(LocalStorageKeys.myEmail, LocalStorage.myEmail);
+      LocalStorage.setString(LocalStorageKeys.myEmail, LocalStorage.myEmail);*/
 
       // if (LocalStorage.myRole == 'consultant') {
       //   Get.toNamed(AppRoutes.personalInformation);
       // } else {
       //   Get.offAllNamed(AppRoutes.patientsHome);
       // }
+
+      Get.offAllNamed(AppRoutes.signIn);
     } else {
       Get.snackbar(response.statusCode.toString(), response.message);
     }

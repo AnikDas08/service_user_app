@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
 import '../../../../../config/route/app_routes.dart';
-import '../../../../../utils/extensions/extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../component/pop_up/common_pop_menu.dart';
-import '../../../../component/text/common_text.dart';
+import '../../../../utils/custom_appbar/custom_appbar.dart';
 import '../controller/setting_controller.dart';
 import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_string.dart';
+import '../widgets/logout_dialog.dart';
 import '../widgets/setting_item.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -24,11 +23,11 @@ class SettingScreen extends StatelessWidget {
             child: SafeArea(
               child: Column(
                 children: [
-              
-                  CustomAppBar(title: AppString.settings,),
-              
+
+                  CustomAppBar(title: "Settings",),
+
                   SizedBox(height: 30.h,),
-              
+
                   /// Change password Item here
                   InkWell(
                     onTap: () => Get.toNamed(AppRoutes.changePassword),
@@ -37,7 +36,7 @@ class SettingScreen extends StatelessWidget {
                       image: "assets/icons/password_icon.svg",
                     ),
                   ),
-              
+
                   /// Terms of Service Item here
                   InkWell(
                     onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
@@ -46,7 +45,7 @@ class SettingScreen extends StatelessWidget {
                       image: "assets/icons/privacy_icon.svg",
                     ),
                   ),
-              
+
                   /// Privacy Policy Item here
                   InkWell(
                     onTap: () => Get.toNamed(AppRoutes.termsOfServices),
@@ -56,21 +55,15 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ),
 
-                  InkWell(
-                    onTap: () => Get.toNamed(AppRoutes.service_provider_policy),
-                    child: const SettingItem(
-                      title: "Service Provider Usage Policy",
-                      image: "assets/icons/service_provider_policy.svg",
-                    ),
-                  ),
-
 
                   InkWell(
                     onTap: () => logoutDialog(onConfirm: (){}),
                     child: const SettingItem(
                       title: AppString.logOut,
-                      image: "assets/icons/logout_icon.svg",
+                      iconDate: Icons.logout,
+                      iconColor: AppColors.primaryColor,
                       titleColor: AppColors.primaryColor,
+                      image: "assets/icons/logout_icon.svg",
                     ),
                   ),
 
@@ -78,13 +71,14 @@ class SettingScreen extends StatelessWidget {
                   InkWell(
                     onTap:
                         () => deletePopUp(
-                          controller: controller.passwordController,
-                          onTap: controller.deleteAccountRepo,
-                          isLoading: controller.isLoading,
-                        ),
+                      controller: controller.passwordController,
+                      onTap: controller.deleteAccountRepo,
+                      isLoading: controller.isLoading,
+                    ),
                     child: const SettingItem(
                       title: AppString.deleteAccount,
-                      image: "assets/icons/delete_icon.svg",
+                      image:"assets/icons/delete_icon.svg",
+                      iconColor: AppColors.primaryColor,
                       titleColor: AppColors.primaryColor,
                     ),
                   ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_string.dart';
+import '../../../../utils/custom_appbar/custom_appbar.dart';
 import '../../data/language_model.dart';
 import '../controller/language_controller.dart';
 
@@ -23,9 +23,9 @@ class LanguageSelectionScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              CustomAppBar(title: AppString.language,),
+              CustomAppBar(title: AppString.language_text,),
               SizedBox(height: 20.h),
-          
+
               // Language List
               Obx(() => ListView.builder(
                 shrinkWrap: true,
@@ -67,7 +67,7 @@ class LanguageSelectionScreen extends StatelessWidget {
             color: Colors.grey[200],
           ),
           child: Center(
-            child: Image.asset(language.flagAsset)
+              child: Image.asset(language.flagAsset)
           ),
         ),
         title: CommonText(
@@ -126,7 +126,7 @@ class LanguageSelectionGetView extends GetView<LanguageController> {
         ),
         centerTitle: true,
         title: const CommonText(
-          text: AppString.language,
+          text: AppString.language_text,
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: Color(0xFFE91E63),

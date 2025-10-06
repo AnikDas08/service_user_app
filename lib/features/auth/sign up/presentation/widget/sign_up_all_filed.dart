@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../../utils/constants/app_colors.dart';
 import '../../../../../utils/helpers/other_helper.dart';
 import '../../../../../utils/constants/app_string.dart';
 import '../../../../../component/text/common_text.dart';
@@ -17,61 +16,52 @@ class SignUpAllField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         /// User Name here
-        const CommonText(text: AppString.name_text, fontSize: 14, fontWeight: FontWeight.w400,color: AppColors.black400),
-        SizedBox(height: 6,),
+        const CommonText(text: AppString.full_name, bottom: 8, top: 12),
         CommonTextField(
-          hintText: AppString.hints_name,
-          hintTextColor: AppColors.black100,
+          hintText: AppString.hints_full_name,
           controller: controller.nameController,
           validator: OtherHelper.validator,
         ),
 
         /// User Email here
-        const CommonText(text: AppString.email, fontSize: 14, fontWeight: FontWeight.w400,color: AppColors.black400,top: 12,bottom: 6,),
-        SizedBox(height: 6,),
+        const CommonText(text: AppString.email_text, bottom: 8, top: 12),
         CommonTextField(
-          hintText: AppString.hint_email_text,
-          hintTextColor: AppColors.black100,
           controller: controller.emailController,
+          hintText: AppString.hint_email_text,
           validator: OtherHelper.emailValidator,
         ),
 
         /// User phone number here
-        const CommonText(text: AppString.phone_number_text, fontSize: 14,fontWeight: FontWeight.w400,top:12,bottom: 6,),
+        const CommonText(text: AppString.phone_number_text, bottom: 8, top: 12),
         CommonTextField(
-          hintText: AppString.hint_phone_number,
-          hintTextColor: AppColors.black100,
           controller: controller.phoneNumberController,
+          hintText: AppString.hint_phone_number,
           validator: OtherHelper.validator,
         ),
 
         /// User Location here
-        const CommonText(text: AppString.location, bottom: 6, top: 12),
+        const CommonText(text: AppString.location_text, bottom: 8, top: 12),
         CommonTextField(
-          hintText: AppString.location_hint,
-          hintTextColor: AppColors.black100,
           controller: controller.locationController,
+          hintText: AppString.location_hint,
           validator: OtherHelper.validator,
         ),
 
         /// User Password here
-        const CommonText(text: AppString.password_text, bottom: 6, top: 12),
+        const CommonText(text: AppString.password_text, bottom: 8, top: 12),
         CommonTextField(
-          hintText: AppString.password_hint,
-          hintTextColor: AppColors.black100,
           controller: controller.passwordController,
           isPassword: true,
+          hintText: AppString.hint_password_text,
           validator: OtherHelper.passwordValidator,
         ),
 
         /// User Confirm Password here
-        const CommonText(text: AppString.confirm_password_text, bottom: 6, top: 12),
+        const CommonText(text: AppString.confirm_password_text, bottom: 8, top: 12),
         CommonTextField(
-          hintText: AppString.hint_confirm_password,
-          hintTextColor: AppColors.black100,
           controller: controller.confirmPasswordController,
           isPassword: true,
-          //hintText: AppString.confirmPassword,
+          hintText: AppString.hint_confirm_password,
           validator:
               (value) => OtherHelper.confirmPasswordValidator(
                 value,

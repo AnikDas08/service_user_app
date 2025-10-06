@@ -4,16 +4,40 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/component/text_field/common_text_field.dart';
-import 'package:haircutmen_user_app/config/route/app_routes.dart';
-import 'package:haircutmen_user_app/features/home/widget/home_custom_button.dart';
-import 'package:haircutmen_user_app/features/profile/presentation/controller/edit_profile_controller.dart';
-import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
 
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
+import '../../../../utils/custom_appbar/custom_appbar.dart';
+import '../../../home/widget/custom_button_home.dart';
+import '../controller/edit_profile_controller.dart';
 
 class EditProfile extends StatelessWidget {
-  const EditProfile({super.key});
+  EditProfile({super.key});
+  String? selectedLocation;
+
+  List<String> locations = [
+    'New York',
+    'Los Angeles',
+    'Chicago',
+    'Houston',
+    'Phoenix',
+    'Philadelphia',
+    'San Antonio',
+    'San Diego',
+    'Dallas',
+    'San Jose',
+    'Austin',
+    'Jacksonville',
+    'Fort Worth',
+    'Columbus',
+    'Charlotte',
+    'San Francisco',
+    'Indianapolis',
+    'Seattle',
+    'Denver',
+    'Boston',
+    // Add more locations as needed
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -29,24 +53,24 @@ class EditProfile extends StatelessWidget {
                   CustomAppBar(title: AppString.edit_profile_button,),
                   SizedBox(height: 20,),
                   Obx(
-                    ()=> Stack(
+                        ()=> Stack(
                       children: [
                         CircleAvatar(
                           radius: 60,
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(60),
-                            child: controller.profileImage.value!=null?Image.file(
-                              controller.profileImage.value!,
-                              width: 120.w,
-                              height: 120.h,
-                              fit: BoxFit.cover,
-                            ):
-                                Image.asset(
-                                  "assets/images/item_image.png",
-                                  width: 120.w,
-                                  height: 120.h,
-                                  fit: BoxFit.cover,
-                                )
+                              borderRadius: BorderRadius.circular(60),
+                              child: controller.profileImage.value!=null?Image.file(
+                                controller.profileImage.value!,
+                                width: 120.w,
+                                height: 120.h,
+                                fit: BoxFit.cover,
+                              ):
+                              Image.asset(
+                                "assets/images/item_image.png",
+                                width: 120.w,
+                                height: 120.h,
+                                fit: BoxFit.cover,
+                              )
                           ),
                         ),
                         Positioned(
@@ -104,17 +128,15 @@ class EditProfile extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.full_name, hintText: "Enter Your Full Name",),
+                        EditPersonal(title: AppString.full_name, hintText: AppString.hints_full_name,),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.email, hintText: "Enter Email",),
+                        EditPersonal(title: AppString.contact_number_text, hintText: AppString.contact_hint,),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.phone, hintText: "Enter Number",),
+                        EditPersonal(title: AppString.multiple_location, hintText: AppString.location_hint,),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.location, hintText: "Enter Your Location",),
+                        _buildLocationDropdown(controller),
                         SizedBox(height: 20.h,),
-                        CustomButton(text: "Submit For Approval", isSelected: true, onTap: (){
-                          Get.offNamed(AppRoutes.homeNav);
-                        })
+                        CustomButton(text: AppString.confirm_button, isSelected: true, onTap: (){})
                       ],
                     ),
                   ),
@@ -124,6 +146,62 @@ class EditProfile extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+  Widget _buildLocationDropdown(EditProfileController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CommonText(
+          text: AppString.add_primary_locatiopn,
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black400,
+        ),
+        SizedBox(height: 12),
+        Container(
+          width: double.infinity,
+          height: 44,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.black100, width: 1),
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: Obx(() => DropdownButton<String>(
+              value: controller.selectedLocation.value.isEmpty
+                  ? null
+                  : controller.selectedLocation.value,
+              hint: CommonText(
+                text: 'Select Location',
+                fontSize: 12,
+                color: AppColors.black200,
+                textAlign: TextAlign.left,
+              ),
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.black300,
+                size: 24.sp,
+              ),
+              isExpanded: true,
+              items: controller.locations.map((String location) {
+                return DropdownMenuItem<String>(
+                  value: location,
+                  child: CommonText(
+                    text: location,
+                    fontSize: 14,
+                    color: AppColors.black400,
+                    textAlign: TextAlign.left,
+                  ),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                controller.setSelectedLocation(newValue ?? '');
+              },
+            )),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/features/profile/presentation/screen/personal_information.dart';
-import 'package:haircutmen_user_app/services/storage/storage_keys.dart';
-import 'package:haircutmen_user_app/utils/app_bar/custom_appbars.dart';
+import 'package:haircutmen_user_app/features/profile/presentation/widgets/contract_support_dialog_profile.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../config/route/app_routes.dart';
-import '../../../../component/image/common_image.dart';
 import '../../../../component/other_widgets/item.dart';
 import '../../../../component/text/common_text.dart';
+import '../../../../utils/custom_appbar/custom_appbar.dart';
 import '../controller/profile_controller.dart';
-import '../../../../../utils/constants/app_images.dart';
 import '../../../../../utils/constants/app_string.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -19,6 +16,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /// Body Section Starts here
       body: GetBuilder<ProfileController>(
         builder: (controller) {
           return SafeArea(
@@ -26,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  CustomAppBar(title: AppString.profile,showBackButton: false,),
+                  CustomAppBar(title: AppString.profile_text,showBackButton: false,),
                   /// User Profile Image here
                   Center(
                     child: CircleAvatar(
@@ -45,71 +43,66 @@ class ProfileScreen extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.w400,
                   ),
-                  SizedBox(height: 6,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CommonText(
-                        text: "Hair Care",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      SizedBox(width: 6.w),
-                      Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 24.sp,
-                      ),
-                      SizedBox(width: 4.w),
-                      CommonText(
-                        text: "4.6",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      SizedBox(width: 4.w),
-                      CommonText(
-                        text: "(300)",
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.black200,
-                      ),
-                    ],
-                  ),
                   SizedBox(height: 20,),
                   /// Edit Profile item here
                   Item(
                     image: "assets/icons/profile.svg",
                     title: AppString.personal_information,
-                    onTap: () => Get.toNamed(AppRoutes.personal_information),
-                  ),
-
-                  /// Setting item here
-                  Item(
-                    image: "assets/icons/services_icon.svg",
-                    title: AppString.service_information,
-                    onTap: () => Get.toNamed(AppRoutes.service_person_screen),
+                    onTap: () => Get.toNamed(AppRoutes.personal_information_screen),
                   ),
 
                   /// Language item here
                   Item(
                     image: "assets/icons/language_icon.svg",
-                    title: AppString.language,
+                    title: AppString.language_text.tr,
                     onTap: () => Get.toNamed(AppRoutes.language_screen),
                   ),
 
-                  /// Privacy Policy item here
+                  /// Setting item here
                   Item(
                     image: "assets/icons/setting_icon.svg",
-                    title: AppString.setting,
-                    onTap: () => Get.toNamed(AppRoutes.setting),
+                    title: AppString.setting.tr,
+                    onTap: ()=>Get.toNamed(AppRoutes.setting),
                   ),
 
-                  /// Terms of Service item here
                   Item(
                     image: "assets/icons/contract_icon.svg",
-                    title: AppString.contact_support,
-                    onTap: () => Get.toNamed(AppRoutes.contract_screen),
+                    title: AppString.contact_support.tr,
+                    onTap: () => contractSupportDialog(onTap: (){}),
                   ),
+                  Item(
+                    icon: Icons.favorite_outline,
+                    disableIcon: false,
+                    title: AppString.favourite_list.tr,
+                    onTap: () => Get.toNamed(AppRoutes.favourite_screen),
+                  ),
+                 SizedBox(height: 10.h,),
+                 Container(
+                   padding: EdgeInsets.all(14),
+                   width: double.infinity,
+                   decoration: BoxDecoration(
+                     color: AppColors.red100,
+                     borderRadius: BorderRadius.circular(10),
+                   ),
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       CommonText(
+                           text: "Present Credit: 50",
+                         fontSize: 16,
+                         fontWeight: FontWeight.w500,
+                         color: AppColors.black400
+                       ),
+                       SizedBox(height: 18,),
+                       CommonText(
+                           text: "One Credit equal 1 RSD",
+                         fontSize: 16,
+                         fontWeight: FontWeight.w500,
+                         color: AppColors.black100,
+                       ),
+                     ],
+                   ),
+                 )
                 ],
               ),
             ),

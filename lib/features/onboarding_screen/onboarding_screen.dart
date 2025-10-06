@@ -9,7 +9,6 @@ import '../../component/button/common_button.dart';
 import '../../component/image/common_image.dart';
 import '../../component/text/common_text.dart';
 import '../../utils/constants/app_images.dart';
-import '../auth/sign in/presentation/widgets/social_sign_in.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -43,6 +42,7 @@ class OnboardingScreen extends StatelessWidget {
               _buildButtonsSection(),
 
               40.height,
+
               _buildSocialIcon(),
 
               // Bottom spacing
@@ -62,8 +62,8 @@ class OnboardingScreen extends StatelessWidget {
           fontSize: 24,
           fontWeight: FontWeight.w600,
           color: AppColors.primaryColor,
-          textAlign: TextAlign.center,
           maxLines: 2,
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -123,7 +123,7 @@ class OnboardingScreen extends StatelessWidget {
       children: [
         // Log In Button (Outlined)
         CommonButton(
-          titleText: "Log In",
+          titleText: AppString.login_text,
           titleColor: AppColors.primaryColor,
           buttonColor: AppColors.transparent,
           borderColor: AppColors.primaryColor,
@@ -138,7 +138,7 @@ class OnboardingScreen extends StatelessWidget {
 
         // Sign Up Button (Filled)
         CommonButton(
-          titleText: "Sign Up",
+          titleText: AppString.signup_text,
           titleColor: AppColors.white,
           buttonColor: AppColors.primaryColor,
           borderColor: AppColors.primaryColor,
@@ -150,38 +150,38 @@ class OnboardingScreen extends StatelessWidget {
       ],
     );
   }
-}
 
-Widget _buildSocialIcon() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    spacing: 24,
-    children: [
-      Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.black50,
-          borderRadius: BorderRadius.circular(100),
+  Widget _buildSocialIcon() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 24,
+      children: [
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.black50,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: CommonImage(imageSrc: AppImages.google, size: 24),
         ),
-        child: CommonImage(imageSrc: AppImages.google, size: 24),
-      ),
-      Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.black50,
-          borderRadius: BorderRadius.circular(100),
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.black50,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: CommonImage(imageSrc: AppImages.facebook, size: 24),
         ),
-        child: CommonImage(imageSrc: AppImages.facebook, size: 24),
-      ),
-      Container(
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.black50,
-          borderRadius: BorderRadius.circular(100),
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.black50,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: CommonImage(imageSrc: AppImages.apple, size: 24),
         ),
-        child: CommonImage(imageSrc: AppImages.apple, size: 24),
-      ),
-    ],
-  );
+      ],
+    );
+  }
 }

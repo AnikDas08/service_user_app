@@ -1,5 +1,4 @@
 // controllers/chat_controller.dart
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,11 +18,6 @@ class ChatControllers extends GetxController {
   final RxString contactName = ''.obs;
   final RxString contactAvatar = ''.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Start with empty messages - no predefined messages
-  }
 
   @override
   void onClose() {

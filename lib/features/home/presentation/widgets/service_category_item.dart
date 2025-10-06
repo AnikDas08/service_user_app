@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../component/image/common_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 
@@ -23,18 +23,19 @@ class ServiceCategoryItem extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 60.w,
-            height: 60.w,
+            width: 54.w,
+            height: 54.w,
             decoration: BoxDecoration(
               color: AppColors.red50,
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: CommonImage(
-                imageSrc: icon,
-                size: 24.w,
-                imageColor: AppColors.primaryColor,
-              ),
+              child: SvgPicture.asset(
+                icon,
+                height: 24,
+                width: 24,
+                color: AppColors.primaryColor,
+              )
             ),
           ),
           SizedBox(height: 8.h),
@@ -42,7 +43,7 @@ class ServiceCategoryItem extends StatelessWidget {
             text: label,
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: AppColors.textColor,
+            color: AppColors.black300,
             textAlign: TextAlign.center,
           ),
         ],

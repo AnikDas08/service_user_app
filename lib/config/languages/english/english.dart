@@ -1,6 +1,7 @@
 import '../../../utils/constants/app_string.dart';
 
 Map<String, String> english = {
+  // General
   AppString.dataEmpty: "Data Empty",
   AppString.noInternet: "No Internet",
   AppString.checkInternet: "Check Internet",
@@ -9,14 +10,16 @@ Map<String, String> english = {
   AppString.no: "No",
   AppString.yes: "Yes",
   AppString.areYouSure: "Are you sure",
-  AppString.enterYouPassword: "Enter your password",
+  AppString.enterYouPassword: "Enter you password",
   AppString.cancel: "Cancel",
   AppString.done: "Done",
   AppString.deleteDetails: "All your changes will be deleted and you will no longer be able to access them.",
-  AppString.someThingWrong: "Some Thing Wrong",
+  AppString.someThingWrong: "Something Wrong",
   AppString.tryAgain: "Try Again",
   AppString.phoneNumber: "Phone Number",
   AppString.test: "Test",
+
+  // Password Related
   AppString.changePassword: "Change Password",
   AppString.currentPassword: "Current Password",
   AppString.newPassword: "New Password",
@@ -25,10 +28,12 @@ Map<String, String> english = {
   AppString.createNewPassword: "Create New Password",
   AppString.createYourNewPassword: "Create Your New Password",
   AppString.password: "Password",
+
+  // Authentication
   AppString.continues: "Continue",
   AppString.email: "Email",
-  AppString.codeHasBeenSendTo: "Code has been sent to",
-  AppString.otpIsInValid: "OTP is invalid",
+  AppString.codeHasBeenSendTo: "Code has been send to",
+  AppString.otpIsInValid: "Otp is inValid",
   AppString.resendCode: "Resend Code",
   AppString.resendCodeIn: "Resend code in",
   AppString.minute: "minute",
@@ -39,17 +44,21 @@ Map<String, String> english = {
   AppString.forgotThePassword: "Forgot the password",
   AppString.signIn: "Sign in",
   AppString.login: "Log In",
-  AppString.doNotHaveAccount: "Don’t have an account? ",
+  AppString.doNotHaveAccount: "Don't have an account? ",
   AppString.signUp: "Sign up",
   AppString.alreadyHaveAccount: "Already have an account? ",
   AppString.fullName: "Full Name",
   AppString.createYourAccount: "Create Your Account",
   AppString.otpVerify: "OTP Verify",
+
+  // Communication
   AppString.inbox: "Inbox",
   AppString.searchDoctor: "search a doctor",
   AppString.activeNow: "Active Now",
   AppString.messageHere: "message here",
   AppString.notifications: "Notifications",
+
+  // Profile
   AppString.dateOfBirth: "Date of birth",
   AppString.age: "Age",
   AppString.aboutMe: "About Me",
@@ -62,6 +71,8 @@ Map<String, String> english = {
   AppString.privacyPolicy: "Privacy Policy",
   AppString.deleteAccount: "Delete account",
   AppString.termsOfServices: "Terms of Services",
+
+  // Errors
   AppString.noInternetConnection: "No internet connection",
   AppString.badResponseRequest: "Bad Response Request",
   AppString.requestTimeOut: "Request Time Out",
@@ -71,18 +82,16 @@ Map<String, String> english = {
   AppString.thePasswordDoesNotMatch: "The password does not match",
   AppString.startServer: "Please, start the Server",
   AppString.unknownError: "Unknown Error",
+
+  // Additional Fields
   AppString.termsOfService: "Terms of Service",
   AppString.personalInformation: "Personal Information",
   AppString.myBalance: "My Balance",
   AppString.otpTitle: "Verify your email",
-  AppString.enterYourEmailToResetPassword: "We’ve Sent A One-Time Password (OTP) To Your Email. Please Enter It Below To Continue.",
+  AppString.enterYourEmailToResetPassword: "We've Sent A One-Time Password (OTP) To Your Email. Please Enter It Below To Continue.",
 
-
-  /// On Boarding
+  // Onboarding & Login
   AppString.onboarding_text: "TvojeVreme\nPartner",
-
-
-  /// Login
   AppString.login_text: "Log In",
   AppString.email_text: "Email",
   AppString.password_text: "Password",
@@ -90,8 +99,7 @@ Map<String, String> english = {
   AppString.hint_password_text: "Enter Password",
   AppString.have_account: "Don't have an Account?",
 
-
-  /// Signup
+  // Sign Up
   AppString.signup_text: "Sign Up",
   AppString.name_text: "Full Name",
   AppString.hints_name: "Enter Your Full Name...",
@@ -102,37 +110,36 @@ Map<String, String> english = {
   AppString.password_hint: "Enter Password",
   AppString.already_have_account_chair: "Already Have an Account?",
 
-
-  /// Forgot Password
-  AppString.forget_password_text: "Forgot Password",
-  AppString.forget_password_details_text: "Enter your email address, and we’ll send you a OTP to reset your password.",
+  // Forget Password
+  AppString.forget_password_text: "Forgot Password?",
+  AppString.forget_password_details_text: "Enter your email address, and we'll send\nyou a OTP to reset your password.",
   AppString.verify_button: "Verify Now",
 
-  /// Verify Use
+  // Verify Screen
   AppString.verify_email_text: "Verify Your OTP",
-  AppString.verify_email_details: "We’ve sent a One-Time Password (OTP) to your email. Please enter it below to continue",
+  AppString.verify_email_details: "We've sent a One-Time Password (OTP) to your email. Please enter it below to continue",
   AppString.continue_button: "Continue",
 
-
-  /// Create Password
+  // Create Password
   AppString.create_password_text: "Create New Password",
-  AppString.create_password_details_text: "Please enter a new password for your account. Make sure it’s at least 8 characters long and includes a mix of letters, numbers, and symbols for security",
+  AppString.create_password_details_text: "Please enter a new password for your account. Make sure it's at least 8 characters long and includes a mix of letters, numbers, and symbols for security",
   AppString.new_passowrd_text: "New Password",
   AppString.confirm_password_text: "Confirm Password",
   AppString.hint_new_password: "Enter New Password",
   AppString.hint_confirm_password: "Enter Confirm Password",
   AppString.confirm_button: "Confirm",
+  AppString.add_primary_locatiopn: "Add Primary Location",
   AppString.password_change_now: "Your Password Has Been\nChanged",
 
-
-  /// Complete Profile
+  // Complete Profile
   AppString.complete_profile_text: "Complete Profile",
   AppString.about_me_text: "About Me",
   AppString.hint_type_here: "Type Here...",
+  AppString.type_first: "Type...",
   AppString.service_text: "Service Type",
   AppString.service_hint: "Type of Service",
-  AppString.additional_service_text: "Sub Category of Service Type",
-  AppString.additional_service_hints: "Type your sub category",
+  AppString.additional_service_text: "Additional Service Type",
+  AppString.additional_service_hints: "Type of Services",
   AppString.add_service_language: "Add Service Language",
   AppString.primary_location_text: "Primary Location",
   AppString.primary_location_hint: "Type Your Location",
@@ -148,9 +155,9 @@ Map<String, String> english = {
   AppString.and_text: "And",
   AppString.term_condition_text: "Terms & Condition",
 
-
-  /// Home Screen
+  // Home Screen
   AppString.welcome_text: "Welcome To Veldora",
+  AppString.avaliable_ite: "Available Service in My Range",
   AppString.online_voew: "Online",
   AppString.view_button: "View",
   AppString.home_texts: "Home",
@@ -160,25 +167,34 @@ Map<String, String> english = {
   AppString.profile_text: "Profile",
   AppString.upcoming_button: "UpComing",
   AppString.pending_button: "Pending",
-  AppString.Cancel_button: "Canceled",
-
-
-  /// Overview Screen
   AppString.view_details_text: "View Details",
   AppString.contact_details_text: "Contact Details",
   AppString.contact_number_text: "Contact Number",
+  AppString.multiple_location: "Location(multiple)",
+  AppString.appoint_scan_text: "Appointment\nSuccessfully Complete",
+  AppString.review_profile: "Review",
   AppString.email_address_text: "Email Address",
   AppString.contact_now_button: "Contact Now",
+  AppString.canceled_button: "Canceled",
   AppString.cancel_button: "Cancel",
+  AppString.view_status: "View Status",
+
+  // Overview Screen
   AppString.overview_button: "My Overview",
   AppString.working_button: "Working Time",
   AppString.statistics: "Statistics",
   AppString.successful_booking: "Successful Booking",
   AppString.cancel_booking: "Canceled Booking",
-  AppString.total_amount: "Total  Money Earned",
+  AppString.photo_customer_four: "Service Fee",
+  AppString.book_now_button: "Book Now",
+  AppString.total_amount: "Total Money Earned",
+  AppString.view_profile_text: "View Profile",
+  AppString.avilable_button: "Availability",
+  AppString.service_fee: "Service Fee",
+  AppString.appointment_text: "Appointment",
+  AppString.cancel_booking_detail: "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.",
 
-
-  /// 7 value
+  // Days
   AppString.saturday_text: "Saturday",
   AppString.sunday_text: "Sunday",
   AppString.monday_text: "Monday",
@@ -188,8 +204,7 @@ Map<String, String> english = {
   AppString.friday_text: "Friday",
   AppString.select_month: "Select Month",
 
-
-  /// Month
+  // Months
   AppString.january_text: "January",
   AppString.february_text: "February",
   AppString.march_text: "March",
@@ -206,21 +221,22 @@ Map<String, String> english = {
   AppString.end_time: "Select End Time",
   AppString.submit_button: "Submit",
 
-
-  /// Search
+  // Message Screen
   AppString.search_text: "Search here",
 
-
-
-  /// Profile Screen
+  // Profile Screen
   AppString.personal_information: "Personal Information",
   AppString.service_information: "My Service",
-  AppString.language: "Language",
+  AppString.language_text: "Language",
+  AppString.contact_support_text: "Please Contact us via\nemail for any of your needs",
+  AppString.contact_support_button: "Contact to Email",
   AppString.setting: "Setting",
   AppString.contact_support: "Contact and Support",
+  AppString.favourite_list: "All Favourite List",
   AppString.full_name: "Full Name",
-  AppString.contact: "Contact",
-  AppString.location: "Location",
+  AppString.hints_full_name: "Enter Your Full Name",
+  AppString.contact_hint: "Enter Your Phone Number",
+  AppString.contact_text: "Contact",
   AppString.edit_profile_button: "Edit Profile",
   AppString.edit_now: "Edit Now",
   AppString.phone: "Phone",
@@ -245,12 +261,23 @@ Map<String, String> english = {
   AppString.logout_correct: "Do you want to logout?",
   AppString.yes_button: "Yes",
   AppString.no_button: "No",
+  AppString.scan_now: "Scan",
 
+  // Booking screen
+  AppString.booking_date_time_text: "Booking Date & Time",
+  AppString.service_description: "Service Description",
+  AppString.confirms_button: "Confirm Booking",
+  AppString.service_example: "Service Example Photo (optional)",
+  AppString.tap_image_customer: "Tap to Select Image",
 
-  /// Qr Code
+  // QR Scan
   AppString.qr_text: "QR Code",
   AppString.qr_details: "Please Scan QR Code Below",
+  AppString.scan_qr: "Please scan Your QR code",
+  AppString.barcode_text: "Try using barcode and QR",
   AppString.qr_name: "MD Kamran khan",
+  AppString.feedback_text: "Give Your Feedback",
+  AppString.type_feedback: "Type Feedback",
   AppString.qr_id: "User ID : ",
-  AppString.privacy_policy_texts: "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim."
+  AppString.privacy_policy_texts: "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim.",
 };

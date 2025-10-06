@@ -10,7 +10,8 @@ class AppString {
   static const String enterYouPassword = "Enter you password";
   static const String cancel = "Cancel";
   static const String done = "Done";
-  static const String deleteDetails ="All your changes will be deleted and you will no longer be able to access them.";
+  static const String deleteDetails =
+      "All your changes will be deleted and you will no longer be able to access them.";
 
   static const String someThingWrong = "Some Thing Wrong";
   static const String tryAgain = "Try Again";
@@ -111,12 +112,14 @@ class AppString {
   static const String phone_number_text = "Phone Number";
   static const String hint_phone_number = "7674334";
   static const String location_text = "Location";
+  static const String referral_code_text = "Referral Code";
+  static const String referral_code_hint = "Enter Referral Code";
   static const String location_hint = "Choose City";
   static const String password_hint = "Enter Password";
   static const String already_have_account_chair = "Already Have an Account?";
 
   /// Forget Password
-  static const String forget_password_text="Forgot Password";
+  static const String forget_password_text="Forgot Password?";
   static const String forget_password_details_text="Enter your email address, and we’ll send\nyou a OTP to reset your password.";
   static const String verify_button="Verify Now";
 
@@ -134,6 +137,7 @@ class AppString {
   static const String hint_new_password="Enter New Password";
   static const String hint_confirm_password="Enter Confirm Password";
   static const String confirm_button="Confirm";
+  static const String add_primary_locatiopn="Add Primary Location";
   static const String password_change_now="Your Password Has Been\nChanged";
 
 
@@ -141,16 +145,17 @@ class AppString {
   static const String complete_profile_text="Complete Profile";
   static const String about_me_text="About Me";
   static const String hint_type_here="Type Here...";
-  static const String service_text="Service";
+  static const String type_first="Type...";
+  static const String service_text="Service Type";
   static const String service_hint="Type of Service";
-  static const String additional_service_text="Sub Category of Service Type";
-  static const String additional_service_hints="Type your Sub-Category";
+  static const String additional_service_text="Additional Service Type";
+  static const String additional_service_hints="Type of Services";
   static const String add_service_language="Add Service Language";
   static const String primary_location_text="Primary Location";
   static const String primary_location_hint="Type Your Location";
   static const String service_distance="Service Distance";
   static const String price_text="Price";
-  static const String price_hints="Type Your Price";
+  static const String price_hints="Type Your Location";
   static const String price_hours="Price(per hour)";
   static const String add_new="Please Attach Your Work Photos (Not Mandatory) Maximum 10 Image";
   static const String upload_image_text="Upload Image";
@@ -162,6 +167,7 @@ class AppString {
 
   /// Home Screen
   static const String welcome_text="Welcome To Veldora";
+  static const String avaliable_ite="Available Service in My Range";
   static const String online_voew="Online";
   static const String view_button="View";
   static const String home_texts="Home";
@@ -171,13 +177,17 @@ class AppString {
   static const String profile_text="Profile";
   static const String upcoming_button="UpComing";
   static const String pending_button="Pending";
-  static const String Cancel_button="Canceled";
   static const String view_details_text="View Details";
   static const String contact_details_text="Contact Details";
   static const String contact_number_text="Contact Number";
+  static const String multiple_location="Location(multiple)";
+  static const String appoint_scan_text="Appointment\nSuccessfully Complete";
+  static const String review_profile="Review";
   static const String email_address_text="Email Address";
   static const String contact_now_button="Contact Now";
+  static const String canceled_button="Canceled";
   static const String cancel_button="Cancel";
+  static const String view_status="View Status";
 
   /// Overview Screen
   static const String overview_button="My Overview";
@@ -185,7 +195,14 @@ class AppString {
   static const String statistics="Statistics";
   static const String successful_booking="Successful Booking";
   static const String cancel_booking="Canceled Booking";
+  static const String photo_customer_four="Service Fee";
+  static const String book_now_button="Book Now";
   static const String total_amount="Total  Money Earned";
+  static const String view_profile_text="View Profile";
+  static const String avilable_button="Availability";
+  static const String service_fee="Service Fee";
+  static const String appointment_text="Appointment";
+  static const String cancel_booking_detail="Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
 
 
   ///
@@ -222,12 +239,16 @@ class AppString {
   /// Profile Screen
   static const String personal_information="Personal Information";
   static const String service_information="My Service";
-  static const String language="Language";
+  static const String language_text="Language";
+  static const String contact_support_text="Please Contact us via\nemail for any of your needs";
+  static const String contact_support_button="Contact to Email";
   static const String setting="Setting";
   static const String contact_support="Contact and Support";
+  static const String favourite_list="All Favourite List";
   static const String full_name="Full Name";
-  static const String contact="Contact";
-  static const String location="Location";
+  static const String hints_full_name="Enter Your Full  Name";
+  static const String contact_hint="Enter Your Phone Number";
+  static const String contact_text="Contact";
   static const String edit_profile_button="Edit Profile";
   static const String edit_now="Edit Now";
   static const String phone="Phone";
@@ -252,13 +273,27 @@ class AppString {
   static const String logout_correct="Do you want to logout?";
   static const String yes_button="Yes";
   static const String no_button="No";
+  static const String scan_now="Scan";
+
+
+  /// Booking screen
+  static const String booking_date_time_text="Booking Date & Time";
+
+  static const String service_description="Service Description";
+  static const String confirms_button="Confirm Booking";
+  static const String service_example="Service Example Photo (optional)";
+  static const String tap_image_customer="Tap to Select Image";
 
 
 
   /// QR Scan
   static const String qr_text = "QR Code";
   static const String qr_details = "Please Scan QR Code Below";
+  static const String scan_qr = "Please scan Your QR code";
+  static const String barcode_text = "Type Service Provider Id";
   static const String qr_name = "MD Kamran khan";
+  static const String feedback_text = "Give Your Feedback";
+  static const String type_feedback = "Type Feedback";
   static const String qr_id = "User ID : ";
   static const String privacy_policy_texts = "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim.";
 }

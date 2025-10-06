@@ -12,6 +12,8 @@ import '../../data/model/chat_message_model.dart';
 import '../controller/message_controller.dart';
 
 class MessageScreen extends StatelessWidget {
+  const MessageScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ChatControllers controller = Get.put(ChatControllers());
@@ -95,16 +97,16 @@ class MessageScreen extends StatelessWidget {
         children: [
           // Profile Picture
           ClipOval(
-            child: Container(
-              width: 40.w,
-              height: 40.w,
-              decoration: BoxDecoration(
-                color: AppColors.black50,
-                shape: BoxShape.circle,
-              ),
-              child:Image.asset("assets/images/profile_image.png")
+              child: Container(
+                  width: 40.w,
+                  height: 40.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.black50,
+                    shape: BoxShape.circle,
+                  ),
+                  child:Image.asset("assets/images/profile_image.png")
               )
-            ),
+          ),
 
           SizedBox(width: 12.w),
 
@@ -136,13 +138,13 @@ class MessageScreen extends StatelessWidget {
             // Other person's avatar
             ClipOval(
               child: Container(
-                width: 25.w,
-                height: 25.w,
-                decoration: BoxDecoration(
-                  color: AppColors.black50,
-                  shape: BoxShape.circle,
-                ),
-                child: Image.asset("assets/images/profile_image.png")
+                  width: 25.w,
+                  height: 25.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.black50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset("assets/images/profile_image.png")
               ),
             ),
             SizedBox(width: 8.w),
@@ -248,7 +250,7 @@ class MessageScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image Grid
-            Container(
+            SizedBox(
               width: 220.w,
               child: GridView.builder(
                 shrinkWrap: true,
@@ -342,15 +344,15 @@ class MessageScreen extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(25.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withOpacity(0.4),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  )
-                ]
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(25.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withOpacity(0.4),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    )
+                  ]
               ),
               child: TextField(
                 controller: controller.messageController,
@@ -380,15 +382,15 @@ class MessageScreen extends StatelessWidget {
               height: 44.w,
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(100.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withOpacity(0.4),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  )
-                ]
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(100.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.black.withOpacity(0.4),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    )
+                  ]
               ),
               child: Icon(
                 CupertinoIcons.photo,
@@ -408,15 +410,15 @@ class MessageScreen extends StatelessWidget {
               width: 44.w,
               height: 44.w,
               decoration: BoxDecoration(
-                color: AppColors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.gray.withOpacity(0.6),
-                    blurRadius: 2,
-                    offset: Offset(0, 1),
-                  ),
-                ]
+                  color: AppColors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.gray.withOpacity(0.6),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ]
               ),
               child: SvgPicture.asset(
                 "assets/icons/send_icon.svg",

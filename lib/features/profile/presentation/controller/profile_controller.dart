@@ -1,10 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../../config/api/api_end_point.dart';
 import '../../../../config/route/app_routes.dart';

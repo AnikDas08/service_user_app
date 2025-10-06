@@ -1,308 +1,119 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/features/home/data/model/booking_model.dart';
-
-import '../../../../component/text/common_text.dart';
-import '../../../../utils/constants/app_colors.dart';
-import '../screen/home_screen.dart';
+import '../screen/service_details_screen.dart';
 
 class HomeController extends GetxController {
-  // Online status
-  bool isOnline = true;
+  final TextEditingController searchController = TextEditingController();
 
-  // Selected filter (0: Upcoming, 1: Pending, 2: Canceled)
-  int selectedFilter = 0;
+  // Simple favorite list using provider names as identifiers
+  final RxList<String> favoriteNames = <String>[].obs;
 
-
-  // Calendar state
-  DateTime focusedDay = DateTime.now();
-  DateTime? selectedDay;
-
-  // Sample booking data
-  List<BookingModel> allBookings = [
-    BookingModel(
-      customerName: 'Md Naimul Hasan',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1256',
-      price: '2500',
-      profileImage: 'assets/images/customer1.jpg',
-      status: BookingStatus.upcoming,
-    ),
-    BookingModel(
-      customerName: 'MD SHAKIR AHMED',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '11:00',
-      bookingId: '1268',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.upcoming,
-    ),
-    BookingModel(
-      customerName: 'Md Naimul Hasan',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1256',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.upcoming,
-    ),
-    BookingModel(
-      customerName: 'Md Naimul Hasan',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1256',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.upcoming,
-    ),
-    BookingModel(
-      customerName: 'Md Ananta Khan',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1270',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.pending,
-    ),
-    BookingModel(
-      customerName: 'Md Ananta Khan',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1270',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.pending,
-    ),
-    BookingModel(
-      customerName: 'Md Ananta Khan',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1270',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.pending,
-    ),
-    BookingModel(
-      customerName: 'Md Delwar Hossain',
-      service: 'Haircut',
-      date: '08.22.2025',
-      time: '10:00',
-      bookingId: '1272',
-      price: '2500',
-      profileImage: 'assets/images/item_image.png',
-      status: BookingStatus.canceled,
-    ),
-  ];
+  // Sample data
+  final RxList<Map<String, dynamic>> serviceProviders = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> filteredProviders = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    selectedDay = DateTime.now();
+    _loadServiceProviders();
   }
 
-  // Toggle online status
-  void toggleOnlineStatus() {
-    isOnline = !isOnline;
-    update();
-
-    // You can add additional logic here like API calls
-    if (isOnline) {
-      print('User is now online');
-      // Call API to set status online
+  // Simple favorite toggle
+  void toggleFavorite(String providerName) {
+    if (favoriteNames.contains(providerName)) {
+      favoriteNames.remove(providerName);
     } else {
-      print('User is now offline');
-      // Call API to set status offline
+      favoriteNames.add(providerName);
     }
-  }
-
-  // Change filter tab
-  void changeFilter(int index) {
-    selectedFilter = index;
     update();
   }
 
-  // Get filtered bookings based on selected filter
-  List<BookingModel> getFilteredBookings() {
-    switch (selectedFilter) {
-      case 0: // Upcoming
-        return allBookings.where((booking) => booking.status == BookingStatus.upcoming).toList();
-      case 1: // Pending
-        return allBookings.where((booking) => booking.status == BookingStatus.pending).toList();
-      case 2: // Canceled
-        return allBookings.where((booking) => booking.status == BookingStatus.canceled).toList();
-      default:
-        return allBookings;
+  // Check if a provider is favorite
+  bool isFavorite(String providerName) {
+    return favoriteNames.contains(providerName);
+  }
+
+  // Get all favorite providers
+  List<Map<String, dynamic>> get favoriteProviders {
+    return serviceProviders.where((provider) => isFavorite(provider["name"]!)).toList();
+  }
+
+  void _loadServiceProviders() {
+    // Sample data
+    serviceProviders.value = [
+      {
+        "name": "Angle Mariomi",
+        "service": "Haircut",
+        "distance": "2km",
+        "rating": "4.5",
+        "reviews": "200",
+        "price": "RSD 2500",
+        "image": "assets/images/item_image.png",
+      },
+      {
+        "name": "Angle Priya",
+        "service": "Nail Caring",
+        "distance": "5km",
+        "rating": "4.5",
+        "reviews": "200",
+        "price": "RSD 2500",
+        "image": "assets/images/item_image.png",
+      },
+      {
+        "name": "Samim Akter",
+        "service": "Massage",
+        "distance": "4km",
+        "rating": "4.5",
+        "reviews": "200",
+        "price": "RSD 2500",
+        "image": "assets/images/item_image.png",
+      },
+      {
+        "name": "Sohidul Hasan",
+        "service": "Skin Caring",
+        "distance": "6km",
+        "rating": "4.5",
+        "reviews": "200",
+        "price": "RSD 2500",
+        "image": "assets/images/item_image.png",
+      },
+    ];
+    filteredProviders.value = serviceProviders;
+  }
+
+  /*void searchProviders(String query) {
+    if (query.isEmpty) {
+      filteredProviders.value = serviceProviders;
+    } else {
+      filteredProviders.value = serviceProviders
+          .where((provider) =>
+      provider["name"]!.toLowerCase().contains(query.toLowerCase()) ||
+          provider["service"]!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+  }*/
+
+  void onServiceCategoryTap(String category) {
+    if (category == "All") {
+      filteredProviders.value = serviceProviders;
+    } else {
+      filteredProviders.value = serviceProviders
+          .where((provider) => provider["service"]!.toLowerCase().contains(category.toLowerCase()))
+          .toList();
     }
   }
 
-  // Calendar day selected
-  void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
-    selectedDay = selectedDate;
-    focusedDay = focusedDate;
-    update();
-
-    // You can add logic to filter bookings by selected date
-    print('Selected date: ${selectedDate.toIso8601String()}');
+  void onProviderTap(Map<String, dynamic> provider) {
+    Get.to(() => const ServiceDetailsScreen(), arguments: provider);
   }
 
-  // Calendar page changed
-  void onPageChanged(DateTime focusedDate) {
-    focusedDay = focusedDate;
-    update();
-  }
+  /*void onFavoriteTap(Map<String, dynamic> provider) {
+    toggleFavorite(provider["name"]!);
+  }*/
 
-  // View booking details
-  void viewBookingDetails(BookingModel booking) {
-    print('Viewing booking details for: ${booking.customerName}');
-
-    // Navigate to booking details page
-    // Get.to(() => BookingDetailsScreen(booking: booking));
-
-    // Or show a dialog with booking details
-    Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        title: CommonText(
-          text: 'Booking Details',
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w600,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDetailRow('Customer', booking.customerName),
-            _buildDetailRow('Service', booking.service),
-            _buildDetailRow('Date', booking.date),
-            _buildDetailRow('Time', booking.time),
-            _buildDetailRow('Booking ID', booking.bookingId),
-            _buildDetailRow('Price', 'BDT ${booking.price}'),
-            _buildDetailRow('Status', booking.status.name.capitalize!),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: CommonText(
-              text: 'Close',
-              fontSize: 14.sp,
-              color: AppColors.primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80.w,
-            child: CommonText(
-              text: '$label:',
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[700]!,
-            ),
-          ),
-          Expanded(
-            child: CommonText(
-              text: value,
-              fontSize: 14.sp,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Accept booking (for pending bookings)
-  void acceptBooking(BookingModel booking) {
-    print('Accepting booking: ${booking.bookingId}');
-    // Add API call logic here
-
-    // Update booking status locally
-    final index = allBookings.indexOf(booking);
-    if (index != -1) {
-      allBookings[index] = BookingModel(
-        customerName: booking.customerName,
-        service: booking.service,
-        date: booking.date,
-        time: booking.time,
-        bookingId: booking.bookingId,
-        price: booking.price,
-        profileImage: booking.profileImage,
-        status: BookingStatus.upcoming,
-      );
-      update();
-    }
-  }
-
-  // Reject booking (for pending bookings)
-  void rejectBooking(BookingModel booking) {
-    print('Rejecting booking: ${booking.bookingId}');
-    // Add API call logic here
-
-    // Update booking status locally
-    final index = allBookings.indexOf(booking);
-    if (index != -1) {
-      allBookings[index] = BookingModel(
-        customerName: booking.customerName,
-        service: booking.service,
-        date: booking.date,
-        time: booking.time,
-        bookingId: booking.bookingId,
-        price: booking.price,
-        profileImage: booking.profileImage,
-        status: BookingStatus.canceled,
-      );
-      update();
-    }
-  }
-
-  // Cancel upcoming booking
-  void cancelBooking(BookingModel booking) {
-    print('Canceling booking: ${booking.bookingId}');
-    // Add API call logic here
-
-    // Update booking status locally
-    final index = allBookings.indexOf(booking);
-    if (index != -1) {
-      allBookings[index] = BookingModel(
-        customerName: booking.customerName,
-        service: booking.service,
-        date: booking.date,
-        time: booking.time,
-        bookingId: booking.bookingId,
-        price: booking.price,
-        profileImage: booking.profileImage,
-        status: BookingStatus.canceled,
-      );
-      update();
-    }
-  }
-
-  // Mark booking as completed
-  void completeBooking(BookingModel booking) {
-    print('Completing booking: ${booking.bookingId}');
-    // Add API call logic here
-
-    // You can add a completed status or remove from list
-    allBookings.removeWhere((b) => b.bookingId == booking.bookingId);
-    update();
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 }

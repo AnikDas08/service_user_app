@@ -13,36 +13,41 @@ class AlreadyAccountRichText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(
-        children: [
-          /// Already Have Account
-          TextSpan(
-            text: AppString.already_have_account_chair,
-            style: GoogleFonts.plusJakartaSans(
-              color: AppColors.primaryColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: (){
+        Get.toNamed(AppRoutes.signIn);
+      },
+      child: Text.rich(
+        TextSpan(
+          children: [
+            /// Already Have Account
+            TextSpan(
+              text: AppString.already_have_account_chair,
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.primaryColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
             ),
-          ),
 
-
-          TextSpan(
-            text: AppString.signIn,
-            recognizer:
-            TapGestureRecognizer()
-              ..onTap = () {
-                Get.offNamed(AppRoutes.signIn);
-              },
-            style: GoogleFonts.plusJakartaSans(
-              color: AppColors.primaryColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+            /// Sign In Button Here
+            TextSpan(
+              text: AppString.signIn,
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      Get.offNamed(AppRoutes.signIn);
+                    },
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.primaryColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
+        textAlign: TextAlign.center,
       ),
-      textAlign: TextAlign.center,
     );
   }
 }

@@ -46,13 +46,13 @@ class CommonText extends StatelessWidget {
         bottom: bottom.h,
       ),
       child: Text(
-        text.tr,
         textAlign: textAlign,
+        text.tr,
         maxLines: maxLines,
         overflow: overflow,
         style:
             style ??
-            GoogleFonts.poppins(
+            GoogleFonts.roboto(
               fontSize: fontSize.sp,
               fontWeight: fontWeight,
               color: color,

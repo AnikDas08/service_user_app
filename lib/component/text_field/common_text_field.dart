@@ -176,7 +176,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
     );
 
     if (!shouldBeMultiline && widget.height != null) {
-      return Container(height: widget.height, child: textField);
+      return SizedBox(height: widget.height, child: textField);
     }
 
     return textField;

@@ -36,6 +36,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(height: 12,),
                   SizedBox(height: 9,),
                   /// User Name here
                   const CommonText(

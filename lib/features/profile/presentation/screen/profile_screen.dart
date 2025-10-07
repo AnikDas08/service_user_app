@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/widgets/contract_support_dialog_profile.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
+import 'package:haircutmen_user_app/utils/constants/app_images.dart';
 import '../../../../../config/route/app_routes.dart';
 import '../../../../component/other_widgets/item.dart';
 import '../../../../component/text/common_text.dart';
@@ -18,6 +20,7 @@ class ProfileScreen extends StatelessWidget {
     return Scaffold(
       /// Body Section Starts here
       body: GetBuilder<ProfileController>(
+        init: ProfileController(),
         builder: (controller) {
           return SafeArea(
             child: Padding(
@@ -27,20 +30,21 @@ class ProfileScreen extends StatelessWidget {
                   CustomAppBar(title: AppString.profile_text,showBackButton: false,),
                   /// User Profile Image here
                   Center(
-                    child: CircleAvatar(
-                      radius: 60.sp,
-                      backgroundColor: Colors.transparent,
-                      child: Image.asset(
-                        "assets/images/profile_image.png",
-                        fit: BoxFit.cover,
+                    child: Center(
+                      child: CircleAvatar(
+                        radius: 60.sp,
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: controller.profileData?.image == null
+                            ? AssetImage(AppImages.facebook) as ImageProvider
+                            : NetworkImage(ApiEndPoint.imageUrl + controller.profileData!.image!),
                       ),
                     ),
                   ),
                   SizedBox(height: 12,),
                   SizedBox(height: 9,),
                   /// User Name here
-                  const CommonText(
-                    text: "Sohidul Islam",
+                  CommonText(
+                    text: controller.profileData?.name ?? 'Loading...',
                     fontSize: 18,
                     fontWeight: FontWeight.w400,
                   ),

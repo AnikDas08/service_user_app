@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
+import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import '../../../../../../utils/extensions/extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../../component/button/common_button.dart';
 import '../../../../../component/text/common_text.dart';
+import '../../../../../config/route/app_routes.dart';
 import '../controller/sign_up_controller.dart';
 import '../../../../../../utils/constants/app_string.dart';
 import '../widget/already_accunt_rich_text.dart';
@@ -18,7 +20,7 @@ class SignUpScreen extends StatelessWidget {
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
       /// App Bar Section Starts Here
-      appBar: AppBar(),
+
 
       /// Body Section Starts Here
       body: GetBuilder<SignUpController>(
@@ -28,6 +30,9 @@ class SignUpScreen extends StatelessWidget {
             child: Column(
               children: [
                 /// Logo text here
+                CustomAppBar(title: "",onBackTap: (){
+                  Get.offAllNamed(AppRoutes.onboarding);
+                },),
                 const CommonText(
                   text: AppString.onboarding_text,
                   fontSize: 24,

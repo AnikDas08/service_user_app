@@ -9,6 +9,7 @@ import '../../features/auth/sign up/presentation/controller/sign_up_controller.d
 import '../../features/message/presentation/controller/chat_controller.dart';
 import '../../features/message/presentation/controller/message_controller.dart';
 import '../../features/notifications/presentation/controller/notifications_controller.dart';
+import '../../features/profile/presentation/controller/edit_profile_controller.dart';
 import '../../features/profile/presentation/controller/profile_controller.dart';
 import '../../features/setting/presentation/controller/privacy_policy_controller.dart';
 import '../../features/setting/presentation/controller/setting_controller.dart';
@@ -37,5 +38,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => ScanController(), fenix: true);
     Get.lazyPut(() => FavouriteController(), fenix: true);
     Get.lazyPut(() => ServiceDetailsController(), fenix: true);
+    Get.lazyPut(() => EditProfileController(), fenix: true);
   }
 }

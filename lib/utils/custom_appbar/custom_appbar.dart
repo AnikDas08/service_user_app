@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../constants/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final bool showBackButton;
   final bool showMessage;
-  final bool showRightButton; // ✅ NEW
-  final VoidCallback? onRightButtonTap; // ✅ NEW
-  final IconData rightIcon; // ✅ NEW
+  final bool showRightButton;
+  final VoidCallback? onBackTap; // ✅ Custom back button handler
+  final VoidCallback? onRightButtonTap;
+  final IconData rightIcon;
   final Color backgroundColor;
   final Color titleColor;
   final Color iconColors;
@@ -22,9 +22,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.title,
     this.showBackButton = true,
     this.showMessage = true,
-    this.showRightButton = false, // ✅ Default false
+    this.showRightButton = false,
+    this.onBackTap, // ✅ Added
     this.onRightButtonTap,
-    this.rightIcon = Icons.more_vert, // ✅ Default Icon
+    this.rightIcon = Icons.more_vert,
     this.backgroundColor = Colors.transparent,
     this.titleColor = Colors.black,
     this.iconColors = Colors.black,
@@ -40,10 +41,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
+          // ✅ Centered title
           if (showMessage)
             Center(
               child: Text(
-                title!.tr,
+                title?.tr ?? '',
                 style: textStyle ??
                     GoogleFonts.poppins(
                       textStyle: TextStyle(
@@ -55,23 +57,29 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
 
-          // Back button
+          // ✅ Left Back Button
           if (showBackButton)
             Positioned(
               left: 0,
               child: GestureDetector(
-                onTap: () => Get.back(),
-                child: _buildIconButton(Icons.arrow_back),
+                onTap: onBackTap ?? () => Get.back(), // ✅ Custom or default
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: _buildIconButton(Icons.arrow_back),
+                ),
               ),
             ),
 
-          // ✅ Right button
+          // ✅ Right Button
           if (showRightButton)
             Positioned(
               right: 0,
               child: GestureDetector(
                 onTap: onRightButtonTap,
-                child: _buildIconButton(rightIcon),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: _buildIconButton(rightIcon),
+                ),
               ),
             ),
         ],
@@ -81,8 +89,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _buildIconButton(IconData icon) {
     return Container(
-      padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(5),
+      decoration: const BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: [

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/component/text_field/common_text_field.dart';
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
@@ -15,32 +16,9 @@ class EditProfile extends StatelessWidget {
   EditProfile({super.key});
   String? selectedLocation;
 
-  List<String> locations = [
-    'New York',
-    'Los Angeles',
-    'Chicago',
-    'Houston',
-    'Phoenix',
-    'Philadelphia',
-    'San Antonio',
-    'San Diego',
-    'Dallas',
-    'San Jose',
-    'Austin',
-    'Jacksonville',
-    'Fort Worth',
-    'Columbus',
-    'Charlotte',
-    'San Francisco',
-    'Indianapolis',
-    'Seattle',
-    'Denver',
-    'Boston',
-    // Add more locations as needed
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final controller=Get.find<EditProfileController>();
     return GetBuilder<EditProfileController>(
       init: EditProfileController(),
       builder: (controller) {
@@ -53,24 +31,51 @@ class EditProfile extends StatelessWidget {
                   CustomAppBar(title: AppString.edit_profile_button,),
                   SizedBox(height: 20,),
                   Obx(
-                        ()=> Stack(
+                        () => Stack(
                       children: [
                         CircleAvatar(
                           radius: 60,
                           child: ClipRRect(
-                              borderRadius: BorderRadius.circular(60),
-                              child: controller.profileImage.value!=null?Image.file(
-                                controller.profileImage.value!,
-                                width: 120.w,
-                                height: 120.h,
-                                fit: BoxFit.cover,
-                              ):
-                              Image.asset(
-                                "assets/images/item_image.png",
-                                width: 120.w,
-                                height: 120.h,
-                                fit: BoxFit.cover,
-                              )
+                            borderRadius: BorderRadius.circular(60),
+                            child: controller.profileImage.value != null
+                                ? Image.file(
+                              controller.profileImage.value!,
+                              width: 120.w,
+                              height: 120.h,
+                              fit: BoxFit.cover,
+                            )
+                                : controller.profileData?.image != null
+                                ? Image.network(
+                              ApiEndPoint.imageUrl + controller.profileData!.image!,
+                              width: 120.w,
+                              height: 120.h,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  "assets/images/item_image.png",
+                                  width: 120.w,
+                                  height: 120.h,
+                                  fit: BoxFit.cover,
+                                );
+                              },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            )
+                                : Image.asset(
+                              "assets/images/item_image.png",
+                              width: 120.w,
+                              height: 120.h,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Positioned(
@@ -84,7 +89,7 @@ class EditProfile extends StatelessWidget {
                               border: Border.all(color: Colors.white, width: 2),
                             ),
                             child: GestureDetector(
-                              onTap: (){
+                              onTap: () {
                                 controller.handleImageUpload();
                               },
                               child: SvgPicture.asset(
@@ -128,15 +133,18 @@ class EditProfile extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.full_name, hintText: AppString.hints_full_name,),
+                        EditPersonal(title: AppString.full_name, controller: controller.nameController,),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.contact_number_text, hintText: AppString.contact_hint,),
+                        EditPersonal(title: AppString.contact_number_text, controller: controller.numberController,),
                         SizedBox(height: 12,),
-                        EditPersonal(title: AppString.multiple_location, hintText: AppString.location_hint,),
+                        EditPersonal(title: AppString.multiple_location, controller: controller.locationController,),
                         SizedBox(height: 12,),
-                        _buildLocationDropdown(controller),
+                        EditPersonal(title: AppString.add_primary_locatiopn, controller: controller.primaryLocationController,),
                         SizedBox(height: 20.h,),
-                        CustomButton(text: AppString.confirm_button, isSelected: true, onTap: (){})
+                        CustomButton(text: AppString.confirm_button, isSelected: true, onTap: (){
+                          controller.editProfileRepo();
+                          controller.update();
+                        })
                       ],
                     ),
                   ),
@@ -208,11 +216,11 @@ class EditProfile extends StatelessWidget {
 
 class EditPersonal extends StatelessWidget {
   final String title;
-  final String hintText;
+  final TextEditingController controller;
   const EditPersonal({
     super.key,
     required this.title,
-    required this.hintText,
+    required this.controller
   });
 
   @override
@@ -229,9 +237,9 @@ class EditPersonal extends StatelessWidget {
         ),
         SizedBox(height: 6,),
         CommonTextField(
-          hintText: hintText,
+          controller: controller,
           hintTextColor: AppColors.black400,
-          height: 44,
+          //height: 44,
         )
       ],
     );

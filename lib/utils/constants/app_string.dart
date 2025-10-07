@@ -181,6 +181,8 @@ class AppString {
   static const String contact_details_text="Contact Details";
   static const String contact_number_text="Contact Number";
   static const String multiple_location="Location(multiple)";
+  static const String add_primary_locatio="Add Primary Location";
+  static const String add_primary_hint="Type Your address";
   static const String appoint_scan_text="Appointment\nSuccessfully Complete";
   static const String review_profile="Review";
   static const String email_address_text="Email Address";

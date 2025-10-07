@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 
 import '../../../../../component/text/common_text.dart';
 import '../../../../../config/route/app_routes.dart';
+import '../../../../../services/storage/storage_keys.dart';
+import '../../../../../services/storage/storage_services.dart';
 import '../../../../../utils/constants/app_string.dart';
 import '../../../../home/widget/custom_button_home.dart';
 
@@ -51,6 +53,10 @@ simpleDialog() async {
                 //Navigator.of(Get.context!).pop();
                 // Then navigate to sign in screen with offAll to clear the navigation stack
                 Get.back();
+                LocalStorage.token="";
+                LocalStorage.isLogIn=false;
+                LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
+                LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
                 Get.offAllNamed(AppRoutes.signIn);
               }
             )

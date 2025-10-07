@@ -173,14 +173,14 @@ class OnboardingScreen extends StatelessWidget {
           ),
           child: CommonImage(imageSrc: AppImages.facebook, size: 24),
         ),
-        Container(
+       /* Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.black50,
             borderRadius: BorderRadius.circular(100),
           ),
           child: CommonImage(imageSrc: AppImages.apple, size: 24),
-        ),
+        ),*/
       ],
     );
   }

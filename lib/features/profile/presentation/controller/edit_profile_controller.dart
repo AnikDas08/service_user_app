@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/home/presentation/controller/home_nav_controller.dart';
+import 'package:haircutmen_user_app/features/profile/data/profiles_model.dart';
+import 'package:haircutmen_user_app/features/profile/presentation/controller/profile_controller.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,9 +30,14 @@ class EditProfileController extends GetxController {
   /// edit button loading here
   bool isLoading = false;
 
+  bool isProfileLoading=false;
+  ProfileData? profileData;
+
   /// all controller here
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController primaryLocationController = TextEditingController();
 
   RxList<String> uploadedImages = <String>[].obs;
   Rx<File?> profileImage = Rx<File?>(null);
@@ -65,6 +73,12 @@ class EditProfileController extends GetxController {
     selectedLocation.value = location;
   }
 
+  @override
+  void onInit() {
+    super.onInit();
+    getProfile();
+  }
+
 
 
   /// select image function here
@@ -78,6 +92,38 @@ class EditProfileController extends GetxController {
     selectedLanguage = languages[index];
     update();
     Get.back();
+  }
+
+  Future<void> getProfile()async{
+    isProfileLoading=true;
+    update();
+    try{
+      final response=await ApiService.get(
+          ApiEndPoint.user,
+          header: {
+            "Authorization": "Bearer ${LocalStorage.token}"
+          }
+      );
+      if(response.statusCode==200){
+        final profileModel=ProfileModel.fromJson(response.data);
+        profileData = profileModel.data;
+        print("ksdljkdlsjfdkfj $profileData");
+        nameController.text=profileData?.name??"";
+        numberController.text=profileData?.contact??"";
+        locationController.text=profileData?.location??"";
+        primaryLocationController.text=profileData?.location??"";
+      }
+      else{
+        ///rtrfgg
+        Utils.errorSnackBar(response.statusCode, response.message);
+      }
+    }
+    catch(e){
+      Utils.errorSnackBar(0, e.toString());
+    }
+    isProfileLoading=false;
+    update();
+
   }
 
   Future<void> handleImageUpload() async {
@@ -192,6 +238,7 @@ class EditProfileController extends GetxController {
 
       if (pickedFile != null) {
         profileImage.value = File(pickedFile.path);
+        image = pickedFile.path;
         Get.snackbar(
           "Success",
           "Profile image updated successfully",
@@ -206,48 +253,66 @@ class EditProfileController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     }
+    update();
   }
 
   /// update profile function here
   Future<void> editProfileRepo() async {
-    if (!formKey.currentState!.validate()) return;
+    final token = LocalStorage.token;
+    if (token == null || token.isEmpty) {
+      Utils.errorSnackBar(0, "Token not found, please login again");
+      return;
+    }
 
-    if (!LocalStorage.isLogIn) return;
     isLoading = true;
     update();
 
-    Map<String, String> body = {
-      "fullName": nameController.text,
-      "phone": numberController.text,
-    };
+    try {
+      // Prepare body
+      Map<String, String> body = {
+        "name": nameController.text.trim(),
+        "contact": numberController.text.trim(),
+        "location": locationController.text.trim(),
+      };
 
-    var response = await ApiService.multipart(
-      ApiEndPoint.user,
-      body: body,
-      imagePath: image,
-      imageName: "image",
-    );
+      String? imagePath = profileImage.value?.path;
 
-    if (response.statusCode == 200) {
-      var data = response.data;
+      final response = await ApiService.multipart(
+        ApiEndPoint.user,
+        header: {"Authorization": "Bearer $token"},
+        body: body,
+        method: "PATCH", // since you want to update
+        imageName: "image",
+        imagePath: imagePath,
+      );
 
-      LocalStorage.userId = data['data']?["_id"] ?? "";
-      LocalStorage.myImage = data['data']?["image"] ?? "";
-      LocalStorage.myName = data['data']?["fullName"] ?? "";
-      LocalStorage.myEmail = data['data']?["email"] ?? "";
-
-      LocalStorage.setString("userId", LocalStorage.userId);
-      LocalStorage.setString("myImage", LocalStorage.myImage);
-      LocalStorage.setString("myName", LocalStorage.myName);
-      LocalStorage.setString("myEmail", LocalStorage.myEmail);
-
-      Utils.successSnackBar("Successfully Profile Updated", response.message);
-      Get.toNamed(AppRoutes.profile);
-    } else {
-      Utils.errorSnackBar(response.statusCode, response.message);
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        if (data != null) {
+          profileData = profileData?.copyWith(
+            name: data['name'] ?? profileData?.name,
+            contact: data['contact'] ?? profileData?.contact,
+            location: data['location'] ?? profileData?.location,
+            image: data['image'] ?? profileData?.image,
+          );
+          final profileModel=ProfileModel.fromJson(response.data);
+          update();
+          Utils.successSnackBar("Profile Updated Successfully", response.message);
+        } else {
+          Utils.errorSnackBar(response.statusCode, "No data returned from server");
+        }
+      } else {
+        Utils.errorSnackBar(response.statusCode, response.message);
+      }
+    } catch (e) {
+      Utils.errorSnackBar(0, e.toString());
     }
 
     isLoading = false;
     update();
   }
+
+
+
+
 }

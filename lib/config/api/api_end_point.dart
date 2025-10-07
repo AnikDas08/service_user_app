@@ -11,7 +11,7 @@ class ApiEndPoint {
   static const verifyOtp = "auth/verify-otp";
   static const resetPassword = "auth/reset-password";
   static const changePassword = "auth/change-password";
-  static const user = "users";
+  static const user = "user/profile";
   static const notifications = "notifications";
   static const privacyPolicies = "privacy-policies";
   static const termsOfServices = "terms-and-conditions";

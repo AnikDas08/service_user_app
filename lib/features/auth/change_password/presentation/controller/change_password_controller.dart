@@ -3,12 +3,14 @@ import 'package:get/get.dart';
 
 import '../../../../../services/api/api_service.dart';
 import '../../../../../config/api/api_end_point.dart';
+import '../../../../../services/storage/storage_services.dart';
 import '../../../../../utils/app_utils.dart';
 import '../widget/popup_button.dart';
 
 class ChangePasswordController extends GetxController {
   bool isLoading = false;
   final formKey = GlobalKey<FormState>();
+  final token = LocalStorage.token;
 
   TextEditingController currentPasswordController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
@@ -25,20 +27,24 @@ class ChangePasswordController extends GetxController {
     // For demo purposes, show success dialog directly
     // In production, uncomment the API call below
     await Future.delayed(Duration(milliseconds: 500)); // Simulate API call
-    simpleDialog();
+    //simpleDialog();
     
-    isLoading = false;
-    update();
-    return;
+    //isLoading = false;
+    //update();
+    //return;
     
     // Production code (currently disabled for demo)
     Map<String, String> body = {
-      "oldPassword": currentPasswordController.text,
+      "currentPassword": currentPasswordController.text,
       "newPassword": newPasswordController.text,
+      "confirmPassword": newPasswordController.text,
     };
     var response = await ApiService.patch(
       ApiEndPoint.changePassword,
       body: body,
+      header: {
+        "Authorization": "Bearer $token"
+      }
     );
 
     if (response.statusCode == 200) {

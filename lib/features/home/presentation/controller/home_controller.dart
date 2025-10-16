@@ -1,115 +1,232 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
+import 'package:haircutmen_user_app/services/storage/storage_services.dart';
+import '../../../../services/api/api_service.dart';
+import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
 
-  // Simple favorite list using provider names as identifiers
-  final RxList<String> favoriteNames = <String>[].obs;
+  // Favorite list using provider IDs
+  final RxList<String> favoriteIds = <String>[].obs;
 
-  // Sample data
-  final RxList<Map<String, dynamic>> serviceProviders = <Map<String, dynamic>>[].obs;
-  final RxList<Map<String, dynamic>> filteredProviders = <Map<String, dynamic>>[].obs;
+  // Provider data from API
+  final RxList<ProviderModel> serviceProviders = <ProviderModel>[].obs;
+  final RxList<ProviderModel> filteredProviders = <ProviderModel>[].obs;
+  final RxBool isLoadingProviders = false.obs;
+
+  // Categories from API
+  final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
+  final RxBool isLoadingCategories = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadServiceProviders();
+    fetchCategories(); // Fetch categories first
+    fetchServiceProviders(); // Fetch providers from API
+
+    // Listen to search input
+    searchController.addListener(_onSearchChanged);
   }
 
-  // Simple favorite toggle
-  void toggleFavorite(String providerName) {
-    if (favoriteNames.contains(providerName)) {
-      favoriteNames.remove(providerName);
+  // Search functionality
+  void _onSearchChanged() {
+    final query = searchController.text.toLowerCase();
+    if (query.isEmpty) {
+      filteredProviders.value = serviceProviders;
     } else {
-      favoriteNames.add(providerName);
+      filteredProviders.value = serviceProviders.where((provider) {
+        return provider.name.toLowerCase().contains(query) ||
+            provider.category.toLowerCase().contains(query) ||
+            provider.subCategory.toLowerCase().contains(query);
+      }).toList();
+    }
+  }
+
+  // Fetch service providers from API
+  Future<void> fetchServiceProviders() async {
+    try {
+      isLoadingProviders.value = true;
+
+      final response = await ApiService.get(
+        ApiEndPoint.provider,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final providersResponse = ProvidersResponse.fromJson(response.data);
+
+        if (providersResponse.success) {
+          serviceProviders.value = providersResponse.data;
+          filteredProviders.value = providersResponse.data;
+          update();
+        } else {
+          Get.snackbar(
+            "Error",
+            providersResponse.message,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          "Error",
+          response.message ?? "Failed to load providers",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "An error occurred: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingProviders.value = false;
+    }
+  }
+
+  // Fetch categories from API
+  Future<void> fetchCategories() async {
+    try {
+      isLoadingCategories.value = true;
+
+      final response = await ApiService.get(
+        ApiEndPoint.category,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+
+        categories.value = data.map((item) {
+          return {
+            "id": item['_id'],
+            "name": item['name'],
+            "icon": item['icon'],
+          };
+        }).toList();
+
+        update();
+      } else {
+        Get.snackbar(
+          "Error",
+          response.message ?? "Failed to load categories",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "An error occurred: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingCategories.value = false;
+    }
+  }
+
+  // Toggle favorite
+  void toggleFavorite(String providerId) {
+    if (favoriteIds.contains(providerId)) {
+      favoriteIds.remove(providerId);
+    } else {
+      favoriteIds.add(providerId);
     }
     update();
   }
 
   // Check if a provider is favorite
-  bool isFavorite(String providerName) {
-    return favoriteNames.contains(providerName);
+  bool isFavorite(String providerId) {
+    return favoriteIds.contains(providerId);
   }
 
   // Get all favorite providers
-  List<Map<String, dynamic>> get favoriteProviders {
-    return serviceProviders.where((provider) => isFavorite(provider["name"]!)).toList();
+  List<ProviderModel> get favoriteProviders {
+    return serviceProviders.where((provider) => isFavorite(provider.id)).toList();
   }
 
-  void _loadServiceProviders() {
-    // Sample data
-    serviceProviders.value = [
-      {
-        "name": "Angle Mariomi",
-        "service": "Haircut",
-        "distance": "2km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-      {
-        "name": "Angle Priya",
-        "service": "Nail Caring",
-        "distance": "5km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-      {
-        "name": "Samim Akter",
-        "service": "Massage",
-        "distance": "4km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-      {
-        "name": "Sohidul Hasan",
-        "service": "Skin Caring",
-        "distance": "6km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-    ];
-    filteredProviders.value = serviceProviders;
-  }
-
-  /*void searchProviders(String query) {
-    if (query.isEmpty) {
-      filteredProviders.value = serviceProviders;
-    } else {
-      filteredProviders.value = serviceProviders
-          .where((provider) =>
-      provider["name"]!.toLowerCase().contains(query.toLowerCase()) ||
-          provider["service"]!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    }
-  }*/
-
+  // Filter by category
   void onServiceCategoryTap(String category) {
     if (category == "All") {
       filteredProviders.value = serviceProviders;
     } else {
       filteredProviders.value = serviceProviders
-          .where((provider) => provider["service"]!.toLowerCase().contains(category.toLowerCase()))
+          .where((provider) =>
+      provider.category.toLowerCase().contains(category.toLowerCase()) ||
+          provider.subCategory.toLowerCase().contains(category.toLowerCase()))
           .toList();
     }
   }
 
-  void onProviderTap(Map<String, dynamic> provider) {
-    Get.to(() => const ServiceDetailsScreen(), arguments: provider);
+  // Navigate to provider details
+  void onProviderTap(String id) {
+    Get.to(() => const ServiceDetailsScreen(), arguments: id);
   }
 
-  /*void onFavoriteTap(Map<String, dynamic> provider) {
-    toggleFavorite(provider["name"]!);
-  }*/
+  // Apply filters from bottom sheet
+  void applyFilters(Map<String, dynamic> filterData) {
+    List<ProviderModel> filtered = List.from(serviceProviders);
+
+    // Filter by category
+    if (filterData['category'] != null) {
+      final selectedCategory = filterData['category'] as String;
+      filtered = filtered.where((provider) =>
+      provider.category.toLowerCase() == selectedCategory.toLowerCase() ||
+          provider.subCategory.toLowerCase() == selectedCategory.toLowerCase()).toList();
+    }
+
+    // Filter by location
+    if (filterData['location'] != null) {
+      final selectedLocation = filterData['location'] as String;
+      // Assuming you have location field in ProviderModel
+      // filtered = filtered.where((provider) =>
+      //     provider.location.toLowerCase().contains(selectedLocation.toLowerCase())).toList();
+    }
+
+    // Filter by price range
+    if (filterData['priceRange'] != null) {
+      final maxPrice = filterData['priceRange'] as double;
+      filtered = filtered.where((provider) =>
+      provider.price <= maxPrice).toList();
+    }
+
+    // Filter by date (if you need date-based filtering in the future)
+    if (filterData['date'] != null) {
+      // Add date filtering logic if needed
+    }
+
+    // Filter by time (if you need time-based filtering in the future)
+    if (filterData['time'] != null) {
+      // Add time filtering logic if needed
+    }
+
+    filteredProviders.value = filtered;
+    update();
+  }
+
+  // Refresh data
+  Future<void> refreshData() async {
+    await Future.wait([
+      fetchCategories(),
+      fetchServiceProviders(),
+    ]);
+  }
 
   @override
   void onClose() {

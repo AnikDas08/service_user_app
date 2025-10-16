@@ -1,90 +1,111 @@
 import 'package:get/get.dart';
-
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
+import '../../../../services/api/api_service.dart';
+import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
 
 class DetailsController extends GetxController {
   final RxList<String> favoriteNames = <String>[].obs;
-  final RxList<Map<String, dynamic>> serviceProviders = <Map<String, dynamic>>[].obs;
-  RxString category="".obs;
-
+  final RxList<ProviderModel> serviceProviders = <ProviderModel>[].obs;
+  RxString category = "".obs;
+  RxString id = "".obs;
+  RxBool isLoading = false.obs;
+  RxString errorMessage = "".obs;
 
   @override
   void onInit() {
     super.onInit();
 
-    final arg = Get.arguments;
-    if (arg != null && arg is String) {
-      category.value = arg;
-    } else {
-      category.value = "";
+    final args = Get.arguments;
+    if (args != null) {
+      id.value = args["id"] ?? "";
+      category.value = args["name"] ?? "";
+
+      if (id.value.isNotEmpty) {
+        _loadServiceProviders();
+      }
     }
-    _loadServiceProviders();
   }
 
-  void _loadServiceProviders() {
-    // Sample data
-    serviceProviders.value = [
-      {
-        "name": "Angle Mariomi",
-        "service": category.value,
-        "distance": "2km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-      {
-        "name": "Angle Priya",
-        "service": category.value,
-        "distance": "5km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-      {
-        "name": "Samim Akter",
-        "service": category.value,
-        "distance": "4km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-      {
-        "name": "Sohidul Hasan",
-        "service": category.value,
-        "distance": "6km",
-        "rating": "4.5",
-        "reviews": "200",
-        "price": "RSD 2500",
-        "image": "assets/images/item_image.png",
-      },
-    ];
+  Future<void> _loadServiceProviders() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = "";
+
+      final response = await ApiService.get(
+        '${ApiEndPoint.provider}?categoryId=${id.value}',
+        header: {
+          'Content-Type': 'application/json',
+          // Add authorization token if needed
+          // 'Authorization': 'Bearer ${your_token}',
+        },
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final providersResponse = ProvidersResponse.fromJson(response.data);
+
+        if (providersResponse.success) {
+          serviceProviders.value = providersResponse.data;
+
+          if (serviceProviders.isEmpty) {
+            errorMessage.value = "No service providers found for this category";
+          }
+        } else {
+          errorMessage.value = providersResponse.message;
+        }
+      } else {
+        errorMessage.value = response.message ?? "Failed to load service providers";
+      }
+    } catch (e) {
+      errorMessage.value = "An error occurred: ${e.toString()}";
+      print("Error loading service providers: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  void toggleFavorite(String providerName) {
-    if (favoriteNames.contains(providerName)) {
-      favoriteNames.remove(providerName);
+  void toggleFavorite(String providerId) {
+    if (favoriteNames.contains(providerId)) {
+      favoriteNames.remove(providerId);
     } else {
-      favoriteNames.add(providerName);
+      favoriteNames.add(providerId);
     }
     update();
   }
 
-  bool isFavorite(String providerName) {
-    return favoriteNames.contains(providerName);
-  }
-  void onProviderTap(Map<String, dynamic> provider) {
-    Get.to(() => const ServiceDetailsScreen(), arguments: provider);
-  }
-  List<Map<String, dynamic>> get favoriteProviders {
-    return serviceProviders.where((provider) => isFavorite(provider["name"]!)).toList();
+  bool isFavorite(String providerId) {
+    return favoriteNames.contains(providerId);
   }
 
-  void onServiceCategoryTap(String category) {
-      serviceProviders.value = serviceProviders
-          .where((provider) => provider["service"]!.toLowerCase().contains(category.toLowerCase()))
-          .toList();
+  void onProviderTap(String id) {
+    Get.to(() => const ServiceDetailsScreen(), arguments: id);
+  }
+
+  List<ProviderModel> get favoriteProviders {
+    return serviceProviders
+        .where((provider) => isFavorite(provider.id))
+        .toList();
+  }
+
+  void onServiceCategoryTap(String categoryName) {
+    serviceProviders.value = serviceProviders
+        .where((provider) =>
+    provider.category.toLowerCase().contains(categoryName.toLowerCase()) ||
+        provider.subCategory.toLowerCase().contains(categoryName.toLowerCase()))
+        .toList();
+  }
+
+  // Helper method to calculate distance (you may need to implement actual distance calculation)
+  String getDistance(ProviderModel provider) {
+    // Implement distance calculation based on user's location and provider's location
+    // For now, returning service distance
+    return "${provider.serviceDistance}km";
+  }
+
+  // Retry loading providers
+  void retryLoading() {
+    if (id.value.isNotEmpty) {
+      _loadServiceProviders();
     }
+  }
 }

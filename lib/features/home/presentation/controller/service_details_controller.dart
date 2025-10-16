@@ -1,5 +1,10 @@
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/home/data/model/provider_response.dart';
+import 'package:haircutmen_user_app/services/api/api_service.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
+import '../../../../config/api/api_end_point.dart';
+import '../../../../services/storage/storage_services.dart';
+import '../../data/model/schedul_class.dart';
 import '../widgets/booking_dialog.dart';
 
 class TimeSlot {
@@ -20,29 +25,39 @@ class TimeSlot {
 }
 
 class ServiceDetailsController extends GetxController {
-  Map<String, dynamic> serviceProvider = {};
+  ProvidersData? providerData;
+  String? id;
 
+  final RxBool isLoading = true.obs;
   final RxBool isFavorite = false.obs;
+  final RxBool isLoadingSchedule = false.obs;
   final RxList<Map<String, dynamic>> workPhotos = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> reviews = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> services = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> availability = <Map<String, dynamic>>[].obs;
   final RxList<String> selectedServiceIds = <String>[].obs;
 
-  // Simplified Time Slot System
   final RxList<TimeSlot> availableTimeSlots = <TimeSlot>[].obs;
   final selectedTimeSlots = <TimeSlot>[].obs;
+
+  // Schedule data from API
+  final RxList<ScheduleData> providerSchedule = <ScheduleData>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    serviceProvider = Get.arguments ?? {};
-    _loadData();
+
+    if (Get.arguments != null) {
+      id = Get.arguments;
+    }
+
+    _loadStaticData();
     _generateTimeSlots();
+    _loadProvider();
   }
 
-  void _loadData() {
-    // Load work photos
+  void _loadStaticData() {
+    // Load work photos (static for now)
     workPhotos.value = [
       {"image": "assets/images/work1.png"},
       {"image": "assets/images/work2.png"},
@@ -50,7 +65,7 @@ class ServiceDetailsController extends GetxController {
       {"image": "assets/images/work4.png"},
     ];
 
-    // Load reviews
+    // Load reviews (static for now)
     reviews.value = [
       {
         "name": "Rahad Ullah",
@@ -68,57 +83,37 @@ class ServiceDetailsController extends GetxController {
       },
     ];
 
-    // Load services with proper structure
-    services.value = [
-      {
-        "id": "1",
-        "name": "Hair Cut",
-        "type": "Color Cut",
-        "price": "RSD 2500",
-        "duration": "1 hour",
-        "selected": false
-      },
-      {
-        "id": "2",
-        "name": "hair cut",
-        "type": "Hair Wash",
-        "price": "RSD 1500",
-        "duration": "1 hour",
-        "selected": false
-      },
-    ];
-
-    // Load availability data
+    // Load availability data (static for now) - Updated to 24-hour format
     availability.value = [
       {
         "day": AppString.monday_text,
         "isAvailable": true,
-        "timeSlots": ["9:00 AM - 12:00 PM", "2:00 PM - 6:00 PM"]
+        "timeSlots": ["09:00 - 12:00", "14:00 - 18:00"]
       },
       {
         "day": AppString.tuesday_text,
         "isAvailable": true,
-        "timeSlots": ["9:00 AM - 12:00 PM", "2:00 PM - 6:00 PM"]
+        "timeSlots": ["09:00 - 12:00", "14:00 - 18:00"]
       },
       {
         "day": AppString.wednesday_text,
         "isAvailable": true,
-        "timeSlots": ["9:00 AM - 12:00 PM", "2:00 PM - 6:00 PM"]
+        "timeSlots": ["09:00 - 12:00", "14:00 - 18:00"]
       },
       {
         "day": AppString.thursday_text,
         "isAvailable": true,
-        "timeSlots": ["9:00 AM - 12:00 PM", "2:00 PM - 6:00 PM"]
+        "timeSlots": ["09:00 - 12:00", "14:00 - 18:00"]
       },
       {
         "day": AppString.friday_text,
         "isAvailable": true,
-        "timeSlots": ["9:00 AM - 12:00 PM", "2:00 PM - 6:00 PM"]
+        "timeSlots": ["09:00 - 12:00", "14:00 - 18:00"]
       },
       {
         "day": AppString.saturday_text,
         "isAvailable": true,
-        "timeSlots": ["10:00 AM - 4:00 PM"]
+        "timeSlots": ["10:00 - 16:00"]
       },
       {
         "day": AppString.sunday_text,
@@ -128,10 +123,146 @@ class ServiceDetailsController extends GetxController {
     ];
   }
 
+  Future<void> _loadProvider() async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiService.get(
+        "${ApiEndPoint.provider}/$id",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dataList = response.data['data'] as List<dynamic>?;
+        if (dataList != null && dataList.isNotEmpty) {
+          providerData = ProvidersData.fromJson(dataList[0]);
+
+          // Convert API services to local format - only services with category
+          _convertServicesToLocalFormat();
+
+          // Update service images if available
+          if (providerData!.serviceImages.isNotEmpty) {
+            workPhotos.value = providerData!.serviceImages
+                .map((img) => {"image": img})
+                .toList();
+          }
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to load provider data',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print("Error loading provider: $e");
+      Get.snackbar(
+        'Error',
+        'Something went wrong',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // NEW METHOD: Load provider schedule from API
+  Future<void> loadProviderSchedule() async {
+    if (providerData?.user.id == null) {
+      Get.snackbar(
+        'Error',
+        'Provider information not available',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    try {
+      isLoadingSchedule.value = true;
+
+      final response = await ApiService.get(
+        "schedule/provider-schedule/${providerData!.user.id}",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final scheduleResponse = ScheduleResponse.fromJson(response.data);
+
+        if (scheduleResponse.success) {
+          providerSchedule.value = scheduleResponse.data
+              .where((schedule) => schedule.isActive)
+              .toList();
+
+          // Sort by date
+          providerSchedule.sort((a, b) => a.date.compareTo(b.date));
+
+          print("Successfully loaded ${providerSchedule.length} schedule slots");
+        } else {
+          Get.snackbar(
+            'Error',
+            'Failed to load schedule',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to fetch schedule',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      print("Error loading provider schedule: $e");
+      Get.snackbar(
+        'Error',
+        'Failed to load provider schedule',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoadingSchedule.value = false;
+    }
+  }
+
+  void _convertServicesToLocalFormat() {
+    if (providerData == null || providerData!.services.isEmpty) {
+      services.value = [];
+      return;
+    }
+
+    // Filter services that have category (exclude ones without category like the "New" service)
+    services.value = providerData!.services
+        .where((service) => service.category != null)
+        .map((service) {
+      // Calculate duration based on price per hour and service price
+      int durationMinutes = 60; // Default 1 hour
+      if (providerData!.pricePerHour > 0 && service.price > 0) {
+        durationMinutes = ((service.price / providerData!.pricePerHour) * 60).round();
+      }
+
+      String duration = durationMinutes >= 60
+          ? '${(durationMinutes / 60).round()} hour${durationMinutes >= 120 ? 's' : ''}'
+          : '$durationMinutes min';
+
+      return {
+        "id": service.id,
+        "name": service.category?.name ?? "Service",
+        "type": service.subCategory?.name ?? service.status,
+        "price": "RSD ${service.price.toInt()}",
+        "duration": duration,
+        "selected": false,
+        "rawPrice": service.price,
+      };
+    }).toList();
+
+    services.refresh();
+  }
+
   // Toggle service selection
   void toggleServiceSelection(String serviceId) {
-    print("Toggling service: $serviceId");
-
     int index = services.indexWhere((service) => service['id'] == serviceId);
     if (index != -1) {
       bool currentSelection = services[index]['selected'] ?? false;
@@ -145,27 +276,20 @@ class ServiceDetailsController extends GetxController {
         selectedServiceIds.remove(serviceId);
       }
 
-      print("Service ${services[index]['name']} is now ${services[index]['selected'] ? 'selected' : 'unselected'}");
-      print("Selected IDs: $selectedServiceIds");
-
-      // Force update the UI
       services.refresh();
       selectedServiceIds.refresh();
       update();
     }
   }
 
-  // Check if service is selected
   bool isServiceSelected(String serviceId) {
     return selectedServiceIds.contains(serviceId);
   }
 
-  // Get selected services
   List<Map<String, dynamic>> getSelectedServices() {
     return services.where((service) => service['selected'] == true).toList();
   }
 
-  // Clear all selections
   void clearAllSelections() {
     for (var service in services) {
       service['selected'] = false;
@@ -175,27 +299,28 @@ class ServiceDetailsController extends GetxController {
     update();
   }
 
-  // Get total price of selected services
   int getTotalPrice() {
     int total = 0;
     for (var service in getSelectedServices()) {
-      String priceStr = service['price'].toString().replaceAll(RegExp(r'[^0-9]'), '');
-      total += int.tryParse(priceStr) ?? 0;
+      if (service['rawPrice'] != null) {
+        total += (service['rawPrice'] as double).toInt();
+      } else {
+        String priceStr = service['price'].toString().replaceAll(RegExp(r'[^0-9]'), '');
+        total += int.tryParse(priceStr) ?? 0;
+      }
     }
     return total;
   }
 
-  // Get total duration of selected services
   String getTotalDuration() {
     int totalMinutes = 0;
     for (var service in getSelectedServices()) {
       String duration = service['duration'].toString();
-      // Extract numbers from duration string
       RegExp regExp = RegExp(r'\d+');
       String? match = regExp.stringMatch(duration);
       if (match != null) {
         int minutes = int.tryParse(match) ?? 0;
-        if (duration.toLowerCase().contains('hr')) {
+        if (duration.toLowerCase().contains('hour')) {
           totalMinutes += minutes * 60;
         } else {
           totalMinutes += minutes;
@@ -215,7 +340,6 @@ class ServiceDetailsController extends GetxController {
   void _generateTimeSlots() {
     List<TimeSlot> slots = [];
 
-    // Convert availability data to time slots for all days
     for (var dayData in availability) {
       if (dayData['isAvailable'] == true) {
         String day = dayData['day'];
@@ -244,8 +368,8 @@ class ServiceDetailsController extends GetxController {
     int endHour = _parseTimeToHour(endTime);
 
     for (int hour = startHour; hour < endHour; hour++) {
-      String slotStart = _formatHour(hour);
-      String slotEnd = _formatHour(hour + 1);
+      String slotStart = _formatHour24(hour);
+      String slotEnd = _formatHour24(hour + 1);
 
       slots.add(TimeSlot(
         startTime: slotStart,
@@ -258,30 +382,23 @@ class ServiceDetailsController extends GetxController {
   }
 
   int _parseTimeToHour(String time) {
-    List<String> parts = time.split(' ');
-    String timePart = parts[0];
-
-    int hour = int.parse(timePart.split(':')[0]);
-
+    // Parse 24-hour format time (e.g., "09:00" or "14:00")
+    String timePart = time.split(':')[0];
+    int hour = int.parse(timePart);
     return hour;
   }
 
-  String _formatHour(int hour) {
-    if (hour == 0) return '12:00';
-    if (hour < 12) return '$hour:00';
-    if (hour == 12) return '12:00';
-    return '${hour - 12}:00';
+  String _formatHour24(int hour) {
+    // Format hour in 24-hour format with leading zero
+    return '${hour.toString().padLeft(2, '0')}:00';
   }
 
-  // Simplified Time Slot Methods
   void toggleTimeSlot(TimeSlot slot) {
-    // Clear all previous selections
     for (var s in availableTimeSlots) {
       s.isSelected = false;
     }
     selectedTimeSlots.clear();
 
-    // Select the clicked slot
     slot.isSelected = true;
     selectedTimeSlots.add(slot);
 
@@ -303,30 +420,56 @@ class ServiceDetailsController extends GetxController {
     return selectedTimeSlots.map((slot) => slot.fullDisplayTime).join(', ');
   }
 
-  // Existing methods
   void toggleFavorite() {
     isFavorite.value = !isFavorite.value;
   }
 
   void bookNow() {
+    if (selectedServiceIds.isEmpty) {
+      Get.snackbar(
+        'No Service Selected',
+        'Please select at least one service',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     Get.dialog(const BookingDialog());
   }
 
-  void showAvailability() {
-    // This method can be used to trigger the availability bottom sheet
+  // Updated method to show availability with API call
+  Future<void> showAvailability() async {
+    await loadProviderSchedule();
   }
 
   Map<String, dynamic> getBookingData() {
     return {
-      'serviceProvider': serviceProvider,
-      'selectedServices': services.where((service) => service['selected'] == true).toList(),
+      'providerId': providerData?.id,
+      'providerData': providerData?.toJson(),
+      'selectedServices': getSelectedServices(),
       'selectedTimeSlots': selectedTimeSlots.map((slot) => {
         'day': slot.day,
         'startTime': slot.startTime,
         'endTime': slot.endTime,
         'displayTime': slot.displayTime,
       }).toList(),
-      'totalSelectedSlots': selectedTimeSlots.length,
+      'totalPrice': getTotalPrice(),
+      'totalDuration': getTotalDuration(),
     };
   }
+
+  // Getters for UI
+  String get providerName => providerData?.user.name ?? "Service Provider";
+  String get providerEmail => providerData?.user.email ?? "";
+  String get providerContact => providerData?.user.contact ?? "";
+  String? get providerImage => providerData?.user.image ?? "assets/images/image_here.png";
+  String get providerAbout => providerData?.aboutMe ?? "No information available";
+  String get providerLocation => providerData?.primaryLocation ?? "Location not set";
+  String get providerDistance => "${providerData?.serviceDistance ?? 0}Km";
+  List<String> get spokenLanguages => providerData?.serviceLanguage ?? [];
+  String get spokenLanguagesText => spokenLanguages.join(", ");
+  bool get isVerified => providerData?.verified ?? false;
+  bool get isOnline => providerData?.isOnline ?? false;
+  double get rating => 4.5; // TODO: Get from actual reviews when available
+  int get reviewCount => 200; // TODO: Get from actual reviews when available
 }

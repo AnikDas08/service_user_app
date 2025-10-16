@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../controller/home_controller.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   const FilterBottomSheet({super.key});
@@ -12,20 +13,14 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  String? selectedCategory = 'Haircut';
+  final HomeController controller = Get.find<HomeController>();
+
+  String? selectedCategory;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? selectedLocation;
   double priceRange = 500;
   final double maxPrice = 1000;
-
-  final List<String> categories = [
-    'Haircut',
-    'Massage',
-    'Nail Care',
-    'Skin Care',
-    'Makeup'
-  ];
 
   final List<String> locations = [
     'Select location',
@@ -145,48 +140,74 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Widget _buildCategoryDropdown() {
-    return Container(
-      width: double.infinity,
-      height: 44,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.black100, width: 1),
-        borderRadius: BorderRadius.circular(4.r),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedCategory,
-          hint: CommonText(
-            text: 'Select Category',
-            fontSize: 12,
-            color: AppColors.black200,
-            textAlign: TextAlign.left,
+    return Obx(() {
+      if (controller.isLoadingCategories.value) {
+        return Container(
+          width: double.infinity,
+          height: 44,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.black100, width: 1),
+            borderRadius: BorderRadius.circular(4.r),
           ),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: AppColors.black300,
-            size: 24.sp,
-          ),
-          isExpanded: true,
-          items: categories.map((String category) {
-            return DropdownMenuItem<String>(
-              value: category,
-              child: CommonText(
-                text: category,
-                fontSize: 14,
-                color: AppColors.black400,
-                textAlign: TextAlign.left,
+          child: Center(
+            child: SizedBox(
+              height: 20.h,
+              width: 20.w,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primaryColor,
               ),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              selectedCategory = newValue;
-            });
-          },
+            ),
+          ),
+        );
+      }
+
+      final categories = controller.categories.map((cat) => cat['name'] as String).toList();
+
+      return Container(
+        width: double.infinity,
+        height: 44,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.black100, width: 1),
+          borderRadius: BorderRadius.circular(4.r),
         ),
-      ),
-    );
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: selectedCategory,
+            hint: CommonText(
+              text: 'Select Category',
+              fontSize: 12,
+              color: AppColors.black200,
+              textAlign: TextAlign.left,
+            ),
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: AppColors.black300,
+              size: 24.sp,
+            ),
+            isExpanded: true,
+            items: categories.map((String category) {
+              return DropdownMenuItem<String>(
+                value: category,
+                child: CommonText(
+                  text: category,
+                  fontSize: 14,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.left,
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedCategory = newValue;
+              });
+            },
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildDateField() {

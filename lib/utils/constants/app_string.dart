@@ -258,6 +258,7 @@ class AppString {
   static const String service_type="Service Type";
   static const String price_hour="Price (per hour)";
   static const String work_details="My Work (Photos)";
+  static const String work_photo_text="Work (Photos)";
   static const String edit_service_button="Edit Service Details";
   static const String type_profile="Type here...";
   static const String hint_type="Type Of Service";

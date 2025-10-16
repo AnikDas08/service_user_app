@@ -624,8 +624,8 @@ class _BookingDialogState extends State<BookingDialog> {
     print("Booking Data: $bookingData");
 
     Get.back();
-    print("service 😍😍😍😍${serviceController.serviceProvider}dfgf");
-    Get.toNamed(AppRoutes.invoice,arguments: serviceController.serviceProvider);
+    //print("service 😍😍😍😍${serviceController.serviceProvider}dfgf");
+    Get.toNamed(AppRoutes.invoice,arguments: serviceController.services);
     Get.snackbar(
       "Booking Confirmed",
       "Your booking has been confirmed for ${serviceController.selectedTimeSlots.length} time slot(s)!",

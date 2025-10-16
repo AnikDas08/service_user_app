@@ -8,6 +8,7 @@ import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class ServiceProviderCard extends StatelessWidget {
+  final String id; // Add id parameter for favorite tracking
   final String name;
   final String service;
   final String distance;
@@ -20,6 +21,7 @@ class ServiceProviderCard extends StatelessWidget {
 
   const ServiceProviderCard({
     super.key,
+    required this.id, // Required id
     required this.name,
     required this.service,
     required this.distance,
@@ -42,7 +44,7 @@ class ServiceProviderCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withOpacity(0.08), // Use withOpacity instead of withValues
+                color: AppColors.black.withOpacity(0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -63,12 +65,12 @@ class ServiceProviderCard extends StatelessWidget {
                       fill: BoxFit.cover,
                     ),
                   ),
-                  // Favorite Icon - FIXED VERSION
+                  // Favorite Icon
                   Positioned(
                     top: 8.h,
                     left: 6.w,
                     child: Obx(() {
-                      final isFav = controller.isFavorite(name);
+                      final isFav = controller.isFavorite(id); // Use id instead of name
                       return GestureDetector(
                         onTap: onFavorite,
                         child: Container(

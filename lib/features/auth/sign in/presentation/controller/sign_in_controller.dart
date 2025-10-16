@@ -22,7 +22,32 @@ class SignInController extends GetxController {
     text: kDebugMode ? 'hello123' : "",
   );
 
-  /// Sign in Api call here
+  Future<bool> checkProfile() async {
+    try {
+      var response = await ApiService.get(
+        ApiEndPoint.user,
+        header: {"Authorization": "Bearer ${LocalStorage.token}"},
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data']['aboutMe'] != null;
+      }
+      else if (response.statusCode == 401) {
+        // Session expired → logout
+        //AppAuthStorage().clear(); // if available
+        LocalStorage.isLogIn = false;
+        LocalStorage.token = "";
+        LocalStorage.setBool(LocalStorageKeys.isLogIn, false);
+        LocalStorage.setString(LocalStorageKeys.token, "");
+        return false;
+      }
+      else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future<void> signInUser() async {
     //Get.toNamed(AppRoutes.complete_profile_screen);

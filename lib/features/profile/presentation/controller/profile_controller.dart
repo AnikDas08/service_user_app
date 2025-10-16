@@ -9,6 +9,7 @@ import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
 import '../../../../config/api/api_end_point.dart';
 import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
+import '../../../../services/storage/storage_keys.dart';
 import '../../../../utils/app_utils.dart';
 import '../../data/profiles_model.dart';
 
@@ -31,6 +32,11 @@ class ProfileController extends GetxController {
   /// all controller here
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+
+  var name="".obs;
+  var number="".obs;
+  var email="".obs;
+  var location="".obs;
 
   ProfileData? profileData; // will hold the fetched profile data
   bool isProfileLoading = false; // for loading state
@@ -55,6 +61,37 @@ class ProfileController extends GetxController {
     Get.back();
   }
 
+  Future<bool> checkUser()async{
+    try{
+      final response=await ApiService.get(
+          ApiEndPoint.user,
+          header: {
+            "Authorization": "Bearer ${LocalStorage.token}"
+          }
+      );
+      if(response.statusCode==200){
+        LocalStorage.isLogIn=true;
+        LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
+        return true;
+      }
+      else if (response.statusCode == 401) {
+        // Session expired → logout
+        //AppAuthStorage().clear(); // if available
+        LocalStorage.isLogIn = false;
+        LocalStorage.token = "";
+        LocalStorage.setBool(LocalStorageKeys.isLogIn, false);
+        LocalStorage.setString(LocalStorageKeys.token, "");
+        return false;
+      }
+      else{
+        return false;
+      }
+    }
+    catch(e){
+     return false;
+    }
+  }
+
   Future<void> getProfile()async{
     isProfileLoading=true;
     update();
@@ -68,6 +105,11 @@ class ProfileController extends GetxController {
       if(response.statusCode==200){
         final profileModel=ProfileModel.fromJson(response.data);
         profileData = profileModel.data;
+        name.value=profileData?.name??"";
+        number.value=profileData?.contact??"";
+        email.value=profileData?.email??"";
+        location.value=profileData?.location??"";
+        image=profileData?.image??"";
       }
       else{
         ///rtrfgg

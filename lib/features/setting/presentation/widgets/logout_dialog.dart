@@ -6,6 +6,7 @@ import '../../../../component/button/common_button.dart';
 import '../../../../component/pop_up/common_pop_menu.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_string.dart';
 
 void logoutDialog({
   required VoidCallback onConfirm,
@@ -24,7 +25,7 @@ void logoutDialog({
             children: [
               Center(
                 child: CommonText(
-                  text: "Do you want to logout?",
+                  text: AppString.logout_correct,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
                   color: AppColors.black,
@@ -39,24 +40,24 @@ void logoutDialog({
               children: [
                 Expanded(
                   child: CommonButton(
-                    titleText: "No",
+                    titleText: AppString.no_button,
                     titleColor: AppColors.black,
                     borderColor: AppColors.black,
                     buttonColor: AppColors.transparent,
                     buttonRadius: 4.r,
                     buttonHeight: 48.h,
-                    onTap: AnimationPopUpState.closeDialog,
+                    onTap: () => Navigator.of(context).pop(),
                   ),
                 ),
                 SizedBox(width: 16.w),
                 Expanded(
                   child: CommonButton(
-                    titleText: "Yes",
+                    titleText: AppString.yes_button,
                     titleColor: AppColors.white,
                     buttonRadius: 4.r,
                     buttonHeight: 48.h,
-                    onTap: () async {
-                      await AnimationPopUpState.closeDialog();
+                    onTap: () {
+                      Navigator.of(context).pop();
                       onConfirm();
                     },
                   ),

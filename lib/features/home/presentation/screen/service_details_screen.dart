@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/home/widget/custom_button_home.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,72 +23,121 @@ class ServiceDetailsScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           backgroundColor: AppColors.background,
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                CustomAppBar(
-                title: AppString.view_profile_text,
-                  rightIcon: Icons.share,
-                  showRightButton: true,
-                  onRightButtonTap: () {
-                    Share.share(
-                      'Check this out! https://example.com',
-                      subject: 'Sharing from my app',
-                    );
-                  },
+          body: Obx(() {
+            // Show loading indicator
+            if (controller.isLoading.value) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
                 ),
+              );
+            }
 
-                  SizedBox(height: 20.h),
-
-                    // Header with image
-                    _buildHeader(controller),
-                    SizedBox(height: 20.h),
-
-                    // Profile info section
-                    _buildProfileInfo(controller),
-                    SizedBox(height: 20.h),
-
-                    // Services section
-                    _buildServicesList(controller),
-                    SizedBox(height: 20.h),
-
-                    // About me section
-                    _buildAboutMe(),
-                    SizedBox(height: 20.h),
-
-                    // Work photos section
-                    _buildWorkPhotos(controller),
-                    SizedBox(height: 20.h),
-
-                    // Reviews section
-                    _buildReviews(controller),
-                    SizedBox(height: 30.h), // Space for bottom button
+            // Show error if no data
+            if (controller.providerData == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
+                    SizedBox(height: 16.h),
+                    CommonText(
+                      text: "Provider not found",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black400,
+                    ),
                   ],
                 ),
+              );
+            }
+
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomAppBar(
+                        title: AppString.view_profile_text,
+                        rightIcon: Icons.share,
+                        showRightButton: true,
+                        onRightButtonTap: () {
+                          Share.share(
+                            'Check this out! https://example.com',
+                            subject: 'Sharing from my app',
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      // Header with image
+                      _buildHeader(controller),
+                      SizedBox(height: 20.h),
+
+                      // Profile info section
+                      _buildProfileInfo(controller),
+                      SizedBox(height: 20.h),
+
+                      // Services section
+                      _buildServicesList(controller),
+                      SizedBox(height: 20.h),
+
+                      // About me section
+                      _buildAboutMe(controller),
+                      SizedBox(height: 20.h),
+
+                      // Work photos section
+                      _buildWorkPhotos(controller),
+                      SizedBox(height: 20.h),
+
+                      // Reviews section
+                      _buildReviews(controller),
+                      SizedBox(height: 30.h), // Space for bottom button
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          }),
 
           // Bottom button
-          bottomNavigationBar: _buildBottomButton(controller),
+          bottomNavigationBar: Obx(() {
+            if (controller.isLoading.value || controller.providerData == null) {
+              return SizedBox.shrink();
+            }
+            return _buildBottomButton(controller);
+          }),
         );
       },
     );
   }
 
   Widget _buildHeader(ServiceDetailsController controller) {
-    final provider = controller.serviceProvider;
+    // Priority: user image > service images > default image
+    String? imageUrl;
+
+    if (controller.providerImage != null && controller.providerImage!.isNotEmpty) {
+      imageUrl = controller.providerImage;
+    } else if (controller.providerData?.serviceImages.isNotEmpty == true) {
+      imageUrl = controller.providerData!.serviceImages.first;
+    }
+
     return SizedBox(
       width: double.infinity,
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(10.r)),
-        child: CommonImage(
-          imageSrc: provider["image"] ?? "assets/images/service_provider.png",
+        child: imageUrl != null
+            ? CommonImage(
+          imageSrc: imageUrl,
+          width: double.infinity,
+          height: 147.h,
+          fill: BoxFit.cover,
+        )
+            : CommonImage(
+          imageSrc: "assets/images/profile_image.png",
           width: double.infinity,
           height: 147.h,
           fill: BoxFit.cover,
@@ -98,7 +147,6 @@ class ServiceDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildProfileInfo(ServiceDetailsController controller) {
-    final provider = controller.serviceProvider;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -106,7 +154,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CommonText(
-              text: provider["name"] ?? "Angle Mariomi",
+              text: controller.providerName,
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.black400,
@@ -121,14 +169,14 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 4.w),
                 CommonText(
-                  text: "4.5",
+                  text: controller.rating.toString(),
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black300,
                 ),
                 SizedBox(width: 4.w),
                 CommonText(
-                  text: "(200)",
+                  text: "(${controller.reviewCount})",
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black200,
@@ -152,7 +200,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 4.w),
                 CommonText(
-                  text: provider["service"] ?? "Haircut",
+                  text: controller.services.isNotEmpty
+                      ? controller.services.first['name']
+                      : "Haircut",
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black400,
@@ -166,7 +216,11 @@ class ServiceDetailsScreen extends StatelessWidget {
                 height: 30,
                 isSmall: true,
                 isSelected: false,
-                onTap: () => _showAvailabilityBottomSheet(Get.context!)
+                onTap: ()async{
+                  await controller.showAvailability();
+                  // Then show dialog
+                  _showAvailabilityBottomSheet(Get.context!);
+                }
             )
           ],
         ),
@@ -182,7 +236,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             ),
             SizedBox(width: 4.w),
             CommonText(
-              text: "Distance :2Km",
+              text: "Distance :${controller.providerDistance}",
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: AppColors.black300,
@@ -202,7 +256,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             ),
             Expanded(
               child: CommonText(
-                text: "English, Russian, Serbian",
+                text: controller.spokenLanguagesText,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: AppColors.primaryColor,
@@ -241,7 +295,6 @@ class ServiceDetailsScreen extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  print("Tapping service: ${service['name']}, Current selected: $isSelected");
                   controller.toggleServiceSelection(service['id']);
                 },
                 child: AnimatedContainer(
@@ -448,7 +501,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: "Total Duration: 2 hour",
+                        text: "Total Duration: ${controller.getTotalDuration()}",
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black400,
@@ -472,7 +525,7 @@ class ServiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAboutMe() {
+  Widget _buildAboutMe(ServiceDetailsController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -487,7 +540,7 @@ class ServiceDetailsScreen extends StatelessWidget {
         SizedBox(height: 8.h),
 
         CommonText(
-          text: "With 15 Years Of Experience In The Hair Styling Industry, I'm Passionate About Bringing My Clients Up The Next Level. Come See How I Can Transform Your Feeling When You're Looking For A Fresh Cut, A Bold New Look Or Even Spring Shaving. Process To Make You Look Handsome Or More Attractive. I Have A Deal I Want To Stay By Locking Across Different Styles And Textures, Ensuring That Each Client Leaves Looking And Feeling Their Best.",
+          text: controller.providerAbout,
           fontSize: 12,
           fontWeight: FontWeight.w400,
           color: AppColors.black300,
@@ -503,7 +556,7 @@ class ServiceDetailsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommonText(
-          text: AppString.photo_customer_four,
+          text: AppString.work_photo_text,
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: AppColors.black400,
@@ -512,30 +565,115 @@ class ServiceDetailsScreen extends StatelessWidget {
 
         SizedBox(height: 12.h),
 
-        Obx(() {
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10.w,
-              mainAxisSpacing: 10.h,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: controller.workPhotos.length,
-            itemBuilder: (context, index) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: CommonImage(
-                  imageSrc: "assets/images/item_image.png",
-                  width: double.infinity,
-                  height: 115.h,
-                  fill: BoxFit.cover,
+        GetBuilder<ServiceDetailsController>(
+          builder: (controller) {
+            // Check if there are service images
+            if (controller.providerData?.serviceImages.isEmpty ?? true) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: CommonText(
+                    text: "No work photos available",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black200,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               );
-            },
-          );
-        }),
+            }
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10.w,
+                mainAxisSpacing: 10.h,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: controller.providerData?.serviceImages.length ?? 0,
+              itemBuilder: (context, index) {
+                final imagePath = controller.providerData?.serviceImages[index];
+
+                // Construct full image URL - remove leading slash if present
+                String fullImageUrl = '';
+                if (imagePath != null && imagePath.isNotEmpty) {
+                  // Remove leading slash from imagePath to avoid double slashes
+                  final cleanPath = imagePath.startsWith('/')
+                      ? imagePath.substring(1)
+                      : imagePath;
+                  fullImageUrl = '${ApiEndPoint.imageUrl}/$cleanPath';
+                }
+
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: fullImageUrl.isNotEmpty
+                      ? Image.network(
+                    fullImageUrl,
+                    width: double.infinity,
+                    height: 115.h,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      print('Error loading image: $fullImageUrl');
+                      return Container(
+                        width: double.infinity,
+                        height: 115.h,
+                        color: AppColors.black100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_not_supported,
+                              size: 40.sp,
+                              color: AppColors.black200,
+                            ),
+                            SizedBox(height: 4.h),
+                            CommonText(
+                              text: "Image unavailable",
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.black200,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        width: double.infinity,
+                        height: 115.h,
+                        color: AppColors.black50,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                            strokeWidth: 2,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                      : Container(
+                    width: double.infinity,
+                    height: 115.h,
+                    color: AppColors.black100,
+                    child: Icon(
+                      Icons.image,
+                      size: 40.sp,
+                      color: AppColors.black200,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ],
     );
   }

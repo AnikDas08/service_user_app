@@ -467,12 +467,13 @@ class InvoiceController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Booking successful
-        _showSuccessDialog(response.data);
+
         final result = await Get.to(
           StripeWebViewScreen(checkoutUrl: response.data['data']),
         );
 
         if (result == 'success') {
+          _showSuccessDialog(response.data);
           Get.offAllNamed(AppRoutes.homeNav);
         }
         if (result == 'failed') {

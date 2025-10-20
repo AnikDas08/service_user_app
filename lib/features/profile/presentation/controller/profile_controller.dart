@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/component/app_storage/app_auth_storage.dart';
-import 'package:haircutmen_user_app/component/app_storage/storage_key.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
 
@@ -33,12 +30,12 @@ class ProfileController extends GetxController {
   TextEditingController nameController = TextEditingController();
   TextEditingController numberController = TextEditingController();
 
-  var name="".obs;
-  var number="".obs;
-  var email="".obs;
-  var location="".obs;
+  var name = "".obs;
+  var number = "".obs;
+  var email = "".obs;
+  var location = "".obs;
   RxDouble credit = 0.0.obs;
-  var imageUser="".obs;
+  var imageUser = "".obs;
 
   ProfileData? profileData; // will hold the fetched profile data
   bool isProfileLoading = false; // for loading state
@@ -48,7 +45,6 @@ class ProfileController extends GetxController {
     super.onInit();
     getProfile();
   }
-
 
   /// select image function here
   getProfileImage() async {
@@ -63,20 +59,17 @@ class ProfileController extends GetxController {
     Get.back();
   }
 
-  Future<bool> checkUser()async{
-    try{
-      final response=await ApiService.get(
-          ApiEndPoint.user,
-          header: {
-            "Authorization": "Bearer ${LocalStorage.token}"
-          }
+  Future<bool> checkUser() async {
+    try {
+      final response = await ApiService.get(
+        ApiEndPoint.user,
+        header: {"Authorization": "Bearer ${LocalStorage.token}"},
       );
-      if(response.statusCode==200){
-        LocalStorage.isLogIn=true;
+      if (response.statusCode == 200) {
+        LocalStorage.isLogIn = true;
         LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
         return true;
-      }
-      else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401) {
         // Session expired → logout
         //AppAuthStorage().clear(); // if available
         LocalStorage.isLogIn = false;
@@ -84,51 +77,44 @@ class ProfileController extends GetxController {
         LocalStorage.setBool(LocalStorageKeys.isLogIn, false);
         LocalStorage.setString(LocalStorageKeys.token, "");
         return false;
-      }
-      else{
+      } else {
         return false;
       }
-    }
-    catch(e){
-     return false;
+    } catch (e) {
+      return false;
     }
   }
 
-  Future<void> getProfile()async{
-    isProfileLoading=true;
+  Future<void> getProfile() async {
+    isProfileLoading = true;
     update();
-    try{
-      final response=await ApiService.get(
-          ApiEndPoint.user,
-          header: {
-            "Authorization": "Bearer ${LocalStorage.token}"
-          }
+    try {
+      final response = await ApiService.get(
+        ApiEndPoint.user,
+        header: {"Authorization": "Bearer ${LocalStorage.token}"},
       );
-      if(response.statusCode==200){
-        final profileModel=ProfileModel.fromJson(response.data);
+      if (response.statusCode == 200) {
+        final profileModel = ProfileModel.fromJson(response.data);
         profileData = profileModel.data;
-        name.value=profileData?.name??"";
-        number.value=profileData?.contact??"";
-        email.value=profileData?.email??"";
-        location.value=profileData?.location??"";
-        imageUser.value=profileData?.image??"";
+        name.value = profileData?.name ?? "";
+        number.value = profileData?.contact ?? "";
+        email.value = profileData?.email ?? "";
+        location.value = profileData?.location ?? "";
+        imageUser.value = profileData?.image ?? "";
         credit.value = (profileData?.credits ?? 0).toDouble();
-      }
-      else{
+        LocalStorage.myName = profileData?.name ?? "";
+        LocalStorage.myEmail = profileData?.email ?? "";
+        LocalStorage.myImage = profileData?.image ?? "";
+      } else {
         ///rtrfgg
         Utils.errorSnackBar(response.statusCode, response.message);
       }
-    }
-    catch(e){
+    } catch (e) {
       Utils.errorSnackBar(0, e.toString());
     }
-    isProfileLoading=false;
+    isProfileLoading = false;
     update();
-
   }
-
-
-
 
   /// update profile function here
   Future<void> editProfileRepo() async {

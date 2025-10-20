@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/profile/data/profiles_model.dart';
+import 'package:haircutmen_user_app/utils/app_utils.dart';
 import '../../../../../component/app_storage/app_auth_storage.dart';
-import '../../../../../component/app_storage/storage_key.dart';
 import '../../../../../config/route/app_routes.dart';
 import '../../../../../services/api/api_service.dart';
 import '../../../../../config/api/api_end_point.dart';
@@ -13,10 +14,9 @@ class SignInController extends GetxController {
   /// Sign in Button Loading variable
   bool isLoading = false;
 
-
   /// email and password Controller here
   TextEditingController emailController = TextEditingController(
-    text: kDebugMode ? 'loyolol616@aiwanlab.com' : '',
+    text: kDebugMode ? 'nitar34058@bdnets.com' : '',
   );
   TextEditingController passwordController = TextEditingController(
     text: kDebugMode ? 'hello123' : "",
@@ -31,8 +31,7 @@ class SignInController extends GetxController {
 
       if (response.statusCode == 200) {
         return response.data['data']['aboutMe'] != null;
-      }
-      else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401) {
         // Session expired → logout
         //AppAuthStorage().clear(); // if available
         LocalStorage.isLogIn = false;
@@ -40,8 +39,7 @@ class SignInController extends GetxController {
         LocalStorage.setBool(LocalStorageKeys.isLogIn, false);
         LocalStorage.setString(LocalStorageKeys.token, "");
         return false;
-      }
-      else {
+      } else {
         return false;
       }
     } catch (e) {
@@ -57,7 +55,7 @@ class SignInController extends GetxController {
     update();
 
     Map<String, String> body = {
-      "role":"USER",
+      "role": "USER",
       "email": emailController.text,
       "password": passwordController.text,
     };
@@ -82,10 +80,26 @@ class SignInController extends GetxController {
       LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
       LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
 
+      try {
+        final response = await ApiService.get(
+          ApiEndPoint.user,
+          header: {"Authorization": "Bearer ${LocalStorage.token}"},
+        );
+        if (response.statusCode == 200) {
+          final profileModel = ProfileModel.fromJson(response.data);
+          LocalStorage.myName = profileModel.data?.name ?? "";
+          LocalStorage.myEmail = profileModel.data?.email ?? "";
+          LocalStorage.myImage = profileModel.data?.image ?? "";
+        } else {
+          ///rtrfgg
+          Utils.errorSnackBar(response.statusCode, response.message);
+        }
+      } catch (e) {
+        Utils.errorSnackBar(0, e.toString());
+      }
 
       emailController.clear();
       passwordController.clear();
-
     } else {
       Get.snackbar(response.statusCode.toString(), response.message);
     }

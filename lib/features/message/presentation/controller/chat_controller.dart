@@ -57,9 +57,10 @@ class ChatControllers extends GetxController {
       var data = response.data['data'] ?? [];
 
       for (var item in data) {
-        chats.add(ChatModel.fromJson(item));
-        name = item['participant']['name'];
-        image = item['participant']['image'];
+        var chatModel = ChatModel.fromJson(item);
+        chats.add(chatModel);
+        name = chatModel.participant.name;
+        image = chatModel.participant.image;
       }
 
       page = page + 1;

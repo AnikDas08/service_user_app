@@ -31,15 +31,17 @@ class PersonalInformationScreen extends StatelessWidget {
                     CustomAppBar(title: AppString.personal_information,),
                     SizedBox(height: 30,),
                     Center(
-                      child: Center(
-                        child:  CircleAvatar(
-                          radius: 60.sp,
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: controller.profileData?.image == null
-                              ? AssetImage(AppImages.facebook) as ImageProvider
-                              : NetworkImage(ApiEndPoint.imageUrl + controller.profileData!.image!),
-                        ),
+                      child: Obx(
+                        ()=> Center(
+                          child:  CircleAvatar(
+                            radius: 60.sp,
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: controller.imageUser.value == ""|| controller.imageUser.value==null
+                                ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
+                                : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
+                          ),
 
+                        ),
                       ),
                     ),
                     SizedBox(height: 26,),

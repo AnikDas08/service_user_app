@@ -52,7 +52,7 @@ class EditProfile extends StatelessWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Image.asset(
-                                  "assets/images/item_image.png",
+                                  "assets/images/profile_image.jpg",
                                   width: 120.w,
                                   height: 120.h,
                                   fit: BoxFit.cover,
@@ -71,7 +71,7 @@ class EditProfile extends StatelessWidget {
                               },
                             )
                                 : Image.asset(
-                              "assets/images/item_image.png",
+                              "assets/images/profile_image.jpg",
                               width: 120.w,
                               height: 120.h,
                               fit: BoxFit.cover,

@@ -66,4 +66,7 @@ class AppColors {
   static const Color violet700 = Color(0xFF6D28D9);
   static const Color violet800 = Color(0xFF5B21B6);
   static const Color violet900 = Color(0xFF4C1D95);
+
+  static const Color success = Color(0xFF22C55D);
+  static const Color cancel = Color(0xFFEF4444);
 }

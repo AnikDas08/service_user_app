@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../../config/api/api_end_point.dart';
+import 'package:haircutmen_user_app/config/route/app_routes.dart';
+import 'package:haircutmen_user_app/features/home/presentation/screen/stripe_web_view_screen.dart';
+import 'package:haircutmen_user_app/utils/app_utils.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../services/storage/storage_services.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -38,7 +40,7 @@ class InvoiceController extends GetxController {
     // Extract selected services
     if (invoiceData['selectedServices'] != null) {
       selectedServices = List<Map<String, dynamic>>.from(
-          invoiceData['selectedServices']
+        invoiceData['selectedServices'],
       );
     }
 
@@ -53,14 +55,16 @@ class InvoiceController extends GetxController {
 
   // Getters for UI
   String get providerName {
-    if (invoiceData['provider'] != null && invoiceData['provider']['user'] != null) {
+    if (invoiceData['provider'] != null &&
+        invoiceData['provider']['user'] != null) {
       return invoiceData['provider']['user']['name'] ?? 'Service Provider';
     }
     return invoiceData['providerName'] ?? 'Service Provider';
   }
 
   String? get providerImage {
-    if (invoiceData['provider'] != null && invoiceData['provider']['user'] != null) {
+    if (invoiceData['provider'] != null &&
+        invoiceData['provider']['user'] != null) {
       return invoiceData['provider']['user']['image'];
     }
     return invoiceData['providerImage'];
@@ -143,19 +147,13 @@ class InvoiceController extends GetxController {
             width: 80,
             child: Text(
               label,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
         ],
@@ -179,15 +177,10 @@ class InvoiceController extends GetxController {
     // Show payment confirmation dialog
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(
           'Confirm Payment',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -203,25 +196,21 @@ class InvoiceController extends GetxController {
             SizedBox(height: 16),
             Text(
               'Do you want to proceed with the payment?',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
-              Get.back(); // Close dialog
-              _createBooking();
+              // Get.back(); // Close dialog
+              // _createBooking();
+              //stripe payment
+              getCheckoutSession();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
@@ -229,16 +218,14 @@ class InvoiceController extends GetxController {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text(
-              'Confirm & Pay',
-              style: TextStyle(color: Colors.white),
-            ),
+            child: Text('Confirm & Pay', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   }
 
+  // ignore: unused_element
   Future<void> _createBooking() async {
     try {
       isProcessing.value = true;
@@ -261,10 +248,7 @@ class InvoiceController extends GetxController {
                   SizedBox(height: 16),
                   Text(
                     'Processing your booking...',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -279,12 +263,10 @@ class InvoiceController extends GetxController {
         "provider": invoiceData['providerId'],
         "services": invoiceData['selectedServiceIds'],
         "date": invoiceData['dateIso'],
-        "slots": (invoiceData['slotsData'] as List).map((slot) {
-          return {
-            "start": slot['start'],
-            "end": slot['end'],
-          };
-        }).toList(),
+        "slots":
+            (invoiceData['slotsData'] as List).map((slot) {
+              return {"start": slot['start'], "end": slot['end']};
+            }).toList(),
         "amount": totalPrice.value,
       };
 
@@ -353,11 +335,7 @@ class InvoiceController extends GetxController {
                   color: Colors.green.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                  size: 64,
-                ),
+                child: Icon(Icons.check_circle, color: Colors.green, size: 64),
               ),
               SizedBox(height: 20),
               Text(
@@ -372,10 +350,7 @@ class InvoiceController extends GetxController {
               SizedBox(height: 12),
               Text(
                 'Your booking has been confirmed',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
@@ -460,6 +435,77 @@ class InvoiceController extends GetxController {
         ),
       ],
     );
+  }
+
+  Future<void> getCheckoutSession() async {
+    try {
+      isProcessing.value = true;
+      update();
+      // Prepare booking request body
+      Map<String, dynamic> bookingBody = {
+        "provider": invoiceData['providerId'],
+        "services": invoiceData['selectedServiceIds'],
+        "date": invoiceData['dateIso'],
+        "slots":
+            (invoiceData['slotsData'] as List).map((slot) {
+              return {"start": slot['start'], "end": slot['end']};
+            }).toList(),
+        "amount": totalPrice.value,
+      };
+
+      // Make API call
+      final response = await ApiService.post(
+        "booking",
+        body: bookingBody,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+          "Content-Type": "application/json",
+        },
+      );
+
+      Get.back(); // Close loading dialog
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Booking successful
+        _showSuccessDialog(response.data);
+        final result = await Get.to(
+          StripeWebViewScreen(checkoutUrl: response.data['data']),
+        );
+
+        if (result == 'success') {
+          Get.offAllNamed(AppRoutes.homeNav);
+        }
+        if (result == 'failed') {
+          Utils.errorSnackBar("Error", "Payment failed. Please try again.");
+        }
+        if (result == 'cancelled') {
+          Utils.errorSnackBar("Error", "Payment cancelled. Please try again.");
+        }
+      } else {
+        // Booking failed
+        Get.snackbar(
+          'Booking Failed',
+          response.data['message'] ?? 'Failed to create booking',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 4),
+        );
+      }
+    } catch (e) {
+      Get.back(); // Close loading dialog if open
+
+      Get.snackbar(
+        'Error',
+        'Failed to create booking: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 4),
+      );
+    } finally {
+      isProcessing.value = false;
+    }
   }
 
   @override

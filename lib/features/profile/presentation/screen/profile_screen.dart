@@ -30,18 +30,17 @@ class ProfileScreen extends StatelessWidget {
                     CustomAppBar(title: AppString.profile_text,showBackButton: false,),
                     /// User Profile Image here
                     Center(
-                      child: Center(
-                        child: Obx(
-                          ()=> CircleAvatar(
-                            radius: 60.sp,
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: controller.imageUser.value == null
-                                ? AssetImage(AppImages.facebook) as ImageProvider
-                                : NetworkImage(ApiEndPoint.imageUrl + controller.imageUser.value!),
+                          child:Obx(
+                            ()=> CircleAvatar(
+                                radius: 60.sp,
+                                backgroundColor: Colors.transparent,
+                                backgroundImage: controller.imageUser.value == ""||controller.imageUser.value==null
+                                    ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
+                                    : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
+                              ),
                           ),
-                        ),
-                      ),
-                    ),
+                          ),
+
                     SizedBox(height: 12,),
                     SizedBox(height: 9,),
                     /// User Name here

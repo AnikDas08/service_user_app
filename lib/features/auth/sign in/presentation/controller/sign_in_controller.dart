@@ -76,9 +76,11 @@ class SignInController extends GetxController {
 
       LocalStorage.token = data['data']["accessToken"];
       LocalStorage.isLogIn = true;
+      LocalStorage.userId = data['data']["id"];
 
       LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
       LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
+      LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
 
 
       emailController.clear();

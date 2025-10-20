@@ -35,48 +35,45 @@ class MessageScreen extends StatelessWidget {
       backgroundColor: AppColors.white,
       appBar: _buildAppBar(),
       body: GetBuilder<MessageController>(
-        builder:
-            (controller) => Column(
-              children: [
-                // Messages List
-                Expanded(
-                  child:
-                      controller.isLoading
-                          ? CommonLoader()
-                          : controller.messages.isEmpty
-                          ? Center(
-                            child: CommonText(
-                              text: "No messages yet\nStart a conversation!",
-                              fontSize: 16,
-                              color: AppColors.black400,
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                            ),
-                          )
-                          : ListView.builder(
-                            controller: controller.scrollController,
-                            reverse: true,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.h,
-                            ),
-                            itemCount: controller.messages.length,
-                            itemBuilder: (context, index) {
-                              final message = controller.messages[index];
-                              return _buildMessageBubble(message);
-                            },
-                          ),
+        builder: (controller) => Column(
+          children: [
+            // Messages List
+            Expanded(
+              child: controller.isLoading
+                  ? CommonLoader()
+                  : controller.messages.isEmpty
+                  ? Center(
+                child: CommonText(
+                  text: "No messages yet\nStart a conversation!",
+                  fontSize: 16,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
                 ),
-
-                // Message Input Area
-                _buildMessageInput(controller),
-              ],
+              )
+                  : ListView.builder(
+                controller: controller.scrollController,
+                reverse: true,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                  vertical: 8.h,
+                ),
+                itemCount: controller.messages.length,
+                itemBuilder: (context, index) {
+                  final message = controller.messages[index];
+                  return _buildMessageBubble(message);
+                },
+              ),
             ),
+
+            // Message Input Area
+            _buildMessageInput(controller),
+          ],
+        ),
       ),
     );
   }
 
-  ///flkdjfkljsklf sdjkhkj shjkfsdhjkf
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: AppColors.white,
@@ -100,9 +97,23 @@ class MessageScreen extends StatelessWidget {
                 color: AppColors.black50,
                 shape: BoxShape.circle,
               ),
-              child: Image.network(
-                ApiEndPoint.socketUrl+con.image
+              child: con.image.isNotEmpty
+                  ? Image.network(
+                ApiEndPoint.socketUrl + con.image,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    CupertinoIcons.person_fill,
+                    color: AppColors.black400,
+                    size: 24.sp,
+                  );
+                },
               )
+                  : Icon(
+                CupertinoIcons.person_fill,
+                color: AppColors.black400,
+                size: 24.sp,
+              ),
             ),
           ),
 
@@ -126,77 +137,82 @@ class MessageScreen extends StatelessWidget {
   Widget _buildMessageBubble(MessageModel message) {
     bool isMe = message.sender.id == LocalStorage.userId;
     return GetBuilder<MessageController>(
-      builder:
-          (controller) => Container(
-            margin: EdgeInsets.only(bottom: 16.h),
-            child: Row(
-              mainAxisAlignment:
-                  isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (!isMe) ...[
-                  // Other person's avatar
-                  ClipOval(
-                    child: Container(
-                      width: 25.w,
-                      height: 25.w,
-                      decoration: BoxDecoration(
-                        color: AppColors.black50,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset("assets/images/profile_image.png"),
-                    ),
+      builder: (controller) => Container(
+        margin: EdgeInsets.only(bottom: 16.h),
+        child: Row(
+          mainAxisAlignment:
+          isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (!isMe) ...[
+              // Other person's avatar
+              ClipOval(
+                child: Container(
+                  width: 25.w,
+                  height: 25.w,
+                  decoration: BoxDecoration(
+                    color: AppColors.black50,
+                    shape: BoxShape.circle,
                   ),
-                  SizedBox(width: 8.w),
-                ],
+                  child: message.sender.image.isNotEmpty
+                      ? Image.network(
+                    ApiEndPoint.socketUrl + message.sender.image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                          "assets/images/profile_image.png");
+                    },
+                  )
+                      : Image.asset("assets/images/profile_image.png"),
+                ),
+              ),
+              SizedBox(width: 8.w),
+            ],
 
-                // Message Content
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment:
-                        isMe
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onLongPress:
-                            () => _showMessageOptions(message, controller),
-                        child: Container(
-                          constraints: BoxConstraints(
-                            maxWidth: Get.width * 0.75,
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 12.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isMe ? AppColors.red50 : AppColors.black50,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(6.r),
-                              topRight: Radius.circular(6.r),
-                              bottomLeft: Radius.circular(isMe ? 6.r : 0.r),
-                              bottomRight: Radius.circular(isMe ? 0.r : 6.r),
-                            ),
-                          ),
-                          child: _buildMessageContent(message, isMe),
+            // Message Content
+            Flexible(
+              child: Column(
+                crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onLongPress: () => _showMessageOptions(message, controller),
+                    child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: Get.width * 0.75,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isMe ? AppColors.red50 : AppColors.black50,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(6.r),
+                          topRight: Radius.circular(6.r),
+                          bottomLeft: Radius.circular(isMe ? 6.r : 0.r),
+                          bottomRight: Radius.circular(isMe ? 0.r : 6.r),
                         ),
                       ),
-                      SizedBox(height: 4.h),
-                      // Timestamp
-                      CommonText(
-                        text: _formatTime(message.createdAt),
-                        fontSize: 12,
-                        color: AppColors.black100,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ],
+                      child: _buildMessageContent(message, isMe),
+                    ),
                   ),
-                ),
-
-                if (isMe) SizedBox(width: 8.w),
-              ],
+                  SizedBox(height: 4.h),
+                  // Timestamp
+                  CommonText(
+                    text: _formatTime(message.createdAt),
+                    fontSize: 12,
+                    color: AppColors.black100,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ],
+              ),
             ),
-          ),
+
+            if (isMe) SizedBox(width: 8.w),
+          ],
+        ),
+      ),
     );
   }
 
@@ -217,11 +233,28 @@ class MessageScreen extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12.r),
-              child: Image.file(
-                File(message.image),
+              child: message.image.isNotEmpty
+                  ? Image.network(
+                ApiEndPoint.socketUrl + message.image,
                 width: 200.w,
                 height: 200.w,
                 fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: 200.w,
+                    height: 200.w,
+                    color: AppColors.black50,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     width: 200.w,
@@ -234,14 +267,24 @@ class MessageScreen extends StatelessWidget {
                     ),
                   );
                 },
+              )
+                  : Container(
+                width: 200.w,
+                height: 200.w,
+                color: AppColors.black50,
+                child: Icon(
+                  CupertinoIcons.photo,
+                  size: 40.sp,
+                  color: AppColors.black400,
+                ),
               ),
             ),
             if (message.text.isNotEmpty) ...[
               SizedBox(height: 8.h),
               CommonText(
                 text: message.text,
-                fontSize: 16,
-                color: isMe ? Colors.white : AppColors.textColor,
+                fontSize: 14,
+                color: AppColors.black300,
                 textAlign: TextAlign.left,
                 maxLines: 100,
               ),
@@ -276,8 +319,6 @@ class MessageScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Attachment button
-
           // Text Input
           Expanded(
             child: Container(
@@ -314,8 +355,10 @@ class MessageScreen extends StatelessWidget {
           ),
 
           SizedBox(width: 12.w),
+
+          // Image picker button
           InkWell(
-            // onTap: () => controller.showImageSourceDialog(),
+            onTap: () => controller.showImageSourceDialog(),
             child: Container(
               width: 44.w,
               height: 44.w,
@@ -403,7 +446,7 @@ class MessageScreen extends StatelessWidget {
                 // controller.deleteMessage(message.id);
               },
             ),
-            if (message.type != MessageType.text) ...[
+            if (message.type == "image") ...[
               ListTile(
                 leading: Icon(Icons.download, color: AppColors.primaryColor),
                 title: Text('Save Image'),
@@ -417,9 +460,6 @@ class MessageScreen extends StatelessWidget {
                     backgroundColor: AppColors.primaryColor,
                     colorText: Colors.white,
                   );
-                  // controller.contactAvatar.value.isNotEmpty
-                  //     ? controller.contactAvatar.value
-                  //     : controller.contactName.value;
                 },
               ),
             ],
@@ -430,10 +470,9 @@ class MessageScreen extends StatelessWidget {
   }
 
   String _formatTime(DateTime dateTime) {
-    final hour =
-        dateTime.hour == 0
-            ? 12
-            : (dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour);
+    final hour = dateTime.hour == 0
+        ? 12
+        : (dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour);
     final amPm = dateTime.hour >= 12 ? 'Pm' : 'Am';
     return '${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
   }

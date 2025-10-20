@@ -28,14 +28,14 @@ Widget chatListItem({required ChatModel item}) {
                 children: [
                   /// participant Name here
                   CommonText(
-                    text: item.participant.fullName,
+                    text: item.participant.name,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                   ),
 
                   /// participant Last Message here
                   CommonText(
-                    text: item.latestMessage.message,
+                    text: item.latestMessage.text,
                     fontWeight: FontWeight.w400,
                     fontSize: 12,
                   ),

@@ -26,7 +26,7 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => ForgetPasswordController(), fenix: true);
     Get.lazyPut(() => ChangePasswordController(), fenix: true);
     Get.lazyPut(() => NotificationsController(), fenix: true);
-    Get.lazyPut(() => ChatController(), fenix: true);
+    Get.lazyPut(() => ChatControllers(), fenix: true);
     Get.lazyPut(() => ChatControllers(), fenix: true);
     Get.lazyPut(() => ProfileController(), fenix: true);
     Get.lazyPut(() => SettingController(), fenix: true);
@@ -39,5 +39,6 @@ class DependencyInjection extends Bindings {
     Get.lazyPut(() => FavouriteController(), fenix: true);
     Get.lazyPut(() => ServiceDetailsController(), fenix: true);
     Get.lazyPut(() => EditProfileController(), fenix: true);
+    Get.lazyPut(() => MessageController(), fenix: true);
   }
 }

@@ -15,11 +15,12 @@ class ApiEndPoint {
   static const notifications = "notifications";
   static const privacyPolicies = "privacy-policies";
   static const termsOfServices = "terms-and-conditions";
-  static const chats = "chats";
   static const myProvider = "provider/my-provider";
   static const provider = "provider";
   static const service = "service";
   static const category = "category";
-  static const messages = "messages";
   static const providerSchedule = "schedule/provider-schedule";
+  static const chats = "chats/my-chats";
+  static const messages = "messages";
+  static const sendMessage = "messages/create";
 }

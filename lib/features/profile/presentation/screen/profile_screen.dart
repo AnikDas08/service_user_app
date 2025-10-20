@@ -31,22 +31,26 @@ class ProfileScreen extends StatelessWidget {
                     /// User Profile Image here
                     Center(
                       child: Center(
-                        child: CircleAvatar(
-                          radius: 60.sp,
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: controller.profileData?.image == null
-                              ? AssetImage(AppImages.facebook) as ImageProvider
-                              : NetworkImage(ApiEndPoint.imageUrl + controller.profileData!.image!),
+                        child: Obx(
+                          ()=> CircleAvatar(
+                            radius: 60.sp,
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: controller.imageUser.value == null
+                                ? AssetImage(AppImages.facebook) as ImageProvider
+                                : NetworkImage(ApiEndPoint.imageUrl + controller.imageUser.value!),
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(height: 12,),
                     SizedBox(height: 9,),
                     /// User Name here
-                    CommonText(
-                      text: controller.name.value,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                    Obx(
+                      ()=> CommonText(
+                        text: controller.name.value,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                     SizedBox(height: 20,),
                     /// Edit Profile item here
@@ -93,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          CommonText(
-                             text: "Present Credit: 50",
+                             text: "Present Credit: ${controller.credit.value}",
                            fontSize: 16,
                            fontWeight: FontWeight.w500,
                            color: AppColors.black400

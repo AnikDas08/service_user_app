@@ -1,96 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../data/model/message_model.dart';
+import '../../data/model/chat_list_model.dart';
+import '../../../../services/api/api_service.dart';
+import '../../../../services/socket/socket_service.dart';
+import '../../../../config/api/api_end_point.dart';
+import '../../../../services/storage/storage_services.dart';
+import '../../../../utils/app_utils.dart';
+import '../../../../utils/enum/enum.dart';
 
-class ChatController extends GetxController {
-  /// Scroll controller for list
-  ScrollController scrollController = ScrollController();
+class ChatControllers extends GetxController {
+  /// Api status check here
+  Status status = Status.completed;
 
-  /// Text controller for search
+  /// Chat more Data Loading Bar
+  bool isMoreLoading = false;
+
   TextEditingController searchController = TextEditingController();
 
-  /// Full chat list
-  List<MessageItem> allMessages = [
-    MessageItem(
-      name: "John Doe",
-      message: "Hi Can I Help You Today?",
-      time: "09:02 Am",
-      unreadCount: 2,
-    ),
-    MessageItem(
-      name: "John Doe",
-      message: "Hey, how are you doing?",
-      time: "08:45 Am",
-      unreadCount: 1,
-    ),
-    MessageItem(
-      name: "Jane Smith",
-      message: "The meeting is scheduled for tomorrow",
-      time: "Yesterday",
-    ),
-    MessageItem(
-      name: "Mike Johnson",
-      message: "Thanks for your help!",
-      time: "Yesterday",
-    ),
-    MessageItem(
-      name: "Sohidul Hasan",
-      message: "Hi Can I Help You Today?",
-      time: "09:02 Am",
-      unreadCount: 2,
-    ),
-    MessageItem(
-      name: "Rafi Islam",
-      message: "Hi Can I Help You Today?",
-      time: "09:02 Am",
-      unreadCount: 2,
-    ),
-    MessageItem(
-      name: "Mizanur Rahman",
-      message: "Hi Can I Help You Today?",
-      time: "09:02 Am",
-      unreadCount: 2,
-    ),
-    MessageItem(
-      name: "Juel Arafat",
-      message: "Hi Can I Help You Today?",
-      time: "09:02 Am",
-      unreadCount: 2,
-    ),
-    MessageItem(
-      name: "Sabir Rahman",
-      message: "Hi Can I Help You Today?",
-      time: "09:02 Am",
-      unreadCount: 2,
-    ),
-  ];
+  /// page no here
+  int page = 1;
 
-  /// Filtered messages for search
-  List<MessageItem> filteredMessages = [];
+  /// Chat List here
+  List chats = [];
 
+  /// Chat Scroll Controller
+  ScrollController scrollController = ScrollController();
+
+  /// Chat Controller Instance create here
+  static ChatControllers get instance => Get.put(ChatControllers());
+  ChatModel? chatModel;
+  String name = "";
+  String image = "";
+
+  /// Chat More data Loading function
+  Future<void> moreChats() async {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      isMoreLoading = true;
+      update();
+      await getChatRepo();
+      isMoreLoading = false;
+      update();
+    }
+  }
+
+  /// Chat data Loading function
+  Future<void> getChatRepo() async {
+    if (page == 1) {
+      status = Status.loading;
+      update();
+    }
+
+    var response = await ApiService.get("${ApiEndPoint.chats}?page=$page");
+
+    if (response.statusCode == 200) {
+      var data = response.data['data'] ?? [];
+
+      for (var item in data) {
+        chats.add(ChatModel.fromJson(item));
+        name = item['participant']['name'];
+        image = item['participant']['image'];
+      }
+
+      page = page + 1;
+      status = Status.completed;
+      update();
+    } else {
+      Utils.errorSnackBar(response.statusCode.toString(), response.message);
+      status = Status.error;
+      update();
+    }
+  }
+
+  /// Chat data Update  Socket listener
+  listenChat() async {
+    SocketServices.on("update-chatlist::${LocalStorage.userId}", (data) {
+      page = 1;
+      chats.clear();
+
+      for (var item in data) {
+        chats.add(ChatModel.fromJson(item));
+      }
+
+      status = Status.completed;
+      update();
+    });
+  }
+
+  /// Controller on Init¬
   @override
   void onInit() {
+    getChatRepo();
     super.onInit();
-    filteredMessages = List.from(allMessages);
-  }
-
-  /// Search by name
-  void searchByName(String query) {
-    if (query.isEmpty) {
-      filteredMessages = List.from(allMessages);
-    } else {
-      filteredMessages = allMessages
-          .where((msg) =>
-          msg.name.toLowerCase().contains(query.trim().toLowerCase()))
-          .toList();
-    }
-    update(); // <-- Update GetBuilder UI
-  }
-
-  /// Clear search
-  void clearSearch() {
-    searchController.clear();
-    filteredMessages = List.from(allMessages);
-    update();
   }
 }

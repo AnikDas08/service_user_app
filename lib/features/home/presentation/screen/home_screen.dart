@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 20.h),
 
                     // Header Section
-                    _buildHeader(),
+                    _buildHeader(controller),
 
                     SizedBox(height: 20.h),
 
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(HomeController controller) {
     return Row(
       children: [
         // Profile Image
@@ -79,11 +79,20 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
           ),
-          child: ClipOval(
-            child: CommonImage(
-              imageSrc: "assets/images/profile_image.png",
-              size: 46.w,
-              fill: BoxFit.cover,
+          child: Obx(
+            ()=> ClipOval(
+              child: controller.image!=""?Image.network(
+                ApiEndPoint.socketUrl+controller.image.value,
+                width: 46.w,
+                height: 46.w,
+                fit: BoxFit.cover,
+              )
+                  :Image.asset(
+                "assets/images/profile_image.jpg",
+                width: 46.w,
+                height: 46.w,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ),
@@ -95,12 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CommonText(
-                text: "Md Kamran Khan",
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: AppColors.black300,
-                textAlign: TextAlign.left,
+              Obx(
+                  ()=>CommonText(
+                    text: controller.name.value,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black300,
+                    textAlign: TextAlign.left,
+                  ),
               ),
               SizedBox(height: 2.h),
               CommonText(

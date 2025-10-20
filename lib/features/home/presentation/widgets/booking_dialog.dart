@@ -4,10 +4,39 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../component/text/common_text.dart';
+import '../../../../config/api/api_end_point.dart';
 import '../../../../config/route/app_routes.dart';
+import '../../../../services/api/api_service.dart';
+import '../../../../services/storage/storage_services.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
 import '../controller/service_details_controller.dart';
+
+class ScheduleSlot {
+  final String id;
+  final DateTime start;
+  final DateTime end;
+  bool isSelected;
+
+  ScheduleSlot({
+    required this.id,
+    required this.start,
+    required this.end,
+    this.isSelected = false,
+  });
+
+  String get displayTime {
+    // Convert UTC to local time
+    DateTime localStart = start.toLocal();
+    DateTime localEnd = end.toLocal();
+
+    String startHour = localStart.hour.toString().padLeft(2, '0');
+    String startMinute = localStart.minute.toString().padLeft(2, '0');
+    String endHour = localEnd.hour.toString().padLeft(2, '0');
+    String endMinute = localEnd.minute.toString().padLeft(2, '0');
+    return '$startHour:$startMinute - $endHour:$endMinute';
+  }
+}
 
 class BookingDialog extends StatefulWidget {
   const BookingDialog({super.key});
@@ -25,6 +54,11 @@ class _BookingDialogState extends State<BookingDialog> {
   File? _selectedImage;
   final serviceController = Get.find<ServiceDetailsController>();
 
+  final RxBool isLoadingSchedule = false.obs;
+  final RxList<ScheduleSlot> availableSlots = <ScheduleSlot>[].obs;
+  final RxList<ScheduleSlot> selectedSlots = <ScheduleSlot>[].obs;
+  DateTime? selectedDate;
+
   @override
   void initState() {
     super.initState();
@@ -33,8 +67,117 @@ class _BookingDialogState extends State<BookingDialog> {
 
   void _updateTimeControllerText() {
     setState(() {
-      timeController.text = serviceController.getSelectedTimeSlotsText();
+      if (selectedSlots.isEmpty) {
+        timeController.text = '';
+      } else {
+        timeController.text = selectedSlots.map((slot) => slot.displayTime).join(', ');
+      }
     });
+  }
+
+  Future<void> _fetchScheduleForDate(DateTime date) async {
+    if (serviceController.providerData?.user.id == null) {
+      Get.snackbar(
+        'Error',
+        'Provider information not available',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+      return;
+    }
+
+    try {
+      isLoadingSchedule.value = true;
+      availableSlots.clear();
+      selectedSlots.clear();
+
+      // Format date in UTC ISO format
+      DateTime startDateUtc = DateTime.utc(date.year, date.month, date.day);
+      String formattedDate = startDateUtc.toIso8601String();
+
+      String url = "schedule/provider-schedule-date/${serviceController.providerData!.id}?date=$formattedDate";
+
+      print("📥 Fetching schedule for date: $formattedDate");
+      print("🔗 Full URL: $url");
+
+      final response = await ApiService.get(
+        url,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      print("📡 Response Status: ${response.statusCode}");
+      print("📦 Response Data: ${response.data}");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data['success'] == true && data['data'] != null) {
+          final scheduleData = data['data'];
+
+          if (scheduleData['available_slots'] != null) {
+            List<dynamic> slots = scheduleData['available_slots'];
+
+            for (var slot in slots) {
+              availableSlots.add(ScheduleSlot(
+                id: slot['_id'],
+                start: DateTime.parse(slot['start']),
+                end: DateTime.parse(slot['end']),
+              ));
+            }
+
+            print("✅ Loaded ${availableSlots.length} available slots");
+
+            if (availableSlots.isEmpty) {
+              Get.snackbar(
+                'No Availability',
+                'No time slots available for this date',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.orange,
+                colorText: AppColors.white,
+              );
+            }
+          } else {
+            Get.snackbar(
+              'No Slots',
+              'No available slots found for this date',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.orange,
+              colorText: AppColors.white,
+            );
+          }
+        } else {
+          Get.snackbar(
+            'No Schedule',
+            'Provider has no schedule for this date',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange,
+            colorText: AppColors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to fetch schedule: ${response.statusCode}',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: AppColors.white,
+        );
+      }
+    } catch (e) {
+      print("❌ Error fetching schedule: $e");
+      Get.snackbar(
+        'Error',
+        'Failed to load available time slots: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+    } finally {
+      isLoadingSchedule.value = false;
+    }
   }
 
   @override
@@ -197,7 +340,19 @@ class _BookingDialogState extends State<BookingDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: _showTimeSlotDialog,
+          onTap: () {
+            if (selectedDate == null) {
+              Get.snackbar(
+                'Select Date First',
+                'Please select a date before choosing time slots',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.orange,
+                colorText: AppColors.white,
+              );
+            } else {
+              _showTimeSlotDialog();
+            }
+          },
           child: Container(
             height: 48,
             width: double.infinity,
@@ -231,54 +386,6 @@ class _BookingDialogState extends State<BookingDialog> {
             ),
           ),
         ),
-
-        /*SizedBox(height: 8.h),
-        GetBuilder<ServiceDetailsController>(
-          builder: (controller) {
-            return controller.selectedTimeSlots.isNotEmpty
-                ? Wrap(
-              spacing: 8.w,
-              runSpacing: 4.h,
-              children: controller.selectedTimeSlots.map((slot) {
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: AppColors.primaryColor.withOpacity(0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CommonText(
-                        text: '${slot.displayTime}',
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.primaryColor,
-                        textAlign: TextAlign.start,
-                      ),
-                      SizedBox(width: 4.w),
-                      GestureDetector(
-                        onTap: () {
-                          controller.toggleTimeSlot(slot);
-                          _updateTimeControllerText();
-                        },
-                        child: Icon(
-                          Icons.close,
-                          size: 12.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            )
-                : SizedBox.shrink();
-          },
-        ),*/
       ],
     );
   }
@@ -371,14 +478,17 @@ class _BookingDialogState extends State<BookingDialog> {
 
     if (picked != null) {
       setState(() {
+        selectedDate = picked;
         dateController.text = '${picked.day}/${picked.month}/${picked.year}';
+        timeController.clear();
+        selectedSlots.clear();
       });
+
+      await _fetchScheduleForDate(picked);
     }
   }
 
   void _showTimeSlotDialog() {
-    final serviceController = Get.find<ServiceDetailsController>();
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -413,8 +523,7 @@ class _BookingDialogState extends State<BookingDialog> {
                 ),
                 SizedBox(height: 20.h),
 
-                // Direct Time Slots Grid - No Day Selection
-                _buildAllTimeSlotGrid(),
+                _buildScheduleSlotGrid(),
 
                 SizedBox(height: 20.h),
 
@@ -423,7 +532,11 @@ class _BookingDialogState extends State<BookingDialog> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          serviceController.clearTimeSlotSelections();
+                          selectedSlots.clear();
+                          for (var slot in availableSlots) {
+                            slot.isSelected = false;
+                          }
+                          availableSlots.refresh();
                           _updateTimeControllerText();
                         },
                         style: ElevatedButton.styleFrom(
@@ -471,87 +584,107 @@ class _BookingDialogState extends State<BookingDialog> {
     );
   }
 
-  // Simplified grid showing all available time slots
-  Widget _buildAllTimeSlotGrid() {
-    return GetBuilder<ServiceDetailsController>(
-      builder: (controller) {
-        if (controller.availableTimeSlots.isEmpty) {
-          return SizedBox(
-            height: 100.h,
-            child: Center(
-              child: CommonText(
-                text: "No time slots available",
-                fontSize: 14.sp,
-                color: AppColors.black400,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
-        }
-
+  Widget _buildScheduleSlotGrid() {
+    return Obx(() {
+      if (isLoadingSchedule.value) {
         return SizedBox(
-          height: 300.h, // Increased height to accommodate all slots
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1, // Single column to show day + time
-              crossAxisSpacing: 8.w,
-              mainAxisSpacing: 8.h,
-              childAspectRatio: 4, // Wide slots to show full info
+          height: 200.h,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: AppColors.primaryColor,
             ),
-            itemCount: controller.availableTimeSlots.length,
-            itemBuilder: (context, index) {
-              TimeSlot slot = controller.availableTimeSlots[index];
-              return GestureDetector(
-                onTap: () {
-                  controller.toggleTimeSlot(slot);
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
-                  decoration: BoxDecoration(
-                    color: slot.isSelected
-                        ? AppColors.primaryColor.withOpacity(0.1)
-                        : Colors.transparent,
-                    border: Border.all(
-                      color: slot.isSelected
-                          ? AppColors.primaryColor
-                          : AppColors.black50,
-                      width: slot.isSelected ? 2 : 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CommonText(
-                            text: slot.displayTime,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
-                            color: slot.isSelected
-                                ? AppColors.primaryColor
-                                : AppColors.black,
-                            textAlign: TextAlign.start,
-                          ),
-                        ],
-                      ),
-                      if (slot.isSelected)
-                        Icon(
-                          Icons.check_circle,
-                          color: AppColors.primaryColor,
-                          size: 20.sp,
-                        ),
-                    ],
-                  ),
-                ),
-              );
-            },
           ),
         );
-      },
-    );
+      }
+
+      if (availableSlots.isEmpty) {
+        return SizedBox(
+          height: 200.h,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.event_busy,
+                  size: 48.sp,
+                  color: AppColors.black200,
+                ),
+                SizedBox(height: 12.h),
+                CommonText(
+                  text: "No time slots available",
+                  fontSize: 14.sp,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 4.h),
+                CommonText(
+                  text: "Please select a different date",
+                  fontSize: 12.sp,
+                  color: AppColors.black200,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return SizedBox(
+        height: 300.h,
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 8.w,
+            mainAxisSpacing: 8.h,
+            childAspectRatio: 2.5,
+          ),
+          itemCount: availableSlots.length,
+          itemBuilder: (context, index) {
+            ScheduleSlot slot = availableSlots[index];
+            return GestureDetector(
+              onTap: () {
+                slot.isSelected = !slot.isSelected;
+                if (slot.isSelected) {
+                  if (!selectedSlots.contains(slot)) {
+                    selectedSlots.add(slot);
+                  }
+                } else {
+                  selectedSlots.remove(slot);
+                }
+                availableSlots.refresh();
+                selectedSlots.refresh();
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: slot.isSelected
+                      ? AppColors.primaryColor.withOpacity(0.1)
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: slot.isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.black50,
+                    width: slot.isSelected ? 2 : 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Center(
+                  child: CommonText(
+                    text: slot.displayTime,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    color: slot.isSelected
+                        ? AppColors.primaryColor
+                        : AppColors.black,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    });
   }
 
   Future<void> _selectImageFromGallery() async {
@@ -586,20 +719,8 @@ class _BookingDialogState extends State<BookingDialog> {
   }
 
   void _confirmBooking() {
-    final serviceController = Get.find<ServiceDetailsController>();
-
-    if (serviceController.selectedTimeSlots.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Please select at least one time slot",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: AppColors.white,
-      );
-      return;
-    }
-
-    if (dateController.text.isEmpty) {
+    // Validation
+    if (selectedDate == null || dateController.text.isEmpty) {
       Get.snackbar(
         "Error",
         "Please select a date",
@@ -610,25 +731,73 @@ class _BookingDialogState extends State<BookingDialog> {
       return;
     }
 
-    Map<String, dynamic> bookingData = {
+    if (selectedSlots.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select at least one time slot",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+      return;
+    }
+
+    if (serviceController.selectedServiceIds.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select at least one service",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+      return;
+    }
+
+    // Prepare booking data for invoice (NO API CALL)
+    DateTime bookingDateUtc = DateTime.utc(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
+
+    List<Map<String, dynamic>> slotsData = selectedSlots.map((slot) {
+      return {
+        "start": slot.start.toIso8601String(),
+        "end": slot.end.toIso8601String(),
+        "displayTime": slot.displayTime,
+      };
+    }).toList();
+
+    Map<String, dynamic> invoiceData = {
+      'providerId': serviceController.providerData!.id,
+      'provider': serviceController.providerData?.toJson(),
+      'providerName': serviceController.providerName,
+      'providerImage': serviceController.providerImage,
       'date': dateController.text,
-      'timeSlots': serviceController.selectedTimeSlots.map((slot) => {
-        'day': slot.day,
-        'startTime': slot.startTime,
-        'endTime': slot.endTime,
-      }).toList(),
+      'dateIso': bookingDateUtc.toIso8601String(),
+      'timeSlots': selectedSlots.map((slot) => slot.displayTime).toList(),
+      'slotsData': slotsData,
+      'selectedServices': serviceController.getSelectedServices(),
+      'selectedServiceIds': serviceController.selectedServiceIds.toList(),
+      'totalPrice': serviceController.getTotalPrice(),
+      'totalDuration': serviceController.getTotalDuration(),
       'description': descriptionController.text,
       'image': _selectedImage?.path,
     };
 
-    print("Booking Data: $bookingData");
 
+    print("📄 Invoice Data Prepared: $invoiceData");
+    print("📄dfd dsf df Invoice Data Prepared: ${serviceController.selectedServiceIds.toList()}");
+
+    // Close dialog
     Get.back();
-    //print("service 😍😍😍😍${serviceController.serviceProvider}dfgf");
-    Get.toNamed(AppRoutes.invoice,arguments: serviceController.services);
+
+    // Navigate to invoice screen
+    Get.toNamed(AppRoutes.invoice, arguments: invoiceData);
+
     Get.snackbar(
-      "Booking Confirmed",
-      "Your booking has been confirmed for ${serviceController.selectedTimeSlots.length} time slot(s)!",
+      "Success",
+      "Booking details prepared. Please review and confirm payment.",
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.primaryColor,
       colorText: AppColors.white,

@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haircutmen_user_app/utils/extensions/extension.dart';
 
 import '../../../../component/text/common_text.dart';
+import '../../../../config/api/api_end_point.dart';
 import '../../../../config/route/app_routes.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
+import '../../data/model/chat_list_model.dart';
 import '../controller/chat_controller.dart';
 
 class ChatListScreen extends StatelessWidget {
   ChatListScreen({super.key});
 
-  final ChatController controller = Get.put(ChatController());
+  final ChatControllers controller = Get.put(ChatControllers());
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,7 @@ class ChatListScreen extends StatelessWidget {
             // Search Bar
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              child: GetBuilder<ChatController>(
+              child: GetBuilder<ChatControllers>(
                 builder: (_) {
                   return Container(
                     height: 38.h,
@@ -69,7 +72,7 @@ class ChatListScreen extends StatelessWidget {
                           child: TextField(
                             controller: controller.searchController,
                             onChanged: (value) {
-                              controller.searchByName(value);
+                              // controller.searchByName(value);
                             },
                             decoration: InputDecoration(
                               hintText: AppString.search_text,
@@ -86,15 +89,15 @@ class ChatListScreen extends StatelessWidget {
                         ),
                         controller.searchController.text.isNotEmpty
                             ? IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            size: 18.sp,
-                            color: AppColors.black100,
-                          ),
-                          onPressed: () {
-                            controller.clearSearch();
-                          },
-                        )
+                              icon: Icon(
+                                Icons.close,
+                                size: 18.sp,
+                                color: AppColors.black100,
+                              ),
+                              onPressed: () {
+                                controller.searchController.clear();
+                              },
+                            )
                             : SizedBox.shrink(),
                       ],
                     ),
@@ -105,10 +108,9 @@ class ChatListScreen extends StatelessWidget {
 
             // Message List
             Expanded(
-              child: GetBuilder<ChatController>(
+              child: GetBuilder<ChatControllers>(
                 builder: (_) {
-                  final messages = controller.filteredMessages;
-                  if (messages.isEmpty) {
+                  if (controller.chats.isEmpty) {
                     return Center(
                       child: Text(
                         "No messages found",
@@ -121,9 +123,9 @@ class ChatListScreen extends StatelessWidget {
                   }
                   return ListView.builder(
                     controller: controller.scrollController,
-                    itemCount: messages.length,
+                    itemCount: controller.chats.length,
                     itemBuilder: (context, index) {
-                      final message = messages[index];
+                      ChatModel message = controller.chats[index];
                       return _buildMessageItem(message);
                     },
                   );
@@ -136,10 +138,15 @@ class ChatListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageItem(message) {
+  Widget _buildMessageItem(ChatModel message) {
     return GestureDetector(
       onTap: () {
-        Get.toNamed(AppRoutes.message);
+        Get.toNamed(AppRoutes.message,
+            parameters: {"id": message.id}
+        ,arguments: {
+          "name":message.participant.name,
+          "image":message.participant.image,
+            });
       },
       child: Container(
         padding: EdgeInsets.all(8),
@@ -157,7 +164,6 @@ class ChatListScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Avatar
             ClipOval(
               child: Container(
                 width: 50.w,
@@ -166,12 +172,12 @@ class ChatListScreen extends StatelessWidget {
                   color: AppColors.black100,
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(
-                  "assets/images/profile_image.png",
+                child: Image.network(
+                  ApiEndPoint.socketUrl+message.participant.image,
                   width: 50.w,
                   height: 50.w,
                   fit: BoxFit.cover,
-                ),
+                )
               ),
             ),
             SizedBox(width: 12.w),
@@ -185,14 +191,14 @@ class ChatListScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: message.name,
+                        text: message.participant.name,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: AppColors.black400,
                         textAlign: TextAlign.left,
                       ),
                       CommonText(
-                        text: message.time,
+                        text: message.updatedAt.checkTime,
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black100,
@@ -211,7 +217,7 @@ class ChatListScreen extends StatelessWidget {
                       SizedBox(width: 6.w),
                       Expanded(
                         child: CommonText(
-                          text: message.message,
+                          text: message.latestMessage.text,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           color: AppColors.black400,
@@ -219,24 +225,26 @@ class ChatListScreen extends StatelessWidget {
                           maxLines: 1,
                         ),
                       ),
-                      if (message.unreadCount != null &&
-                          message.unreadCount! > 0) ...[
-                        SizedBox(width: 8.w),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 6.w, vertical: 2.h),
-                          decoration: BoxDecoration(
-                            color: AppColors.black50,
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                          child: CommonText(
-                            text: message.unreadCount.toString(),
-                            fontSize: 8,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
+                      // if (message.unreadCount != null &&
+                      //     message.unreadCount! > 0) ...[
+                      //   SizedBox(width: 8.w),
+                      //   Container(
+                      //     padding: EdgeInsets.symmetric(
+                      //       horizontal: 6.w,
+                      //       vertical: 2.h,
+                      //     ),
+                      //     decoration: BoxDecoration(
+                      //       color: AppColors.black50,
+                      //       borderRadius: BorderRadius.circular(10.r),
+                      //     ),
+                      //     child: CommonText(
+                      //       text: message.unreadCount.toString(),
+                      //       fontSize: 8,
+                      //       fontWeight: FontWeight.w500,
+                      //       color: Colors.red,
+                      //     ),
+                      //   ),
+                      // ],
                     ],
                   ),
                 ],

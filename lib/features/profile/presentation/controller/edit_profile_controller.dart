@@ -298,7 +298,7 @@ class EditProfileController extends GetxController {
           final profileModel=ProfileModel.fromJson(response.data);
           update();
           Utils.successSnackBar("Profile Updated Successfully", response.message);
-          await Get.find<ProfileController>().getProfile();
+          //await Get.find<ProfileController>().getProfile();
         } else {
           Utils.errorSnackBar(response.statusCode, "No data returned from server");
         }

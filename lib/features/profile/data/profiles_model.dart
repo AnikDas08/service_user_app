@@ -47,7 +47,7 @@ class ProfileData {
   final String? email;
   final String? contact;
   final String? location;
-  final int? credits;
+  final num? credits;
   final bool? isActive;
   final bool? verified;
   final bool? isDeleted;
@@ -119,7 +119,7 @@ class ProfileData {
     String? email,
     String? contact,
     String? location,
-    int? credits,
+    num? credits,
     bool? isActive,
     bool? verified,
     bool? isDeleted,

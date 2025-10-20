@@ -1,9 +1,10 @@
-// home_screen.dart
+// appointment_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/text/common_text.dart';
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/features/appointment/presentation/controller/appointment_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -12,7 +13,6 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
 import '../../../../utils/custom_appbar/custom_appbar.dart';
 import '../../../home/widget/custom_button_home.dart';
-import '../../data/model/booking_model.dart';
 
 class AppointmentScreen extends StatelessWidget {
   const AppointmentScreen({super.key});
@@ -28,7 +28,10 @@ class AppointmentScreen extends StatelessWidget {
             body: Column(
               children: [
                 // Header with profile and online status
-                CustomAppBar(title: AppString.appointment_text,showBackButton: false,),
+                CustomAppBar(
+                  title: AppString.appointment_text,
+                  showBackButton: false,
+                ),
 
                 // Calendar
                 Container(
@@ -88,7 +91,9 @@ class AppointmentScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
 
                 // Filter Buttons
                 Padding(
@@ -111,14 +116,14 @@ class AppointmentScreen extends StatelessWidget {
                           fontSize: 14,
                           height: 34,
                           isSelected: controller.selectedFilter == 1,
-                          onTap: () => controller.changeFilter(1)
+                          onTap: () => controller.changeFilter(1),
                         ),
                       ),
                       SizedBox(width: 8.w),
                       Expanded(
                         child: CustomButton(
                           text: AppString.canceled_button,
-                          fontSize:14,
+                          fontSize: 14,
                           height: 34,
                           isSelected: controller.selectedFilter == 2,
                           onTap: () => controller.changeFilter(2),
@@ -130,15 +135,47 @@ class AppointmentScreen extends StatelessWidget {
 
                 SizedBox(height: 16.h),
 
-                // Booking List
+                // Booking List with Loading State
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    itemCount: controller.getFilteredBookings().length,
-                    itemBuilder: (context, index) {
-                      final booking = controller.getFilteredBookings()[index];
-                      return _buildBookingCard(booking, controller);
-                    },
+                  child: controller.isLoading
+                      ? Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  )
+                      : controller.getFilteredBookings().isEmpty
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.event_busy,
+                          size: 64.sp,
+                          color: Colors.grey[400],
+                        ),
+                        SizedBox(height: 16.h),
+                        CommonText(
+                          text: 'No bookings found',
+                          fontSize: 16.sp,
+                          color: Colors.grey[600]!,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ],
+                    ),
+                  )
+                      : RefreshIndicator(
+                    onRefresh: controller.fetchAllBookings,
+                    color: AppColors.primaryColor,
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      itemCount:
+                      controller.getFilteredBookings().length,
+                      itemBuilder: (context, index) {
+                        final booking =
+                        controller.getFilteredBookings()[index];
+                        return _buildBookingCard(booking, controller);
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -149,17 +186,21 @@ class AppointmentScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBookingCard(BookingModel booking, AppointmentController controller) {
+  Widget _buildBookingCard(
+      Map<String, dynamic> booking, AppointmentController controller) {
     return GestureDetector(
-      onTap: (){
-        if(controller.selectedFilter==0){
-          Get.toNamed(AppRoutes.upcomingdetail_screen);
-        }
-        else if(controller.selectedFilter==1) {
-          Get.toNamed(AppRoutes.view_detail_pending);
-        }
-        else{
-        }
+      onTap: () {
+        if (controller.selectedFilter == 0) {
+          Get.toNamed(AppRoutes.upcomingdetail_screen,
+          arguments: {'bookingId': controller.getFullBookingId(booking)},
+          );
+        } else if (controller.selectedFilter == 1) {
+          // Pass booking ID as argument
+          Get.toNamed(
+            AppRoutes.view_detail_pending,
+            arguments: {'bookingId': controller.getFullBookingId(booking)},
+          );
+        } else {}
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
@@ -181,13 +222,25 @@ class AppointmentScreen extends StatelessWidget {
               width: 76.w,
               height: 87.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.zero, // no rounding
+                borderRadius: BorderRadius.zero,
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.zero, // ensure no clipping to circle
-                child: Image.asset(
+                borderRadius: BorderRadius.zero,
+                child: controller.getUserImage(booking).startsWith('http') ||
+                    controller.getUserImage(booking).startsWith('/')
+                    ? Image.network(
+                  ApiEndPoint.imageUrl+controller.getUserImage(booking),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/item_image.png",
+                      fit: BoxFit.cover,
+                    );
+                  },
+                )
+                    : Image.asset(
                   "assets/images/item_image.png",
-                  fit: BoxFit.cover, // fills the container
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
@@ -199,13 +252,14 @@ class AppointmentScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: booking.customerName,
+                    text: controller.getUserName(booking),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: AppColors.black400,
                   ),
                   SizedBox(height: 4.h),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SvgPicture.asset(
                         "assets/icons/propetion_icon.svg",
@@ -215,7 +269,7 @@ class AppointmentScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       CommonText(
-                        text: booking.service,
+                        text: controller.getServiceNames(booking),
                         fontSize: 14.sp,
                         color: AppColors.black400,
                         fontWeight: FontWeight.w400,
@@ -233,7 +287,7 @@ class AppointmentScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       CommonText(
-                        text: booking.date,
+                        text: controller.getFormattedDate(booking),
                         fontSize: 12.sp,
                         color: AppColors.black200,
                         fontWeight: FontWeight.w400,
@@ -247,11 +301,10 @@ class AppointmentScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 4.w),
                       CommonText(
-                        text: booking.time,
+                        text: controller.getFormattedTime(booking),
                         fontSize: 12.sp,
                         color: AppColors.black200,
-                        fontWeight: FontWeight.w400
-                        ,
+                        fontWeight: FontWeight.w400,
                       ),
                     ],
                   ),
@@ -259,33 +312,35 @@ class AppointmentScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          CommonText(
-                            text: 'Booking ID: ${booking.bookingId}',
-                            fontSize: 12.sp,
-                            color: AppColors.black300,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          SizedBox(width: 12.w),
-                          CommonText(
-                            text: 'RSD: ${booking.price}',
-                            fontSize: 12.sp,
-                            color: AppColors.black400,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CommonText(
+                              text: 'Booking ID: ${controller.getBookingId(booking)}',
+                              fontSize: 12.sp,
+                              color: AppColors.black300,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            SizedBox(width: 12.w),
+                            CommonText(
+                              text: 'RSD: ${controller.getAmount(booking)}',
+                              fontSize: 12.sp,
+                              color: AppColors.black400,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
                       ),
-                      if(controller.selectedFilter!=2)
+                      if (controller.selectedFilter != 2)
                         Align(
                           alignment: Alignment.bottomRight,
                           child: CustomButton(
                             text: AppString.view_button,
                             isSelected: true,
-                            onTap: () => controller.viewBookingDetails(booking),
+                            onTap: () =>
+                                controller.viewBookingDetails(booking),
                             isSmall: true,
                             height: 24,
-                            //fontSize: 14,
                           ),
                         )
                     ],
@@ -293,14 +348,12 @@ class AppointmentScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // View Button
           ],
         ),
       ),
     );
   }
 }
-
 
 // Event class for table_calendar
 class Event {

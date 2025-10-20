@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import '../../../../services/api/api_service.dart';
+import '../../../../utils/app_utils.dart';
+import '../../../profile/data/profiles_model.dart';
 import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
 
@@ -20,12 +22,18 @@ class HomeController extends GetxController {
   // Categories from API
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingCategories = false.obs;
+  final RxBool isProfileLoading = false.obs;
+  var name="".obs;
+  var image="".obs;
+  ProfileData? profileData;
+
 
   @override
   void onInit() {
     super.onInit();
     fetchCategories(); // Fetch categories first
     fetchServiceProviders(); // Fetch providers from API
+    getProfile();
 
     // Listen to search input
     searchController.addListener(_onSearchChanged);
@@ -93,6 +101,33 @@ class HomeController extends GetxController {
     } finally {
       isLoadingProviders.value = false;
     }
+  }
+
+  Future<void> getProfile()async{
+    update();
+    try{
+      final response=await ApiService.get(
+          ApiEndPoint.user,
+          header: {
+            "Authorization": "Bearer ${LocalStorage.token}"
+          }
+      );
+      if(response.statusCode==200){
+        final profileModel=ProfileModel.fromJson(response.data);
+        profileData = profileModel.data;
+        name.value=profileData?.name??"";
+        image.value=profileData?.image??"";
+      }
+      else{
+        ///rtrfgg
+        Utils.errorSnackBar(response.statusCode, response.message);
+      }
+    }
+    catch(e){
+      Utils.errorSnackBar(0, e.toString());
+    }
+    update();
+
   }
 
   // Fetch categories from API
@@ -173,6 +208,8 @@ class HomeController extends GetxController {
           .toList();
     }
   }
+
+
 
   // Navigate to provider details
   void onProviderTap(String id) {

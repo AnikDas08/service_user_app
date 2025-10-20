@@ -33,24 +33,6 @@ class ServiceDetailsScreen extends StatelessWidget {
               );
             }
 
-            // Show error if no data
-            if (controller.providerData == null) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
-                    SizedBox(height: 16.h),
-                    CommonText(
-                      text: "Provider not found",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black400,
-                    ),
-                  ],
-                ),
-              );
-            }
 
             return SafeArea(
               child: Padding(
@@ -129,18 +111,18 @@ class ServiceDetailsScreen extends StatelessWidget {
       width: double.infinity,
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(10.r)),
-        child: imageUrl != null
-            ? CommonImage(
-          imageSrc: imageUrl,
+        child: controller.providerImage!=null
+            ? Image.network(
+          ApiEndPoint.socketUrl+controller.providerImage!,
           width: double.infinity,
           height: 147.h,
-          fill: BoxFit.cover,
+          fit: BoxFit.cover,
         )
-            : CommonImage(
-          imageSrc: "assets/images/profile_image.png",
+            : Image.asset(
+          "assets/images/image_here.png",
           width: double.infinity,
           height: 147.h,
-          fill: BoxFit.cover,
+          fit: BoxFit.cover,
         ),
       ),
     );
@@ -247,6 +229,7 @@ class ServiceDetailsScreen extends StatelessWidget {
 
         SizedBox(height: 18.h),
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             CommonText(
               text: "Spoken : ",
@@ -254,13 +237,11 @@ class ServiceDetailsScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: AppColors.black400,
             ),
-            Expanded(
-              child: CommonText(
-                text: controller.spokenLanguagesText,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primaryColor,
-              ),
+            CommonText(
+              text: controller.spokenLanguagesText,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.primaryColor,
             ),
           ],
         ),

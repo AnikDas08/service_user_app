@@ -37,6 +37,8 @@ class ProfileController extends GetxController {
   var number="".obs;
   var email="".obs;
   var location="".obs;
+  RxDouble credit = 0.0.obs;
+  var imageUser="".obs;
 
   ProfileData? profileData; // will hold the fetched profile data
   bool isProfileLoading = false; // for loading state
@@ -109,7 +111,8 @@ class ProfileController extends GetxController {
         number.value=profileData?.contact??"";
         email.value=profileData?.email??"";
         location.value=profileData?.location??"";
-        image=profileData?.image??"";
+        imageUser.value=profileData?.image??"";
+        credit.value = (profileData?.credits ?? 0).toDouble();
       }
       else{
         ///rtrfgg

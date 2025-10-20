@@ -7,6 +7,7 @@ import 'package:haircutmen_user_app/features/home/presentation/controller/invoic
 import 'package:haircutmen_user_app/features/home/widget/custom_button_home.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
+import '../../../../config/api/api_end_point.dart';
 
 class InvoiceScreen extends StatelessWidget {
   const InvoiceScreen({super.key});
@@ -16,40 +17,35 @@ class InvoiceScreen extends StatelessWidget {
     return GetBuilder<InvoiceController>(
       init: InvoiceController(),
       builder: (controller) => Scaffold(
+        backgroundColor: AppColors.background,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  CustomAppBar(title: "Invoice",),
-                  // Header with image
-                  _buildHeader(controller),
-                  SizedBox(height: 5.h),
-                  CommonText(
-                    text: "Angel maria",
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18.sp,
-                    color: AppColors.black400,
-                  ),
-                  SizedBox(height: 10.h),
-                  RowDetail(title: "Date",value: ": 12.16.25",),
-                  SizedBox(height: 10.h,),
-                  RowDetail(title: "Time",value: ": 9:16",),
-                  SizedBox(height: 10.h,),
+                  CustomAppBar(title: "Invoice"),
 
-                  SizedBox(height: 30.h,),
+                  SizedBox(height: 10.h),
+
+                  _buildProviderSection(controller),
+
+                  SizedBox(height: 20.h),
+
+                  _buildBookingDetails(controller),
+
+                  SizedBox(height: 30.h),
 
                   CommonText(
                     textAlign: TextAlign.start,
-                    text: "Use Promo Code(Optional)",
+                    text: "Use Promo Code (Optional)",
                     fontWeight: FontWeight.w500,
                     fontSize: 16.sp,
                     color: AppColors.black400,
                   ),
-                  SizedBox(height: 10.h,),
+                  SizedBox(height: 10.h),
                   Row(
                     children: [
                       Expanded(
@@ -61,226 +57,37 @@ class InvoiceScreen extends StatelessWidget {
                           paddingVertical: 10,
                         ),
                       ),
-                      SizedBox(width: 16,),
-                      IntrinsicWidth(child: CustomButton(text: "Apply", isSelected: true, onTap: (){}))
+                      SizedBox(width: 16.w),
+                      IntrinsicWidth(
+                        child: CustomButton(
+                          text: "Apply",
+                          isSelected: true,
+                          onTap: () {
+                            controller.applyPromoCode();
+                          },
+                        ),
+                      )
                     ],
                   ),
-                  SizedBox(height: 30.h,),
+                  SizedBox(height: 30.h),
 
-                  // Services Table
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.black300.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Table(
-                      border: TableBorder(
-                        verticalInside: BorderSide(color: AppColors.black300.withOpacity(0.3)),
-                        horizontalInside: BorderSide(color: AppColors.black300.withOpacity(0.3)),
-                      ),
-                      columnWidths: const {
-                        0: FlexColumnWidth(1),
-                        1: FlexColumnWidth(1.2),
-                        2: FlexColumnWidth(1),
-                      },
-                      children: [
-                        // Header Row
-                        TableRow(
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(8.r),
-                              topRight: Radius.circular(8.r),
-                            ),
-                          ),
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Service",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.black400,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Service Type",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.black400,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Price",
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.black400,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Data Row 1
-                        TableRow(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Hair Cut",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.black300,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Zero Cut",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.black300,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "200RSD",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.primaryColor,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Data Row 2
-                        TableRow(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Hair Cut",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.black300,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "Color with cut",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.black300,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(12.w),
-                              child: CommonText(
-                                text: "200RSD",
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.primaryColor,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 8,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText(
-                        textAlign: TextAlign.start,
-                        text: "Sub Total",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14.sp,
-                        color: AppColors.black400,
-                      ),
-                      SizedBox(
-                        width: 80,
-                        child: CommonText(
-                          textAlign: TextAlign.start,
-                          text: ": RSD 2500",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.sp,
-                          color: AppColors.black400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText(
-                        textAlign: TextAlign.start,
-                        text: "Discount(30%)",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14.sp,
-                        color: AppColors.black400,
-                      ),
-                      SizedBox(
-                        width: 80,
-                        child: CommonText(
-                          textAlign: TextAlign.start,
-                          text: ": RSD 200",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.sp,
-                          color: AppColors.black400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5.h,),
-                  Container(
-                    height: 2,
-                    color: AppColors.black200,
-                  ),
-                  SizedBox(height: 5.h,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText(
-                        textAlign: TextAlign.start,
-                        text: "Total Price",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 14.sp,
-                        color: AppColors.primaryColor,
-                      ),
-                      SizedBox(
-                        width: 80,
-                        child: CommonText(
-                          textAlign: TextAlign.start,
-                          text: " RSD 2300",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 50.h,),
+                  _buildServicesTable(controller),
+
+                  SizedBox(height: 16.h),
+
+                  _buildPriceSummary(controller),
+
+                  SizedBox(height: 50.h),
+
                   CustomButton(
-                      text: "Pay",
-                      isSelected: true,
-                      onTap: (){
-                        //Get.offAllNamed(AppRoutes.homeNav);
-                      })
+                    text: "Pay",
+                    isSelected: true,
+                    onTap: () {
+                      controller.processPayment();
+                    },
+                  ),
 
+                  SizedBox(height: 30.h),
                 ],
               ),
             ),
@@ -289,20 +96,255 @@ class InvoiceScreen extends StatelessWidget {
       ),
     );
   }
-  Widget _buildHeader(InvoiceController controller) {
-    final provider = controller.serviceProvider;
-    return SizedBox(
-      width: double.infinity,
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(10.r)),
-        child: Image.asset(
-          "${provider["image"] }"?? "assets/images/service_provider.png",
-          width: double.infinity,
-          height: 147.h,
-          fit: BoxFit.cover,
+
+  Widget _buildProviderSection(InvoiceController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (controller.providerImage != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10.r),
+            child: controller.providerImage!=null
+                ? Image.network(
+              '${ApiEndPoint.socketUrl}${controller.providerImage}',
+              width: double.infinity,
+              height: 147.h,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: double.infinity,
+                  height: 147.h,
+                  color: AppColors.black100,
+                  child: Icon(
+                    Icons.person,
+                    size: 48.sp,
+                    color: AppColors.black200,
+                  ),
+                );
+              },
+            )
+                : Image.asset(
+              "assets/images/noImage.png",
+              width: double.infinity,
+              height: 147.h,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+        SizedBox(height: 10.h),
+
+        CommonText(
+          text: controller.providerName,
+          fontWeight: FontWeight.w500,
+          fontSize: 18.sp,
+          color: AppColors.black400,
         ),
+      ],
+    );
+  }
+
+  Widget _buildBookingDetails(InvoiceController controller) {
+    return Column(
+      children: [
+        RowDetail(
+          title: "Date",
+          value: ": ${controller.bookingDate}",
+        ),
+        SizedBox(height: 10.h),
+        RowDetail(
+          title: "Time",
+          value: ": ${controller.bookingTime}",
+        ),
+        if (controller.bookingDuration.isNotEmpty) ...[
+          SizedBox(height: 10.h),
+          RowDetail(
+            title: "Duration",
+            value: ": ${controller.bookingDuration}",
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildServicesTable(InvoiceController controller) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.black300.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Table(
+        border: TableBorder(
+          verticalInside: BorderSide(color: AppColors.black300.withOpacity(0.3)),
+          horizontalInside: BorderSide(color: AppColors.black300.withOpacity(0.3)),
+        ),
+        columnWidths: const {
+          0: FlexColumnWidth(1),
+          1: FlexColumnWidth(1.2),
+          2: FlexColumnWidth(1),
+        },
+        children: [
+          TableRow(
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.r),
+                topRight: Radius.circular(8.r),
+              ),
+            ),
+            children: [
+              Padding(
+                padding: EdgeInsets.all(12.w),
+                child: CommonText(
+                  text: "Service",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(12.w),
+                child: CommonText(
+                  text: "Service Type",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(12.w),
+                child: CommonText(
+                  text: "Price",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+          ...controller.selectedServices.map((service) {
+            return TableRow(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(12.w),
+                  child: CommonText(
+                    text: service['name'] ?? 'Service',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black300,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(12.w),
+                  child: CommonText(
+                    text: service['type'] ?? 'Standard',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black300,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(12.w),
+                  child: CommonText(
+                    text: service['price'] ?? '0 RSD',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.primaryColor,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+        ],
       ),
     );
+  }
+
+  Widget _buildPriceSummary(InvoiceController controller) {
+    return Obx(() => Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Sub Total",
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: "RSD ${controller.subTotal}",
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: AppColors.black400,
+              ),
+            ),
+          ],
+        ),
+        if (controller.discount.value > 0) ...[
+          SizedBox(height: 16.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CommonText(
+                textAlign: TextAlign.start,
+                text: "Discount (${controller.discountPercent}%)",
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: AppColors.black400,
+              ),
+              SizedBox(
+                width: 100.w,
+                child: CommonText(
+                  textAlign: TextAlign.end,
+                  text: "- RSD ${controller.discount.value}",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+        ],
+        SizedBox(height: 10.h),
+        Container(
+          height: 2,
+          color: AppColors.black200,
+        ),
+        SizedBox(height: 10.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Total Price",
+              fontWeight: FontWeight.w600,
+              fontSize: 16.sp,
+              color: AppColors.primaryColor,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: "RSD ${controller.totalPrice.value}",
+                fontWeight: FontWeight.w600,
+                fontSize: 16.sp,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ],
+        ),
+      ],
+    ));
   }
 }
 
@@ -330,12 +372,14 @@ class RowDetail extends StatelessWidget {
             color: AppColors.black400,
           ),
         ),
-        CommonText(
-          textAlign: TextAlign.start,
-          text: value,
-          fontWeight: FontWeight.w400,
-          fontSize: 14.sp,
-          color: AppColors.black400,
+        Expanded(
+          child: CommonText(
+            textAlign: TextAlign.start,
+            text: value,
+            fontWeight: FontWeight.w400,
+            fontSize: 14.sp,
+            color: AppColors.black400,
+          ),
         ),
       ],
     );

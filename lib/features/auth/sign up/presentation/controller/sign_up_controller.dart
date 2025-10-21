@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
 
@@ -19,6 +20,7 @@ class SignUpController extends GetxController {
   bool isPopUpOpen = false;
   bool isLoading = false;
   bool isLoadingVerify = false;
+  bool isLoadingReset = false;
 
   Timer? _timer;
   int start = 0;
@@ -101,6 +103,28 @@ class SignUpController extends GetxController {
       Utils.errorSnackBar(response.statusCode.toString(), response.message);
     }
     isLoading = false;
+    update();
+  }
+
+  resendOtp() async {
+    //Get.toNamed(AppRoutes.verifyUser);
+    //return;
+    isLoadingReset = true;
+    update();
+    Map<String, String> body = {
+      "email":emailController.text,
+    };
+
+    var response = await ApiService.post(ApiEndPoint.resendOtp, body: body);
+
+    if (response.statusCode == 200) {
+      var data = response.data;
+      Get.toNamed(AppRoutes.verifyUser);
+      Get.snackbar("Successful", "Otp Send Successfully");
+    } else {
+      Utils.errorSnackBar(response.statusCode.toString(), response.message);
+    }
+    isLoadingReset = false;
     update();
   }
 

@@ -18,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     Future.delayed(const Duration(seconds: 3), () async {
+      print("token 🤣🤣🤣🤣🤣${LocalStorage.token}");
       if (LocalStorage.isLogIn) {
         bool isValidUser=await ProfileController().checkUser();
         if(isValidUser){

@@ -76,7 +76,7 @@ class ServiceProviderCard extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
-                            color: AppColors.white.withOpacity(0.4),
+                            color: AppColors.gray.withOpacity(0.4),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(

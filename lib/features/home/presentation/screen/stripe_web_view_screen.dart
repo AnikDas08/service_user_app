@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/config/route/app_routes.dart';
+import 'package:haircutmen_user_app/features/home/presentation/screen/home_nav_screen.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/home_screen.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/invoice_screen.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
@@ -21,12 +23,7 @@ class StripeWebViewScreen extends StatelessWidget {
                   NavigationDelegate(
                     onNavigationRequest: (request) {
                       if (request.url.contains("success")) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                        );
+                       Get.offAllNamed(AppRoutes.homeNav);
                         Get.snackbar(
                           "Success",
                           "Payment successful",
@@ -54,12 +51,7 @@ class StripeWebViewScreen extends StatelessWidget {
                     onPageStarted: (_) {},
                     onPageFinished: (url) {
                       if (url.contains("success")) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                        );
+                        Get.offAllNamed(AppRoutes.homeNav);
                       } else if (url.contains("cancel")) {
                         Navigator.pushReplacement(
                           context,

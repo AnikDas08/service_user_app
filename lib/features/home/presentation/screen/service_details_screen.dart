@@ -357,7 +357,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                             Row(
                               children: [
                                 CommonText(
-                                  text: service['duration'],
+                                  text: "60 min",
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: AppColors.black200,
@@ -456,7 +456,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                               textAlign: TextAlign.left,
                             ),
                             CommonText(
-                              text: "${service['price']} (${service['duration']})",
+                              text: "${service['price']}",
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryColor,
@@ -482,7 +482,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: "Total Duration: ${controller.getTotalDuration()}",
+                        text: "Total Duration: 60 min",
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black400,

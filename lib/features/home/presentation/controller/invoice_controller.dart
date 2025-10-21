@@ -218,7 +218,7 @@ class InvoiceController extends GetxController {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('Confirm & Pay', style: TextStyle(color: Colors.white)),
+            child: isProcessing.value ? CircularProgressIndicator() : Text('Confirm & Pay', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -438,11 +438,12 @@ class InvoiceController extends GetxController {
   }
 
   Future<void> getCheckoutSession() async {
+    print("jkd🤣🤣🤣🤣 ${LocalStorage.token}");
     try {
       isProcessing.value = true;
       update();
       // Prepare booking request body
-      Map<String, dynamic> bookingBody = {
+      Map<dynamic, dynamic> bookingBody = {
         "provider": invoiceData['providerId'],
         "services": invoiceData['selectedServiceIds'],
         "date": invoiceData['dateIso'],
@@ -459,7 +460,6 @@ class InvoiceController extends GetxController {
         body: bookingBody,
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
-          "Content-Type": "application/json",
         },
       );
 

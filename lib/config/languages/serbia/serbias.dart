@@ -228,7 +228,7 @@ Map<String, String> serbian = {
   // Profile Screen
   AppString.personal_information: "Личне информације",
   AppString.service_information: "Моје услуге",
-  AppString.language_text: "Језик",
+  AppString.language_text: "Jezik",
   AppString.contact_support_text: "Молимо контактирајте нас путем\nemail-а за било које ваше потребе",
   AppString.contact_support_button: "Контактирај путем Email-а",
   AppString.setting: "Подешавања",

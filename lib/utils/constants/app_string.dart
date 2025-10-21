@@ -125,6 +125,7 @@ class AppString {
   static const String verify_email_details =
       "We’ve sent a One-Time Password (OTP) to your email. Please enter it below to continue";
   static const String continue_button = "Continue";
+  static const String resend_button = "Resend Otp";
 
   /// Create Password
   static const String create_password_text = "Create New Password";

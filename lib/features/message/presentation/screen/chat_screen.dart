@@ -173,7 +173,7 @@ class ChatListScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Image.network(
-                  ApiEndPoint.socketUrl+controller.image,
+                  ApiEndPoint.socketUrl+message.participant.image,
                   width: 50.w,
                   height: 50.w,
                   fit: BoxFit.cover,
@@ -191,7 +191,7 @@ class ChatListScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: controller.name,
+                        text: message.participant.name,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: AppColors.black400,

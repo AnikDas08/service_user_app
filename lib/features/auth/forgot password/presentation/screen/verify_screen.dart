@@ -165,6 +165,19 @@ class _VerifyScreenState extends State<VerifyScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 30.h,),
+                    /// Resend OTP Button here
+                    CommonButton(
+                      buttonWidth: MediaQuery.of(context).size.width*0.6,
+                      titleText: AppString.resend_button,
+                      titleColor: AppColors.primaryColor,
+                      buttonColor: AppColors.transparent,
+                      borderColor: AppColors.primaryColor,
+                      isLoading: controller.isLoadingReset,
+                      onTap: () {
+                          controller.resendOtp();
+                      },
+                    ),
                   ],
                 ),
               ),

@@ -35,40 +35,42 @@ class MessageScreen extends StatelessWidget {
       backgroundColor: AppColors.white,
       appBar: _buildAppBar(),
       body: GetBuilder<MessageController>(
-        builder: (controller) => Column(
-          children: [
-            // Messages List
-            Expanded(
-              child: controller.isLoading
-                  ? CommonLoader()
-                  : controller.messages.isEmpty
-                  ? Center(
-                child: CommonText(
-                  text: "No messages yet\nStart a conversation!",
-                  fontSize: 16,
-                  color: AppColors.black400,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
+        builder: (controller) => SafeArea(
+          child: Column(
+            children: [
+              // Messages List
+              Expanded(
+                child: controller.isLoading
+                    ? CommonLoader()
+                    : controller.messages.isEmpty
+                    ? Center(
+                  child: CommonText(
+                    text: "No messages yet\nStart a conversation!",
+                    fontSize: 16,
+                    color: AppColors.black400,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                  ),
+                )
+                    : ListView.builder(
+                  controller: controller.scrollController,
+                  reverse: true,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  itemCount: controller.messages.length,
+                  itemBuilder: (context, index) {
+                    final message = controller.messages[index];
+                    return _buildMessageBubble(message);
+                  },
                 ),
-              )
-                  : ListView.builder(
-                controller: controller.scrollController,
-                reverse: true,
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 8.h,
-                ),
-                itemCount: controller.messages.length,
-                itemBuilder: (context, index) {
-                  final message = controller.messages[index];
-                  return _buildMessageBubble(message);
-                },
               ),
-            ),
-
-            // Message Input Area
-            _buildMessageInput(controller),
-          ],
+          
+              // Message Input Area
+              _buildMessageInput(controller),
+            ],
+          ),
         ),
       ),
     );

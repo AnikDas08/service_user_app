@@ -155,13 +155,6 @@ class InvoiceScreen extends StatelessWidget {
           title: "Time",
           value: ": ${controller.bookingTime}",
         ),
-        if (controller.bookingDuration.isNotEmpty) ...[
-          SizedBox(height: 10.h),
-          RowDetail(
-            title: "Duration",
-            value: ": ${controller.bookingDuration}",
-          ),
-        ],
       ],
     );
   }

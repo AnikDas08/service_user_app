@@ -16,6 +16,7 @@ class ForgetPasswordController extends GetxController {
   /// Loading for Verify OTP
 
   bool isLoadingVerify = false;
+  bool isLoading = false;
 
   /// Loading for Creating New Password
   bool isLoadingReset = false;
@@ -74,6 +75,27 @@ class ForgetPasswordController extends GetxController {
       Get.snackbar(response.statusCode.toString(), response.message);
     }
     isLoadingEmail = false;
+    update();
+  }
+  Future<void> resendOtp() async {
+    //Get.toNamed(AppRoutes.verifyEmail);
+    //return;
+    isLoadingReset = true;
+    update();
+
+    Map<String, String> body = {"email": emailController.text};
+    var response = await ApiService.post(
+      ApiEndPoint.resendOtp,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      Get.toNamed(AppRoutes.verifyEmail);
+      Get.snackbar("Successful", "Otp Send Successfully");
+    } else {
+      Get.snackbar(response.statusCode.toString(), response.message);
+    }
+    isLoadingReset = false;
     update();
   }
 

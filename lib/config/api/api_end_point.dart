@@ -1,7 +1,7 @@
 class ApiEndPoint {
-  static const baseUrl = "http://10.10.7.22:5000/api/v1/";
-  static const imageUrl = "http://10.10.7.22:5000/";
-  static const socketUrl = "http://10.10.7.22:5000";
+  static const baseUrl = "https://dilware5000.binarybards.online/api/v1/";
+  static const imageUrl = "https://dilware5000.binarybards.online/";
+  static const socketUrl = "https://dilware5000.binarybards.online";
 
   static const signUp = "user/user";
   static const verifyEmail = "users/verify-email";
@@ -19,6 +19,7 @@ class ApiEndPoint {
   static const provider = "provider";
   static const service = "service";
   static const category = "category";
+  static const resendOtp = "auth/resend-otp";
   static const providerSchedule = "schedule/provider-schedule";
   static const chats = "chats/my-chats";
   static const messages = "messages";

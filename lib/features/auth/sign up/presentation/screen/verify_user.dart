@@ -141,6 +141,19 @@ class _VerifyUserState extends State<VerifyUser> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 30.h,),
+                  /// Resend OTP Button here
+                  CommonButton(
+                    titleText: AppString.resend_button,
+                    buttonWidth: MediaQuery.of(context).size.width*0.6,
+                    isLoading: controller.isLoadingReset,
+                    titleColor: AppColors.primaryColor,
+                    buttonColor: AppColors.transparent,
+                    borderColor: AppColors.primaryColor,
+                    onTap: () {
+                        controller.resendOtp();
+                    },
+                  ),
                 ],
               ),
             ),

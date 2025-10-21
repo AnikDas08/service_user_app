@@ -66,8 +66,11 @@ class ProfileController extends GetxController {
         header: {"Authorization": "Bearer ${LocalStorage.token}"},
       );
       if (response.statusCode == 200) {
-        LocalStorage.isLogIn = true;
-        LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
+        // LocalStorage.isLogIn = true;
+        // LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
+        // LocalStorage.token=response.data['data']['accessToken'];
+        // LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
+        // print("dfjklf 😍😍😍😍😂😂😂❤️❤️❤️🤣🤣🤣 ${LocalStorage.token}");
         return true;
       } else if (response.statusCode == 401) {
         // Session expired → logout

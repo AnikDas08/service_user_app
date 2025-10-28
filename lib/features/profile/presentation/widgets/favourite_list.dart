@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
+import 'package:haircutmen_user_app/features/profile/presentation/controller/favourite_controller.dart';
 import '../../../../component/image/common_image.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class FavouriteList extends StatelessWidget {
+  final String id; // Add id parameter
   final String name;
   final String service;
   final String distance;
@@ -20,6 +21,7 @@ class FavouriteList extends StatelessWidget {
 
   const FavouriteList({
     super.key,
+    required this.id, // Required id
     required this.name,
     required this.service,
     required this.distance,
@@ -35,14 +37,14 @@ class FavouriteList extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: GetBuilder<HomeController>(
+      child: GetBuilder<FavouriteController>(
         builder: (controller) => Container(
           decoration: BoxDecoration(
             color: AppColors.white,
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withOpacity(0.08), // Use withOpacity instead of withValues
+                color: AppColors.black.withOpacity(0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -63,30 +65,26 @@ class FavouriteList extends StatelessWidget {
                       fill: BoxFit.cover,
                     ),
                   ),
-                  // Favorite Icon - FIXED VERSION
+                  // Favorite Icon - Always filled red in favourite screen
                   Positioned(
                     top: 8.h,
                     left: 6.w,
-                    child: Obx(() {
-                      final isFav = controller.isFavorite(name);
-                      return GestureDetector(
-                        onTap: onFavorite,
-                        child: Container(
-                          padding: EdgeInsets.all(4.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.white.withOpacity(0.4),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isFav ? Icons.favorite : Icons.favorite,
-                            size: 24.w,
-                            color: AppColors.red,
-                          ),
+                    child: GestureDetector(
+                      onTap: onFavorite,
+                      child: Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withOpacity(0.4),
+                          shape: BoxShape.circle,
                         ),
-                      );
-                    }),
+                        child: Icon(
+                          Icons.favorite,
+                          size: 24.w,
+                          color: AppColors.red,
+                        ),
+                      ),
+                    ),
                   )
-
                 ],
               ),
 

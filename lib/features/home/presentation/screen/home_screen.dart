@@ -71,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHeader(HomeController controller) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Profile Image
         Container(
@@ -81,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: Obx(
             ()=> ClipOval(
-              child: controller.image!=""?Image.network(
+              child: controller.image.value!=""?Image.network(
                 ApiEndPoint.socketUrl+controller.image.value,
                 width: 46.w,
                 height: 46.w,
@@ -124,6 +125,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+        GestureDetector(
+          onTap: () {
+            Get.toNamed(AppRoutes.notifications);
+          },
+          child: Icon(
+              Icons.notifications_outlined,
+              color: AppColors.black300,
+              size: 24.sp,
+          ),
+        )
       ],
     );
   }
@@ -296,18 +307,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   final provider = providers[index];
                   return ServiceProviderCard(
-                    id: provider.id,                    // From API
-                    name: provider.name,                 // From API
-                    service: provider.category,       // From API
-                    distance: "${provider.serviceDistance}km", // From API
-                    rating: "4.5",                       // Default or from API if available
-                    reviews: "0",                        // Default or from API if available
-                    price: "RSD ${provider.price.toStringAsFixed(0)}", // From API
+                    id: provider.id,
+                    name: provider.name,
+                    service: provider.category,
+                    distance: "${provider.serviceDistance}km",
+                    rating: "4.5",
+                    reviews: "0",
+                    price: "RSD ${provider.price.toStringAsFixed(0)}",
                     imageUrl: provider.image != null
                         ? ApiEndPoint.socketUrl + provider.image!
                         : "assets/images/item_image.png",
                     onTap: () => controller.onProviderTap(provider.id),
-                    onFavorite: () => controller.toggleFavorite(provider.id),
+                    onFavorite: () => controller.favouriteItem(provider.id), // Changed from toggleFavorite to favouriteItem
                   );
                 },
               );

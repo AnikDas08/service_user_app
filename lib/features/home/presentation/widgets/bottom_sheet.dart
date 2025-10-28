@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/component/text_field/common_text_field.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../controller/home_controller.dart';
@@ -21,6 +23,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   String? selectedLocation;
   double priceRange = 500;
   final double maxPrice = 1000;
+  TextEditingController locationControllers=TextEditingController();
 
   final List<String> locations = [
     'Select location',
@@ -107,7 +110,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     // Location Section
                     _buildSectionTitle('Location'),
                     SizedBox(height: 12.h),
-                    _buildLocationDropdown(),
+                    //_buildLocationDropdown(),
+                    CommonTextField(
+                      controller: locationControllers,
+                      hintText: AppString.hint_type_here,
+                    ),
 
                     SizedBox(height: 16.h),
 

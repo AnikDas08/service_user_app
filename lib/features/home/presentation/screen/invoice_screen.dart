@@ -104,7 +104,7 @@ class InvoiceScreen extends StatelessWidget {
         if (controller.providerImage != null)
           ClipRRect(
             borderRadius: BorderRadius.circular(10.r),
-            child: controller.providerImage!=null
+            child: controller.providerImage != null
                 ? Image.network(
               '${ApiEndPoint.socketUrl}${controller.providerImage}',
               width: double.infinity,
@@ -130,9 +130,7 @@ class InvoiceScreen extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-
         SizedBox(height: 10.h),
-
         CommonText(
           text: controller.providerName,
           fontWeight: FontWeight.w500,
@@ -167,8 +165,10 @@ class InvoiceScreen extends StatelessWidget {
       ),
       child: Table(
         border: TableBorder(
-          verticalInside: BorderSide(color: AppColors.black300.withOpacity(0.3)),
-          horizontalInside: BorderSide(color: AppColors.black300.withOpacity(0.3)),
+          verticalInside:
+          BorderSide(color: AppColors.black300.withOpacity(0.3)),
+          horizontalInside:
+          BorderSide(color: AppColors.black300.withOpacity(0.3)),
         ),
         columnWidths: const {
           0: FlexColumnWidth(1),
@@ -259,8 +259,16 @@ class InvoiceScreen extends StatelessWidget {
   }
 
   Widget _buildPriceSummary(InvoiceController controller) {
-    return Obx(() => Column(
+    return Obx(() => controller.isLoadingFees.value
+        ? Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 20.h),
+        child: CircularProgressIndicator(color: AppColors.primaryColor),
+      ),
+    )
+        : Column(
       children: [
+        // Sub Total
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -283,37 +291,120 @@ class InvoiceScreen extends StatelessWidget {
             ),
           ],
         ),
-        if (controller.discount.value > 0) ...[
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CommonText(
-                textAlign: TextAlign.start,
-                text: "Discount (${controller.discountPercent}%)",
+
+        // Weather Fee (always show)
+        SizedBox(height: 10.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Weather Fee",
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: "RSD ${controller.weatherFee}",
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
               ),
-              SizedBox(
-                width: 100.w,
-                child: CommonText(
-                  textAlign: TextAlign.end,
-                  text: "- RSD ${controller.discount.value}",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14.sp,
-                  color: Colors.green,
-                ),
+            ),
+          ],
+        ),
+
+        // Convenience Fee (always show)
+        SizedBox(height: 10.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Convenience Fee",
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: "RSD ${controller.convenienceFee}",
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: AppColors.black400,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
+
+        // Arrival Fee (always show)
+        SizedBox(height: 10.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Arrival Fee",
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: "RSD ${controller.arrivalFee}",
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: AppColors.black400,
+              ),
+            ),
+          ],
+        ),
+
+        // Discount (always shown, defaults to 0%)
+        SizedBox(height: 10.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Discount (${controller.discountPercent}%)",
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: controller.discount.value > 0
+                    ? "- RSD ${controller.discount.value}"
+                    : "RSD 0",
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: controller.discount.value > 0
+                    ? Colors.green
+                    : AppColors.black400,
+              ),
+            ),
+          ],
+        ),
+
+        // Divider
         SizedBox(height: 10.h),
         Container(
           height: 2,
           color: AppColors.black200,
         ),
         SizedBox(height: 10.h),
+
+        // Total Price
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

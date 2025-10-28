@@ -28,6 +28,11 @@ class ServiceDetailsController extends GetxController {
   ProvidersData? providerData;
   String? id;
 
+  final RxList<dynamic> review = <dynamic>[].obs;
+  final RxDouble averageRating = 0.0.obs;
+  final RxInt totalReviews = 0.obs;
+  final RxBool isLoadingReviews = false.obs;
+
   final RxBool isLoading = true.obs;
   final RxBool isFavorite = false.obs;
   final RxBool isLoadingSchedule = false.obs;
@@ -36,9 +41,14 @@ class ServiceDetailsController extends GetxController {
   final RxList<Map<String, dynamic>> services = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> availability = <Map<String, dynamic>>[].obs;
   final RxList<String> selectedServiceIds = <String>[].obs;
+  RxString name="".obs;
+  RxString comment="".obs;
+  RxDouble rating=0.0.obs;
+  RxString image="".obs;
 
   final RxList<TimeSlot> availableTimeSlots = <TimeSlot>[].obs;
   final selectedTimeSlots = <TimeSlot>[].obs;
+  final providerId="";
 
   // Schedule data from API
   final RxList<ScheduleData> providerSchedule = <ScheduleData>[].obs;
@@ -142,6 +152,8 @@ class ServiceDetailsController extends GetxController {
           // Convert API services to local format - only services with category
           _convertServicesToLocalFormat();
 
+          fetchReviews();
+
           // Update service images if available
           if (providerData!.serviceImages.isNotEmpty) {
             workPhotos.value = providerData!.serviceImages
@@ -167,7 +179,6 @@ class ServiceDetailsController extends GetxController {
       isLoading.value = false;
     }
   }
-
   // NEW METHOD: Load provider schedule from API
   Future<void> loadProviderSchedule() async {
     if (providerData?.user.id == null) {
@@ -202,26 +213,13 @@ class ServiceDetailsController extends GetxController {
 
           print("Successfully loaded ${providerSchedule.length} schedule slots");
         } else {
-          Get.snackbar(
-            'Error',
-            'Failed to load schedule',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          print("Failed to load Schedule");
         }
       } else {
-        Get.snackbar(
-          'Error',
-          'Failed to fetch schedule',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        print("Failed to load Schedule");
       }
     } catch (e) {
       print("Error loading provider schedule: $e");
-      Get.snackbar(
-        'Error',
-        'Failed to load provider schedule',
-        snackPosition: SnackPosition.BOTTOM,
-      );
     } finally {
       isLoadingSchedule.value = false;
     }
@@ -458,6 +456,47 @@ class ServiceDetailsController extends GetxController {
     };
   }
 
+
+// Add this method to fetch reviews
+  // Add this method to fetch reviews
+  Future<void> fetchReviews() async {
+    try {
+      isLoadingReviews.value = true;
+      // Get provider ID from your existing data
+      String providerId = providerData?.user.id ?? '';
+      if (providerId.isEmpty) {
+        print("❌ Provider ID is empty");
+        return;
+      }
+      print("📡 Fetching reviews for provider: $providerId");
+      final response = await ApiService.get(
+        "review/$providerId",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+      print("📡 Reviews Response Status: ${response.statusCode}");
+      print("📦 Reviews Response Data: ${response.data}");
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final data = response.data['data'];
+        // Set review data
+        review.value = data['reviews'] ?? [];
+        averageRating.value = (data['averageRating'] ?? 0.0).toDouble();
+        totalReviews.value = data['totalReviews'] ?? 0;
+
+        print("✅ Reviews loaded successfully - Total: ${totalReviews.value}");
+        print("✅ Average Rating: ${averageRating.value}");
+        print("✅ Reviews List Length: ${review.length}");
+      } else {
+        print("⚠️ Failed to load reviews");
+      }
+    } catch (e) {
+      print("❌ Error fetching reviews: $e");
+    } finally {
+      isLoadingReviews.value = false;
+    }
+  }
+
   // Getters for UI
   String get providerName => providerData?.user.name ?? "Service Provider";
   String get providerEmail => providerData?.user.email ?? "";
@@ -470,6 +509,6 @@ class ServiceDetailsController extends GetxController {
   String get spokenLanguagesText => spokenLanguages.join(", ");
   bool get isVerified => providerData?.verified ?? false;
   bool get isOnline => providerData?.isOnline ?? false;
-  double get rating => 4.5; // TODO: Get from actual reviews when available
+  //double get rating => 4.5; // TODO: Get from actual reviews when available
   int get reviewCount => 200; // TODO: Get from actual reviews when available
 }

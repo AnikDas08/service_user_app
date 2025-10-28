@@ -30,8 +30,9 @@ class SignInController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        return response.data['data']['aboutMe'] != null;
-      } else if (response.statusCode == 401) {
+        return true;
+      }
+      else if (response.statusCode == 401) {
         // Session expired → logout
         //AppAuthStorage().clear(); // if available
         LocalStorage.isLogIn = false;
@@ -70,15 +71,17 @@ class SignInController extends GetxController {
 
       AppAuthStorage().setToken(data['data']["accessToken"]);
 
-      Get.offAllNamed(AppRoutes.homeNav);
-
       LocalStorage.token = data['data']["accessToken"];
       LocalStorage.isLogIn = true;
       LocalStorage.userId = data['data']["id"];
+      print("dkjfklsdjfkd 😍😍😍😍😍 ${LocalStorage.userId}");
 
       LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
       LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
       LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
+
+      Get.offAllNamed(AppRoutes.homeNav);
+
 
       try {
         final response = await ApiService.get(

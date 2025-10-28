@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haircutmen_user_app/features/auth/sign%20in/presentation/controller/sign_in_controller.dart';
 import 'package:haircutmen_user_app/utils/extensions/extension.dart';
 import '../../../config/route/app_routes.dart';
 import 'package:get/get.dart';
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 3), () async {
       print("token 🤣🤣🤣🤣🤣${LocalStorage.token}");
       if (LocalStorage.isLogIn) {
-        bool isValidUser=await ProfileController().checkUser();
+        bool isValidUser=await SignInController().checkProfile();
         if(isValidUser){
           Get.offAllNamed(AppRoutes.homeNav);
         }

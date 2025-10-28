@@ -22,6 +22,16 @@ class InvoiceController extends GetxController {
   final RxInt discountPercent = 0.obs;
   final RxBool isPromoApplied = false.obs;
   final RxBool isProcessing = false.obs;
+  final RxBool isLoadingFees = true.obs;
+  final RxString validPromoCode = ''.obs; // Store valid promo code
+
+  // Dynamic fees from API
+  final RxInt weatherFee = 0.obs;
+  final RxInt convenienceFee = 0.obs;
+  final RxInt arrivalFee = 0.obs;
+  final RxBool weatherFeeOn = false.obs;
+  final RxBool convenienceFeeOn = false.obs;
+  final RxBool arrivalFeeOn = false.obs;
 
   @override
   void onInit() {
@@ -32,6 +42,9 @@ class InvoiceController extends GetxController {
       invoiceData = Get.arguments;
       _parseInvoiceData();
     }
+
+    // Fetch fees from API
+    _fetchSystemFees();
 
     print("📄 Invoice Data: $invoiceData");
   }
@@ -47,10 +60,75 @@ class InvoiceController extends GetxController {
     // Calculate subtotal
     int calculatedSubTotal = invoiceData['totalPrice'] ?? 0;
     subTotal.value = calculatedSubTotal;
-    totalPrice.value = calculatedSubTotal;
 
     print("💰 SubTotal: ${subTotal.value}");
     print("🎯 Services: $selectedServices");
+  }
+
+  Future<void> _fetchSystemFees() async {
+    try {
+      isLoadingFees.value = true;
+
+      final response = await ApiService.get(
+        "system",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      print("📡 System Fees Response: ${response.statusCode}");
+      print("📦 System Fees Data: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final data = response.data['data'];
+
+        // Set weather fee
+        if (data['weatherFee'] != null) {
+          weatherFee.value = data['weatherFee']['amount'] ?? 0;
+          weatherFeeOn.value = data['weatherFee']['isOn'] ?? false;
+        }
+
+        // Set convenience fee
+        if (data['convenienceFee'] != null) {
+          convenienceFee.value = data['convenienceFee']['amount'] ?? 0;
+          convenienceFeeOn.value = data['convenienceFee']['isOn'] ?? false;
+        }
+
+        // Set arrival fee
+        if (data['arrivalFee'] != null) {
+          arrivalFee.value = data['arrivalFee']['amount'] ?? 0;
+          arrivalFeeOn.value = data['arrivalFee']['isOn'] ?? false;
+        }
+
+        // Calculate total price after fees are loaded
+        _calculateTotalPrice();
+
+        print("✅ Fees loaded - Weather: ${weatherFee.value}, Convenience: ${convenienceFee.value}, Arrival: ${arrivalFee.value}");
+      } else {
+        print("⚠️ Failed to load system fees");
+        // Calculate with zero fees
+        _calculateTotalPrice();
+      }
+    } catch (e) {
+      print("❌ Error fetching system fees: $e");
+      // Calculate with zero fees
+      _calculateTotalPrice();
+    } finally {
+      isLoadingFees.value = false;
+    }
+  }
+
+  void _calculateTotalPrice() {
+    // Only add fees that are turned on
+    int totalFees = 0;
+    if (weatherFeeOn.value) totalFees += weatherFee.value;
+    if (convenienceFeeOn.value) totalFees += convenienceFee.value;
+    if (arrivalFeeOn.value) totalFees += arrivalFee.value;
+
+    // Total = SubTotal + Active Fees - Discount
+    totalPrice.value = subTotal.value + totalFees - discount.value;
+
+    print("💵 Total Calculation - SubTotal: ${subTotal.value}, Fees: $totalFees, Discount: ${discount.value}, Total: ${totalPrice.value}");
   }
 
   // Getters for UI
@@ -88,7 +166,7 @@ class InvoiceController extends GetxController {
     return invoiceData['totalDuration'] ?? '';
   }
 
-  void applyPromoCode() {
+  Future<void> applyPromoCode() async {
     String code = promoCode.text.trim();
 
     if (code.isEmpty) {
@@ -102,36 +180,83 @@ class InvoiceController extends GetxController {
       return;
     }
 
-    // Mock promo code validation - Replace with actual API call
-    Map<String, int> promoCodes = {
-      'SAVE10': 10,
-      'SAVE20': 20,
-      'SAVE30': 30,
-      'DISCOUNT15': 15,
-      'SPECIAL25': 25,
-    };
-
-    String upperCode = code.toUpperCase();
-
-    if (promoCodes.containsKey(upperCode)) {
-      discountPercent.value = promoCodes[upperCode]!;
-      discount.value = ((subTotal.value * discountPercent.value) / 100).round();
-      totalPrice.value = subTotal.value - discount.value;
-      isPromoApplied.value = true;
-
-      Get.snackbar(
-        'Success',
-        'Promo code applied! You saved RSD ${discount.value}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+    try {
+      // Show loading indicator
+      Get.dialog(
+        Center(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(color: AppColors.primaryColor),
+                SizedBox(height: 16),
+                Text(
+                  'Validating promo code...',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          ),
+        ),
+        barrierDismissible: false,
       );
-    } else {
+
+      // Call API to validate promo code
+      final response = await ApiService.get(
+        "promo-code/$code",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      Get.back(); // Close loading dialog
+
+      print("📡 Promo Code Response: ${response.statusCode}");
+      print("📦 Promo Code Data: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final promoData = response.data['data'];
+
+        // Extract discount percentage and promo code
+        int discountValue = promoData['discount'] ?? 0;
+        String promoCodeValue = promoData['code'] ?? code;
+
+        discountPercent.value = discountValue;
+        discount.value = ((subTotal.value * discountPercent.value) / 100).round();
+        _calculateTotalPrice();
+        isPromoApplied.value = true;
+        validPromoCode.value = promoCodeValue; // Store the valid promo code
+
+        Get.snackbar(
+          'Success',
+          'Promo code applied! You saved RSD ${discount.value}',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Invalid Code',
+          response.data['message'] ?? 'The promo code you entered is not valid',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.back(); // Close loading dialog if open
+      print("❌ Error validating promo code: $e");
+
       Get.snackbar(
-        'Invalid Code',
-        'The promo code you entered is not valid',
+        'Error',
+        'Failed to validate promo code. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     }
@@ -264,11 +389,16 @@ class InvoiceController extends GetxController {
         "services": invoiceData['selectedServiceIds'],
         "date": invoiceData['dateIso'],
         "slots":
-            (invoiceData['slotsData'] as List).map((slot) {
-              return {"start": slot['start'], "end": slot['end']};
-            }).toList(),
+        (invoiceData['slotsData'] as List).map((slot) {
+          return {"start": slot['start'], "end": slot['end']};
+        }).toList(),
         "amount": totalPrice.value,
       };
+
+      // Add promo code if valid and applied
+      if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
+        bookingBody["promo_code"] = validPromoCode.value;
+      }
 
       print("📤 Booking Request Body: $bookingBody");
 
@@ -448,11 +578,16 @@ class InvoiceController extends GetxController {
         "services": invoiceData['selectedServiceIds'],
         "date": invoiceData['dateIso'],
         "slots":
-            (invoiceData['slotsData'] as List).map((slot) {
-              return {"start": slot['start'], "end": slot['end']};
-            }).toList(),
+        (invoiceData['slotsData'] as List).map((slot) {
+          return {"start": slot['start'], "end": slot['end']};
+        }).toList(),
         "amount": totalPrice.value,
       };
+
+      // Add promo code if valid and applied
+      if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
+        bookingBody["promo_code"] = validPromoCode.value;
+      }
 
       // Make API call
       final response = await ApiService.post(

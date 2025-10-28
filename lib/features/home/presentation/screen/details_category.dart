@@ -104,20 +104,20 @@ class DetailsCategoryScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final provider = providers[index];
                         return ServiceProviderCategory(
+                          id: provider.id, // Pass provider id
                           name: provider.name,
                           service: provider.category.isNotEmpty
                               ? provider.category
                               : provider.subCategory,
                           distance: controller.getDistance(provider),
-                          rating: "4.5", // Update when rating is available from API
-                          reviews: "200", // Update when reviews are available from API
+                          rating: "4.5",
+                          reviews: "200",
                           price: "RSD ${provider.price.toStringAsFixed(0)}",
                           imageUrl: provider.image != null
                               ? ApiEndPoint.socketUrl + provider.image!
                               : "assets/images/item_image.png",
                           onTap: () => controller.onProviderTap(provider.id),
-                          onFavorite: () => controller.toggleFavorite(provider.id),
-                          //isFavorite: controller.isFavorite(provider.id),
+                          onFavorite: () => controller.favouriteItem(provider.id), // Use favouriteItem
                         );
                       },
                     );

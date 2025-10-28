@@ -48,7 +48,7 @@ class NotificationService {
 
     Future.delayed(Duration.zero, () {
       flutterLocalNotificationsPlugin.show(
-          0, message['message'], message['type'], notificationDetails);
+          0, message['message'], message['title'], notificationDetails);
     });
   }
 }

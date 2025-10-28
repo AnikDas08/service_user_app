@@ -32,8 +32,6 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
               );
             }
-
-
             return SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -660,94 +658,263 @@ class ServiceDetailsScreen extends StatelessWidget {
   }
 
   Widget _buildReviews(ServiceDetailsController controller) {
-    // Sample reviews data
-    final reviews = [
-      {
-        "name": "Rahad Ullah",
-        "image": "assets/images/profile_image.png",
-        "rating": 5,
-        "comment":
-        "He Does A Great Job. I Had His Hair Cut A Few Days Ago. Always Tells All My Expectations | Always Provide Top Service."
-      },
-      {
-        "name": "John Doe",
-        "image": "assets/images/profile_image.png",
-        "rating": 4,
-        "comment":
-        "Very professional and friendly. Will come back again for sure!"
-      },
-      {
-        "name": "Jane Smith",
-        "image": "assets/images/profile_image.png",
-        "rating": 3,
-        "comment": "Good service but took longer than expected."
-      },
-    ];
+    return Obx(() {
+      // Show loading indicator
+      if (controller.isLoadingReviews.value) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h),
+            child: CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+          ),
+        );
+      }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(reviews.length, (index) {
-        final review = reviews[index];
-        return Padding(
-          padding: EdgeInsets.only(bottom: 16.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      // Show empty state if no reviews
+      if (controller.review.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.rate_review_outlined,
+                  size: 48.sp,
+                  color: AppColors.black200,
+                ),
+                SizedBox(height: 8.h),
+                CommonText(
+                  text: "No reviews yet",
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.black200,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Show reviews list
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with average rating
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              CommonText(
+                text: "Reviews (${controller.totalReviews.value})",
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.black400,
+                textAlign: TextAlign.left,
+              ),
               Row(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100.r),
-                    ),
-                    child: CommonImage(
-                      imageSrc: review["image"].toString(),
-                      size: 48.w,
-                      fill: BoxFit.cover,
-                    ),
+                  Icon(
+                    Icons.star,
+                    size: 20.sp,
+                    color: Colors.amber,
                   ),
-                  SizedBox(width: 8.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(width: 4.w),
+                  CommonText(
+                    text: controller.averageRating.value.toStringAsFixed(1),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.black400,
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          SizedBox(height: 16.h),
+
+          // Reviews list
+          ...List.generate(controller.review.length, (index) {
+            final review = controller.review[index];
+            final user = review['user'] ?? {};
+            final userName = user['name'] ?? 'Anonymous';
+            final userImage = user['image'];
+            final userInitial = userName.isNotEmpty ? userName[0].toUpperCase() : 'U';
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: 16.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      CommonText(
-                        text: review["name"].toString(),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.black400,
-                        textAlign: TextAlign.left,
-                      ),
-                      Row(
-                        children: List.generate(
-                          5,
-                              (starIndex) =>
-                              Icon(
-                                Icons.star,
-                                size: 24.sp,
-                                color: starIndex <
-                                    int.parse(review["rating"].toString())
-                                    ? Colors.amber
-                                    : AppColors.black100,
+                      // User image
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100.r),
+                          color: AppColors.black100,
+                        ),
+                        child: userImage != null && userImage.toString().isNotEmpty
+                            ? ClipRRect(
+                          borderRadius: BorderRadius.circular(100.r),
+                          child: Image.network(
+                            ApiEndPoint.socketUrl + userImage.toString(),
+                            width: 48.w,
+                            height: 48.w,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 48.w,
+                                height: 48.w,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(100.r),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    userInitial,
+                                    style: TextStyle(
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                            : Container(
+                          width: 48.w,
+                          height: 48.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(100.r),
+                          ),
+                          child: Center(
+                            child: Text(
+                              userInitial,
+                              style: TextStyle(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.primaryColor,
                               ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 12.w),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CommonText(
+                              text: userName,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.black400,
+                              textAlign: TextAlign.left,
+                            ),
+                            SizedBox(height: 4.h),
+                            Row(
+                              children: [
+                                // Star rating
+                                ...List.generate(5, (starIndex) {
+                                  double rating = (review['rating'] ?? 0).toDouble();
+                                  return Icon(
+                                    starIndex < rating.floor()
+                                        ? Icons.star
+                                        : (starIndex < rating
+                                        ? Icons.star_half
+                                        : Icons.star_border),
+                                    size: 16.sp,
+                                    color: Colors.amber,
+                                  );
+                                }),
+                                SizedBox(width: 8.w),
+                                CommonText(
+                                  text: (review['rating'] ?? 0).toString(),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.black300,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
+
+                  SizedBox(height: 10.h),
+
+                  // Review comment
+                  CommonText(
+                    text: review['comment'] ?? 'No comment',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black300,
+                    textAlign: TextAlign.left,
+                    maxLines: 10,
+                  ),
+
+                  // Review date (if you want to show it)
+                  if (review['createdAt'] != null) ...[
+                    SizedBox(height: 6.h),
+                    CommonText(
+                      text: _formatDate(review['createdAt']),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.black200,
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+
+                  // Divider between reviews
+                  if (index < controller.review.length - 1) ...[
+                    SizedBox(height: 12.h),
+                    Divider(
+                      color: AppColors.black100,
+                      height: 1.h,
+                    ),
+                  ],
                 ],
               ),
-              SizedBox(height: 10.h),
-              CommonText(
-                text: review["comment"].toString(),
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: AppColors.black300,
-                textAlign: TextAlign.left,
-                maxLines: 10,
-              ),
-            ],
-          ),
-        );
-      }),
-    );
+            );
+          }),
+        ],
+      );
+    });
+  }
+
+  String _formatDate(String dateStr) {
+    try {
+      DateTime date = DateTime.parse(dateStr);
+      DateTime now = DateTime.now();
+
+      Duration difference = now.difference(date);
+
+      if (difference.inDays == 0) {
+        return 'Today';
+      } else if (difference.inDays == 1) {
+        return 'Yesterday';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays} days ago';
+      } else if (difference.inDays < 30) {
+        int weeks = (difference.inDays / 7).floor();
+        return '$weeks ${weeks == 1 ? "week" : "weeks"} ago';
+      } else if (difference.inDays < 365) {
+        int months = (difference.inDays / 30).floor();
+        return '$months ${months == 1 ? "month" : "months"} ago';
+      } else {
+        int years = (difference.inDays / 365).floor();
+        return '$years ${years == 1 ? "year" : "years"} ago';
+      }
+    } catch (e) {
+      return '';
+    }
   }
 
   Widget _buildBottomButton(ServiceDetailsController controller) {

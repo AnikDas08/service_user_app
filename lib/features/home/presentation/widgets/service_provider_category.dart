@@ -8,6 +8,7 @@ import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class ServiceProviderCategory extends StatelessWidget {
+  final String id; // Add id parameter for favorite tracking
   final String name;
   final String service;
   final String distance;
@@ -20,6 +21,7 @@ class ServiceProviderCategory extends StatelessWidget {
 
   const ServiceProviderCategory({
     super.key,
+    required this.id, // Required id
     required this.name,
     required this.service,
     required this.distance,
@@ -42,7 +44,7 @@ class ServiceProviderCategory extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withOpacity(0.08), // Use withOpacity instead of withValues
+                color: AppColors.black.withOpacity(0.08),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -63,18 +65,18 @@ class ServiceProviderCategory extends StatelessWidget {
                       fill: BoxFit.cover,
                     ),
                   ),
-                  // Favorite Icon - FIXED VERSION
+                  // Favorite Icon
                   Positioned(
                     top: 8.h,
                     left: 6.w,
                     child: Obx(() {
-                      final isFav = controller.isFavorite(name);
+                      final isFav = controller.isFavorite(id); // Use id instead of name
                       return GestureDetector(
                         onTap: onFavorite,
                         child: Container(
                           padding: EdgeInsets.all(4.w),
                           decoration: BoxDecoration(
-                            color: AppColors.white.withOpacity(0.4),
+                            color: AppColors.gray.withOpacity(0.4),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -86,7 +88,6 @@ class ServiceProviderCategory extends StatelessWidget {
                       );
                     }),
                   )
-
                 ],
               ),
 
@@ -118,15 +119,13 @@ class ServiceProviderCategory extends StatelessWidget {
                             width: 20.w,
                           ),
                           SizedBox(width: 4.w),
-                          Expanded(
-                            child: CommonText(
-                              text: service,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.black400,
-                              textAlign: TextAlign.left,
-                              maxLines: 1,
-                            ),
+                          CommonText(
+                            text: service,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.black400,
+                            textAlign: TextAlign.left,
+                            maxLines: 1,
                           ),
                         ],
                       ),

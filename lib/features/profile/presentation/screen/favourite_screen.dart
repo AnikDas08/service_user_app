@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/favourite_controller.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/widgets/favourite_list.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
-
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
@@ -15,69 +15,80 @@ class FavouriteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
-        child: SafeArea(
-          child: Column(
-            children: [
-              CustomAppBar(title: AppString.favourite_list,),
-              SizedBox(height: 20,),
-              _buildServiceProviders(),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: CustomAppBar(
+                title: AppString.favourite_list,
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Expanded(
+              child: GetBuilder<FavouriteController>(
+                init: FavouriteController(),
+                builder: (controller) {
+                  return RefreshIndicator(
+                    onRefresh: controller.refreshData,
+                    color: AppColors.primaryColor,
+                    child: Obx(() {
+                      if (controller.isLoading.value) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        );
+                      }
+                      if (controller.serviceProviders.isEmpty) {
+                        return Center(
+                          child: CommonText(
+                            text: "No favourite providers found",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.black600,
+                          ),
+                        );
+                      }
 
-            ],
-          ),
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: GridView.builder(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 16.w,
+                            mainAxisSpacing: 16.h,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: controller.serviceProviders.length,
+                          itemBuilder: (context, index) {
+                            final provider = controller.serviceProviders[index];
+                            return FavouriteList(
+                              id: provider['id'],
+                              name: provider['name'],
+                              service: provider['category'],
+                              distance: "${provider['serviceDistance']}km",
+                              rating: "4.5",
+                              reviews: "0",
+                              price: "RSD ${provider['price'].toStringAsFixed(0)}",
+                              imageUrl: provider['image'] != null
+                                  ? ApiEndPoint.socketUrl + provider['image']
+                                  : "assets/images/item_image.png",
+                              onTap: () => controller.onProviderTap(provider['id']),
+                              onFavorite: () => controller.toggleFavourite(provider['id']),
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-  Widget _buildServiceProviders() {
-    return GetBuilder<FavouriteController>(
-      builder: (controller) {
-        return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Obx(() {
-                final providers = controller.serviceProviders;
-
-                if (providers.isEmpty) {
-                  return Center(
-                    child: CommonText(
-                      text: "No Favourite providers found",
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black600,
-                    ),
-                  );
-                }
-
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16.w,
-                    mainAxisSpacing: 16.h,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: providers.length,
-                  itemBuilder: (context, index) {
-                    final provider = providers[index];
-                    return FavouriteList(
-                      name: provider["name"]!,
-                      service: provider["service"]!,
-                      distance: provider["distance"]!,
-                      rating: provider["rating"]!,
-                      reviews: provider["reviews"]!,
-                      price: provider["price"]!,
-                      imageUrl: provider["image"]!,
-                      onTap: () => controller.onProviderTap(provider),
-                    );
-                  },
-                );
-              }),
-            ]
-        );
-      },
     );
   }
 }

@@ -21,7 +21,7 @@ class SocketServices {
     _socket.onConnect((data) => appLog("=============> Connection $data"));
     _socket.onConnectError((data) => appLog("========>Connection Error $data"));
     _socket.connect();
-    _socket.on("user-notification::${LocalStorage.userId}", (data) {
+    _socket.on("getNotification::${LocalStorage.userId}", (data) {
       appLog("================> get Data on socket: $data");
       NotificationService.showNotification(data);
     });

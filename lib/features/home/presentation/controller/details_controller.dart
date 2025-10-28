@@ -1,11 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
+import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import '../../../../services/api/api_service.dart';
 import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
 
 class DetailsController extends GetxController {
-  final RxList<String> favoriteNames = <String>[].obs;
+  // Favorite list using provider IDs
+  final RxList<String> favoriteIds = <String>[].obs;
   final RxList<ProviderModel> serviceProviders = <ProviderModel>[].obs;
   RxString category = "".obs;
   RxString id = "".obs;
@@ -22,8 +25,33 @@ class DetailsController extends GetxController {
       category.value = args["name"] ?? "";
 
       if (id.value.isNotEmpty) {
+        fetchFavorites(); // Fetch favorites first
         _loadServiceProviders();
       }
+    }
+  }
+
+  // Fetch user's favorite list from API
+  Future<void> fetchFavorites() async {
+    try {
+      final response = await ApiService.get(
+        ApiEndPoint.favourite, // Your endpoint to get favorites
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        // Extract provider IDs from the providerIds array
+        final List<dynamic> providerIds = response.data['data']['providerIds'] ?? [];
+
+        // Map to get only the _id from each provider object
+        favoriteIds.value = providerIds.map((item) => item.toString()).toList();
+
+        update();
+      }
+    } catch (e) {
+      print("Error fetching favorites: $e");
     }
   }
 
@@ -36,8 +64,7 @@ class DetailsController extends GetxController {
         '${ApiEndPoint.provider}?categoryId=${id.value}',
         header: {
           'Content-Type': 'application/json',
-          // Add authorization token if needed
-          // 'Authorization': 'Bearer ${your_token}',
+          "Authorization": "Bearer ${LocalStorage.token}",
         },
       );
 
@@ -64,17 +91,78 @@ class DetailsController extends GetxController {
     }
   }
 
-  void toggleFavorite(String providerId) {
-    if (favoriteNames.contains(providerId)) {
-      favoriteNames.remove(providerId);
-    } else {
-      favoriteNames.add(providerId);
+  // Add/Remove favorite with API call
+  Future<void> favouriteItem(String providerId) async {
+    try {
+      // Optimistically update UI
+      final wasFavorite = favoriteIds.contains(providerId);
+      if (wasFavorite) {
+        favoriteIds.remove(providerId);
+      } else {
+        favoriteIds.add(providerId);
+      }
+      update();
+
+      final response = await ApiService.post(
+        ApiEndPoint.favourite, // Your favorite endpoint
+        body: {
+          "provider": providerId,
+        },
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success - UI already updated
+        Get.snackbar(
+          "Success",
+          wasFavorite ? "Removed from favorites" : "Added to favorites",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        // Revert on failure
+        if (wasFavorite) {
+          favoriteIds.add(providerId);
+        } else {
+          favoriteIds.remove(providerId);
+        }
+        update();
+
+        Get.snackbar(
+          "Error",
+          response.message ?? "Failed to update favorite",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      // Revert on error
+      final wasFavorite = !favoriteIds.contains(providerId);
+      if (wasFavorite) {
+        favoriteIds.add(providerId);
+      } else {
+        favoriteIds.remove(providerId);
+      }
+      update();
+
+      Get.snackbar(
+        "Error",
+        "An error occurred: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
-    update();
   }
 
+  // Check if a provider is favorite by matching provider ID with favorite list
   bool isFavorite(String providerId) {
-    return favoriteNames.contains(providerId);
+    return favoriteIds.contains(providerId);
   }
 
   void onProviderTap(String id) {
@@ -95,10 +183,8 @@ class DetailsController extends GetxController {
         .toList();
   }
 
-  // Helper method to calculate distance (you may need to implement actual distance calculation)
+  // Helper method to calculate distance
   String getDistance(ProviderModel provider) {
-    // Implement distance calculation based on user's location and provider's location
-    // For now, returning service distance
     return "${provider.serviceDistance}km";
   }
 

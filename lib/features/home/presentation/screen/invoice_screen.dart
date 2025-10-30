@@ -292,7 +292,7 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Weather Fee (always show)
+        // Weather Fee
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -308,7 +308,8 @@ class InvoiceScreen extends StatelessWidget {
               width: 100.w,
               child: CommonText(
                 textAlign: TextAlign.end,
-                text: "RSD ${controller.weatherFee}",
+                text:
+                "RSD ${controller.weatherFee}",
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
@@ -317,7 +318,7 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Convenience Fee (always show)
+        // Convenience Fee
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,7 +334,9 @@ class InvoiceScreen extends StatelessWidget {
               width: 100.w,
               child: CommonText(
                 textAlign: TextAlign.end,
-                text: "RSD ${controller.convenienceFee}",
+                text:
+                "RSD ${controller.convenienceFee}",
+
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
@@ -342,7 +345,7 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Arrival Fee (always show)
+        // Arrival Fee
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,6 +362,7 @@ class InvoiceScreen extends StatelessWidget {
               child: CommonText(
                 textAlign: TextAlign.end,
                 text: "RSD ${controller.arrivalFee}",
+
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
@@ -367,7 +371,7 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Discount (always shown, defaults to 0%)
+        // Discount
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -390,6 +394,35 @@ class InvoiceScreen extends StatelessWidget {
                 fontSize: 14.sp,
                 color: controller.discount.value > 0
                     ? Colors.green
+                    : AppColors.black400,
+              ),
+            ),
+          ],
+        ),
+
+        // Credit (NEW)
+        SizedBox(height: 10.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CommonText(
+              textAlign: TextAlign.start,
+              text: "Credit",
+              fontWeight: FontWeight.w400,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+            ),
+            SizedBox(
+              width: 100.w,
+              child: CommonText(
+                textAlign: TextAlign.end,
+                text: controller.credits.value > 0
+                    ? "RSD ${controller.credits.value.toStringAsFixed(2)}"
+                    : "RSD 0",
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp,
+                color: controller.credits.value > 0
+                    ? Colors.blue
                     : AppColors.black400,
               ),
             ),

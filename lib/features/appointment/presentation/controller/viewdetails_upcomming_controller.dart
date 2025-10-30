@@ -19,8 +19,8 @@ class ViewdetailsUpcommingController extends GetxController {
   var time = ''.obs;
   var duration = '60 Minutes Duration'.obs;
   var amount = ''.obs;
-  var rating = 0.0.obs;
-  var reviewCount = 0.obs;
+  RxDouble rating = 0.0.obs;
+  RxInt reviewCount = 0.obs;
 
   @override
   void onInit() {
@@ -43,6 +43,8 @@ class ViewdetailsUpcommingController extends GetxController {
         // API returns data as a List, get the first item
         if (response.data['data'] is List && response.data['data'].isNotEmpty) {
           bookingData.value = response.data['data'][0];
+          rating.value = response.data['data'][0]['ratings']["averageRating"]??0.0;
+          reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
           _parseBookingData();
         }
       }
@@ -122,9 +124,7 @@ class ViewdetailsUpcommingController extends GetxController {
       bookingId.value = bookingData['_id'].toString().substring(bookingData['_id'].toString().length - 4);
     }
 
-    // Rating and reviews (mock data - not in current API response)
-    rating.value = 4.5;
-    reviewCount.value = 200;
+
   }
 
   // Cancel booking

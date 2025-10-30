@@ -115,6 +115,23 @@ class ServiceDetailsScreen extends StatelessWidget {
           width: double.infinity,
           height: 147.h,
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Center(
+                child: Container(
+                  height: 110.h,
+                  width: double.infinity,
+                  color: AppColors.white,
+                  child: Center(
+                    child: CommonText(
+                      text: "Image not available",
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.black300,
+                    ),
+                  ),
+                )
+            );
+          },
         )
             : Image.asset(
           "assets/images/image_here.png",
@@ -148,18 +165,22 @@ class ServiceDetailsScreen extends StatelessWidget {
                   color: Colors.amber,
                 ),
                 SizedBox(width: 4.w),
-                CommonText(
-                  text: controller.rating.toString(),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.black300,
+                Obx(
+                 ()=> CommonText(
+                    text: controller.averageRating.value.toString(),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black300,
+                  ),
                 ),
                 SizedBox(width: 4.w),
-                CommonText(
-                  text: "(${controller.reviewCount})",
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.black200,
+                Obx(
+                ()=> CommonText(
+                    text: "(${controller.totalReviews.value.toString()})",
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.black200,
+                  ),
                 ),
               ],
             ),

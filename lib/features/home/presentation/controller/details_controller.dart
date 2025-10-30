@@ -104,9 +104,9 @@ class DetailsController extends GetxController {
       update();
 
       final response = await ApiService.post(
-        ApiEndPoint.favourite, // Your favorite endpoint
+        ApiEndPoint.favourite, // Replace with correct favorite endpoint
         body: {
-          "provider": providerId,
+          "providerId": providerId,
         },
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
@@ -114,15 +114,6 @@ class DetailsController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        // Success - UI already updated
-        Get.snackbar(
-          "Success",
-          wasFavorite ? "Removed from favorites" : "Added to favorites",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
-        );
       } else {
         // Revert on failure
         if (wasFavorite) {

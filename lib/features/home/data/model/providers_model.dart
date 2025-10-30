@@ -11,6 +11,9 @@ class ProviderModel {
   final String category;
   final String subCategory;
   final double price;
+  // final double rating;
+  // final int review;
+  final Reviews reviews;
 
   ProviderModel({
     required this.id,
@@ -25,6 +28,10 @@ class ProviderModel {
     required this.category,
     required this.subCategory,
     required this.price,
+    required this.reviews,
+    // required this.rating,
+    // required this.review,
+
   });
 
   factory ProviderModel.fromJson(Map<String, dynamic> json) {
@@ -41,6 +48,9 @@ class ProviderModel {
       category: json['category'] ?? '',
       subCategory: json['subCategory'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
+      // rating: (json['reviews']['averageRating'] ?? 0).toDouble(),
+      // review: (json['reviews']['totalReviews'] ?? 0).toInt(),
+      reviews: Reviews.fromJson(json['reviews'] ?? {}),
     );
   }
 
@@ -119,6 +129,30 @@ class ProvidersResponse {
       'success': success,
       'message': message,
       'data': data.map((x) => x.toJson()).toList(),
+    };
+  }
+}
+
+class Reviews {
+  final double averageRating;
+  final int totalReviews;
+
+  Reviews({
+    required this.averageRating,
+    required this.totalReviews,
+  });
+
+  factory Reviews.fromJson(Map<String, dynamic> json) {
+    return Reviews(
+      averageRating: (json['averageRating'] ?? 0).toDouble(),
+      totalReviews: json['totalReviews'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'averageRating': averageRating,
+      'totalReviews': totalReviews,
     };
   }
 }

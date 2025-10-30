@@ -66,7 +66,7 @@ class MessageScreen extends StatelessWidget {
                   },
                 ),
               ),
-          
+
               // Message Input Area
               _buildMessageInput(controller),
             ],

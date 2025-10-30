@@ -30,10 +30,10 @@ class ScheduleSlot {
     DateTime localStart = start.toLocal();
     DateTime localEnd = end.toLocal();
 
-    String startHour = localStart.hour.toString().padLeft(2, '0');
-    String startMinute = localStart.minute.toString().padLeft(2, '0');
-    String endHour = localEnd.hour.toString().padLeft(2, '0');
-    String endMinute = localEnd.minute.toString().padLeft(2, '0');
+    String startHour = start.hour.toString().padLeft(2, '0');
+    String startMinute = start.minute.toString().padLeft(2, '0');
+    String endHour = end.hour.toString().padLeft(2, '0');
+    String endMinute = end.minute.toString().padLeft(2, '0');
     return '$startHour:$startMinute - $endHour:$endMinute';
   }
 }
@@ -119,6 +119,8 @@ class _BookingDialogState extends State<BookingDialog> {
 
           if (scheduleData['available_slots'] != null) {
             List<dynamic> slots = scheduleData['available_slots'];
+
+            print("📊 Total available slots: ${slots.length}");
 
             for (var slot in slots) {
               availableSlots.add(ScheduleSlot(

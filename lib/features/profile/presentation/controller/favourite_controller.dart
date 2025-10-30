@@ -85,9 +85,9 @@ class FavouriteController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        // Remove from local list immediately
-        serviceProviders.removeWhere((provider) => provider['id'] == providerId);
         Get.find<HomeController>().fetchServiceProviders();
+        Get.find<HomeController>().fetchFavorites();
+        serviceProviders.removeWhere((provider) => provider['id'] == providerId);
         update();
       } else {
         Get.snackbar(

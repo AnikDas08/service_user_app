@@ -8,6 +8,7 @@ import '../../../../services/storage/storage_services.dart';
 import '../../../../utils/constants/app_colors.dart';
 
 class InvoiceController extends GetxController {
+  final RxInt creditApplied = 0.obs;
   // Text Controllers
   TextEditingController promoCode = TextEditingController();
 
@@ -29,9 +30,7 @@ class InvoiceController extends GetxController {
   final RxInt weatherFee = 0.obs;
   final RxInt convenienceFee = 0.obs;
   final RxInt arrivalFee = 0.obs;
-  final RxBool weatherFeeOn = false.obs;
-  final RxBool convenienceFeeOn = false.obs;
-  final RxBool arrivalFeeOn = false.obs;
+  final RxDouble credits = 0.0.obs;
 
   @override
   void onInit() {
@@ -45,6 +44,7 @@ class InvoiceController extends GetxController {
 
     // Fetch fees from API
     _fetchSystemFees();
+    getCredit();
 
     print("📄 Invoice Data: $invoiceData");
   }
@@ -85,19 +85,17 @@ class InvoiceController extends GetxController {
         // Set weather fee
         if (data['weatherFee'] != null) {
           weatherFee.value = data['weatherFee']['amount'] ?? 0;
-          weatherFeeOn.value = data['weatherFee']['isOn'] ?? false;
+          print("weateher fee ${weatherFee.value}");
         }
 
         // Set convenience fee
         if (data['convenienceFee'] != null) {
           convenienceFee.value = data['convenienceFee']['amount'] ?? 0;
-          convenienceFeeOn.value = data['convenienceFee']['isOn'] ?? false;
         }
 
         // Set arrival fee
         if (data['arrivalFee'] != null) {
           arrivalFee.value = data['arrivalFee']['amount'] ?? 0;
-          arrivalFeeOn.value = data['arrivalFee']['isOn'] ?? false;
         }
 
         // Calculate total price after fees are loaded
@@ -119,16 +117,45 @@ class InvoiceController extends GetxController {
   }
 
   void _calculateTotalPrice() {
-    // Only add fees that are turned on
-    int totalFees = 0;
-    if (weatherFeeOn.value) totalFees += weatherFee.value;
-    if (convenienceFeeOn.value) totalFees += convenienceFee.value;
-    if (arrivalFeeOn.value) totalFees += arrivalFee.value;
+    // Step 1: Start with SubTotal
+    int runningTotal = subTotal.value;
+    print("💵 Step 1 - SubTotal: $runningTotal");
 
-    // Total = SubTotal + Active Fees - Discount
-    totalPrice.value = subTotal.value + totalFees - discount.value;
+    // Step 2: Apply Credit FIRST (subtract from subtotal)
+    int creditToApply = credits.value.toInt();
+    if (creditToApply > runningTotal) {
+      creditToApply = runningTotal; // Don't apply more credit than subtotal
+    }
+    runningTotal -= creditToApply;
+    creditApplied.value = creditToApply; // Store applied credit
+    print("💵 Step 2 - After Credit ($creditToApply): $runningTotal");
 
-    print("💵 Total Calculation - SubTotal: ${subTotal.value}, Fees: $totalFees, Discount: ${discount.value}, Total: ${totalPrice.value}");
+    // Step 3: Subtract Discount (from promo code)
+    runningTotal -= discount.value;
+    print("💵 Step 3 - After Discount (${discount.value}): $runningTotal");
+
+    // Step 4: Add all Fees
+    runningTotal += weatherFee.value;
+    print("💵 Step 4a - After Weather Fee (${weatherFee.value}): $runningTotal");
+
+    runningTotal += convenienceFee.value;
+    print("💵 Step 4b - After Convenience Fee (${convenienceFee.value}): $runningTotal");
+
+    runningTotal += arrivalFee.value;
+    print("💵 Step 4c - After Arrival Fee (${arrivalFee.value}): $runningTotal");
+
+    // ✅ DON'T set to 0 if negative - show the actual negative value in UI
+    totalPrice.value = runningTotal;
+
+    print("💵 ============ FINAL CALCULATION ============");
+    print("💵 SubTotal: ${subTotal.value}");
+    print("💵 - Credit Applied: $creditToApply");
+    print("💵 - Discount: ${discount.value}");
+    print("💵 + Weather Fee: ${weatherFee.value}");
+    print("💵 + Convenience Fee: ${convenienceFee.value}");
+    print("💵 + Arrival Fee: ${arrivalFee.value}");
+    print("💵 = TOTAL: ${totalPrice.value}");
+    print("💵 ==========================================");
   }
 
   // Getters for UI
@@ -287,18 +314,7 @@ class InvoiceController extends GetxController {
   }
 
   void processPayment() {
-    // Validate payment
-    if (totalPrice.value <= 0) {
-      Get.snackbar(
-        'Error',
-        'Invalid payment amount',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
+    // ✅ Allow payment even if total is 0 or negative
     // Show payment confirmation dialog
     Get.dialog(
       AlertDialog(
@@ -317,7 +333,12 @@ class InvoiceController extends GetxController {
             SizedBox(height: 8),
             _buildConfirmRow('Time:', bookingTime),
             SizedBox(height: 8),
-            _buildConfirmRow('Amount:', 'RSD ${totalPrice.value}'),
+            _buildConfirmRow(
+                'Amount:',
+                totalPrice.value < 0
+                    ? '-RSD ${totalPrice.value.abs()}' // ✅ Show negative with minus sign
+                    : 'RSD ${totalPrice.value}'
+            ),
             SizedBox(height: 16),
             Text(
               'Do you want to proceed with the payment?',
@@ -331,11 +352,8 @@ class InvoiceController extends GetxController {
             child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
-            onPressed: () {
-              // Get.back(); // Close dialog
-              // _createBooking();
-              //stripe payment
-              getCheckoutSession();
+            onPressed: () async {
+              await getCheckoutSession();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
@@ -343,7 +361,9 @@ class InvoiceController extends GetxController {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: isProcessing.value ? CircularProgressIndicator() : Text('Confirm & Pay', style: TextStyle(color: Colors.white)),
+            child: isProcessing.value
+                ? CircularProgressIndicator()
+                : Text('Confirm & Pay', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -567,27 +587,98 @@ class InvoiceController extends GetxController {
     );
   }
 
+  Future<void> getCredit() async {
+    try {
+      final response = await ApiService.get(
+        "user/get-rsd",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      print("📡 Credit API Status: ${response.statusCode}");
+      print("📦 Credit API Response: ${response.data}");
+
+      if (response.statusCode == 200 && response.data != null) {
+        dynamic data = response.data;
+
+        // 🔹 কখনো কখনো response.data আবারও nested হতে পারে
+        if (data is Map && data.containsKey('data')) {
+          var rsdValue = data['data']['rsd'];
+          if (rsdValue != null) {
+            credits.value = double.tryParse(rsdValue.toString()) ?? 0.0;
+            print("✅ Credit Updated: ${credits.value}");
+          } else {
+            print("⚠️ RSD not found in data");
+          }
+        } else {
+          print("⚠️ Invalid data format: ${response.data}");
+        }
+      } else {
+        print("⚠️ Credit API failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("❌ Error in getCredit(): $e");
+    }
+  }
+
+
   Future<void> getCheckoutSession() async {
-    print("jkd🤣🤣🤣🤣 ${LocalStorage.token}");
+    print("Starting checkout session... Token: ${LocalStorage.token}");
+
     try {
       isProcessing.value = true;
-      update();
+
+      // Show loading dialog
+      Get.dialog(
+        WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(color: AppColors.primaryColor),
+                  SizedBox(height: 16),
+                  Text(
+                    'Processing your booking...',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
       // Prepare booking request body
-      Map<dynamic, dynamic> bookingBody = {
+      Map<String, dynamic> bookingBody = {
         "provider": invoiceData['providerId'],
         "services": invoiceData['selectedServiceIds'],
         "date": invoiceData['dateIso'],
-        "slots":
-        (invoiceData['slotsData'] as List).map((slot) {
+        "slots": (invoiceData['slotsData'] as List).map((slot) {
           return {"start": slot['start'], "end": slot['end']};
         }).toList(),
-        "amount": totalPrice.value,
+        "amount": totalPrice.value, // ✅ Send actual value (can be negative)
+        "weatherFee": weatherFee.value,
+        "convenienceFee": convenienceFee.value,
+        "arrivalFee": arrivalFee.value,
+        "discount": discount.value,
+        "subTotal": subTotal.value,
       };
 
       // Add promo code if valid and applied
       if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
-        bookingBody["promo_code"] = validPromoCode.value;
+        bookingBody["promoCode"] = validPromoCode.value;
       }
+
+      print("📤 Booking Request Body: $bookingBody");
 
       // Make API call
       final response = await ApiService.post(
@@ -595,30 +686,58 @@ class InvoiceController extends GetxController {
         body: bookingBody,
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
+          "Content-Type": "application/json",
         },
       );
 
-      Get.back(); // Close loading dialog
+      print("📡 Booking Response Status: ${response.statusCode}");
+      print("📦 Booking Response Data: ${response.data}");
+
+      // Close loading dialog
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Booking successful
+        if (response.data == null) {
+          throw Exception("Response data is null");
+        }
 
+        // Check for different possible response structures
+        String? checkoutUrl;
+
+        if (response.data['data'] != null && response.data['data'] is String) {
+          checkoutUrl = response.data['data'];
+        } else if (response.data['checkoutUrl'] != null) {
+          checkoutUrl = response.data['checkoutUrl'];
+        } else if (response.data['url'] != null) {
+          checkoutUrl = response.data['url'];
+        } else if (response.data['data'] != null && response.data['data']['url'] != null) {
+          checkoutUrl = response.data['data']['url'];
+        }
+
+        print("🔗 Checkout URL: $checkoutUrl");
+
+        if (checkoutUrl == null || checkoutUrl.isEmpty) {
+          Get.snackbar("Payment", response.message);
+          Get.back();
+          return;
+        }
+
+        // Navigate to Stripe WebView
         final result = await Get.to(
-          StripeWebViewScreen(checkoutUrl: response.data['data']),
+          StripeWebViewScreen(checkoutUrl: checkoutUrl),
         );
 
         if (result == 'success') {
           _showSuccessDialog(response.data);
           Get.offAllNamed(AppRoutes.homeNav);
-        }
-        if (result == 'failed') {
+        } else if (result == 'failed') {
           Utils.errorSnackBar("Error", "Payment failed. Please try again.");
-        }
-        if (result == 'cancelled') {
+        } else if (result == 'cancelled') {
           Utils.errorSnackBar("Error", "Payment cancelled. Please try again.");
         }
       } else {
-        // Booking failed
         Get.snackbar(
           'Booking Failed',
           response.data['message'] ?? 'Failed to create booking',
@@ -629,7 +748,11 @@ class InvoiceController extends GetxController {
         );
       }
     } catch (e) {
-      Get.back(); // Close loading dialog if open
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
+      print("❌ Error creating booking: $e");
 
       Get.snackbar(
         'Error',

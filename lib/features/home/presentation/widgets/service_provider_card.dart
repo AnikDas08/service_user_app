@@ -58,12 +58,39 @@ class ServiceProviderCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4.r),
-                    child: CommonImage(
-                      imageSrc: imageUrl,
+                    child: imageUrl.startsWith("assets")
+                        ? Center(
+                      child: CommonText(
+                        text: imageUrl,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.black400,
+                      ),
+                    )
+                        : Image.network(
+                      imageUrl,
                       width: double.infinity,
                       height: 110.h,
-                      fill: BoxFit.cover,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Container(
+                            height: 110.h,
+                            width: double.infinity,
+                            color: AppColors.white,
+                            child: Center(
+                              child: CommonText(
+                                text: "Image not available",
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.black300,
+                              ),
+                            ),
+                          )
+                        );
+                      },
                     ),
+
                   ),
                   // Favorite Icon
                   Positioned(

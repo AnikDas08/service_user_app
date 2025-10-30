@@ -311,8 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     name: provider.name,
                     service: provider.category,
                     distance: "${provider.serviceDistance}km",
-                    rating: "4.5",
-                    reviews: "0",
+                    rating: provider.reviews.averageRating.toString(),
+                    reviews: provider.reviews.totalReviews.toString(),
                     price: "RSD ${provider.price.toStringAsFixed(0)}",
                     imageUrl: provider.image != null
                         ? ApiEndPoint.socketUrl + provider.image!

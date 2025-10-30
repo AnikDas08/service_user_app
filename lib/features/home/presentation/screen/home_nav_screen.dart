@@ -1,9 +1,7 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/features/appointment/presentation/screen/appointment_screen.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/home_nav_controller.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/home_screen.dart';
@@ -14,9 +12,6 @@ import '../../../profile/presentation/screen/profile_screen.dart';
 
 class HomeNavScreen extends StatelessWidget {
   HomeNavScreen({super.key});
-
-  final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey =
-  GlobalKey<CurvedNavigationBarState>();
 
   final List<Map<String, String>> _navItems = [
     {"icon": "assets/icons/home.svg", "label": "Home"},
@@ -37,69 +32,46 @@ class HomeNavScreen extends StatelessWidget {
             children: [
               HomeScreen(),
               const AppointmentScreen(),
-              controller.selectedIndex == 2
-                  ? ScanScreen() // শুধুমাত্র select হলে load হবে
-                  : Container(),
+              controller.selectedIndex == 2 ? ScanScreen() : Container(),
               ChatListScreen(),
               const ProfileScreen(),
             ],
           ),
-          bottomNavigationBar: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Curved Navigation Bar with only icons
-              CurvedNavigationBar(
-                key: _bottomNavigationKey,
-                index: controller.selectedIndex,
-                backgroundColor: AppColors.transparent,
-                buttonBackgroundColor: AppColors.primaryColor,
-                color: AppColors.primaryColor,
-                height: 50,
-                animationCurve: Curves.easeInOut,
-                animationDuration: const Duration(milliseconds: 600),
-                items: List.generate(_navItems.length, (index) {
-                  return SvgPicture.asset(
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: AppColors.primaryColor,
+            currentIndex: controller.selectedIndex,
+            onTap: controller.changeIndex,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white54,
+            selectedLabelStyle: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 10.sp,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 12.sp,
+            ),
+            iconSize: 22, // slightly larger icons
+            items: List.generate(_navItems.length, (index) {
+              return BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 10,top: 10),
+                  child: SvgPicture.asset(
                     _navItems[index]["icon"]!,
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      Colors.white,
+                    width: 22,
+                    height: 22,
+                    colorFilter: ColorFilter.mode(
+                      controller.selectedIndex == index
+                          ? Colors.white
+                          : Colors.white54,
                       BlendMode.srcIn,
                     ),
-                  );
-                }),
-                onTap: controller.changeIndex,
-              ),
-              // Static text labels below
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                width: double.infinity,
-                color: AppColors.primaryColor,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: List.generate(_navItems.length, (index) {
-                        return Expanded(
-                          child: Center(
-                            child: CommonText(
-                              text: _navItems[index]["label"]!,
-                              fontSize: 12,
-                              color: Colors.white,
-                              fontWeight: controller.selectedIndex == index
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                    SizedBox(height: 40,),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                label: _navItems[index]["label"],
+              );
+            }),
           ),
         );
       },

@@ -23,10 +23,12 @@ class SignUpScreen extends StatelessWidget {
 
 
       /// Body Section Starts Here
+      resizeToAvoidBottomInset: true,
       body: GetBuilder<SignUpController>(
         builder: (controller) {
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
               children: [
                 /// Logo text here

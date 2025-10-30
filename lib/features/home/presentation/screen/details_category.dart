@@ -110,8 +110,8 @@ class DetailsCategoryScreen extends StatelessWidget {
                               ? provider.category
                               : provider.subCategory,
                           distance: controller.getDistance(provider),
-                          rating: "4.5",
-                          reviews: "200",
+                          rating: provider.reviews.averageRating.toString(),
+                          reviews: provider.reviews.totalReviews.toString(),
                           price: "RSD ${provider.price.toStringAsFixed(0)}",
                           imageUrl: provider.image != null
                               ? ApiEndPoint.socketUrl + provider.image!

@@ -45,6 +45,8 @@ class PendingViewDetailsController extends GetxController {
         // API returns data as a List, get the first item
         if (response.data['data'] is List && response.data['data'].isNotEmpty) {
           bookingData.value = response.data['data'][0];
+          rating.value = response.data['data'][0]['ratings']["averageRating"];
+          reviewCount.value = response.data['data'][0]['totalReviews'];
           _parseBookingData();
         }
       }
@@ -125,8 +127,6 @@ class PendingViewDetailsController extends GetxController {
     }
 
     // Rating and reviews (mock data - not in current API response)
-    rating.value = 4.5;
-    reviewCount.value = 200;
   }
 
   // Cancel booking

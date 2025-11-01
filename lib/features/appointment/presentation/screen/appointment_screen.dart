@@ -91,9 +91,7 @@ class AppointmentScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                SizedBox(height: 20),
 
                 // Filter Buttons
                 Padding(
@@ -133,9 +131,13 @@ class AppointmentScreen extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 16.h),
+                SizedBox(height: 12.h),
 
-                // Booking List with Loading State
+
+
+                SizedBox(height: 8.h),
+
+                // Booking List with Loading State and Pagination
                 Expanded(
                   child: controller.isLoading
                       ? Center(
@@ -164,15 +166,21 @@ class AppointmentScreen extends StatelessWidget {
                     ),
                   )
                       : RefreshIndicator(
-                    onRefresh: controller.fetchAllBookings,
+                    onRefresh: () => controller.fetchAllBookings(),
                     color: AppColors.primaryColor,
                     child: ListView.builder(
+                      controller: controller.scrollController, // Important for pagination!
+                      physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      itemCount:
-                      controller.getFilteredBookings().length,
+                      itemCount: controller.getFilteredBookings().length +
+                          (controller.isLoadingMore ? 1 : 0), // Add 1 for loading indicator
                       itemBuilder: (context, index) {
-                        final booking =
-                        controller.getFilteredBookings()[index];
+                        // Show loading indicator at the end
+                        if (index == controller.getFilteredBookings().length) {
+                          return _buildLoadingIndicator();
+                        }
+
+                        final booking = controller.getFilteredBookings()[index];
                         return _buildBookingCard(booking, controller);
                       },
                     ),
@@ -186,13 +194,40 @@ class AppointmentScreen extends StatelessWidget {
     );
   }
 
+  // Loading indicator widget for pagination
+  Widget _buildLoadingIndicator() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 16.h),
+      alignment: Alignment.center,
+      child: Column(
+        children: [
+          SizedBox(
+            width: 24.w,
+            height: 24.h,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          CommonText(
+            text: 'Loading more...',
+            fontSize: 12.sp,
+            color: AppColors.black300,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildBookingCard(
       Map<String, dynamic> booking, AppointmentController controller) {
     return GestureDetector(
       onTap: () {
         if (controller.selectedFilter == 0) {
-          Get.toNamed(AppRoutes.upcomingdetail_screen,
-          arguments: {'bookingId': controller.getFullBookingId(booking)},
+          Get.toNamed(
+            AppRoutes.upcomingdetail_screen,
+            arguments: {'bookingId': controller.getFullBookingId(booking)},
           );
         } else if (controller.selectedFilter == 1) {
           // Pass booking ID as argument
@@ -229,7 +264,8 @@ class AppointmentScreen extends StatelessWidget {
                 child: controller.getUserImage(booking).startsWith('http') ||
                     controller.getUserImage(booking).startsWith('/')
                     ? Image.network(
-                  ApiEndPoint.imageUrl+controller.getUserImage(booking),
+                  ApiEndPoint.imageUrl +
+                      controller.getProviderImage(booking),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Image.asset(
@@ -252,7 +288,7 @@ class AppointmentScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: controller.getUserName(booking),
+                    text: controller.getProviderName(booking),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: AppColors.black400,
@@ -273,6 +309,8 @@ class AppointmentScreen extends StatelessWidget {
                         fontSize: 14.sp,
                         color: AppColors.black400,
                         fontWeight: FontWeight.w400,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -316,7 +354,8 @@ class AppointmentScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             CommonText(
-                              text: 'Booking ID: ${controller.getBookingId(booking)}',
+                              text:
+                              'Booking ID: ${controller.getBookingId(booking)}',
                               fontSize: 12.sp,
                               color: AppColors.black300,
                               fontWeight: FontWeight.w400,

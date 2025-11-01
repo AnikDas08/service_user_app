@@ -294,33 +294,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.w,
-                  mainAxisSpacing: 16.h,
-                  childAspectRatio: 0.75,
-                ),
-                itemCount: providers.length,
-                itemBuilder: (context, index) {
-                  final provider = providers[index];
-                  return ServiceProviderCard(
-                    id: provider.id,
-                    name: provider.name,
-                    service: provider.category,
-                    distance: "${provider.serviceDistance}km",
-                    rating: provider.reviews.averageRating.toString(),
-                    reviews: provider.reviews.totalReviews.toString(),
-                    price: "RSD ${provider.price.toStringAsFixed(0)}",
-                    imageUrl: provider.image != null
-                        ? ApiEndPoint.socketUrl + provider.image!
-                        : "assets/images/item_image.png",
-                    onTap: () => controller.onProviderTap(provider.id),
-                    onFavorite: () => controller.favouriteItem(provider.id), // Changed from toggleFavorite to favouriteItem
-                  );
+              return RefreshIndicator(
+                onRefresh: () async {
+                  // 🔁 Call your controller function to refresh providers list
+                  await controller.fetchServiceProviders();
                 },
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  //physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.w,
+                    mainAxisSpacing: 16.h,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: providers.length,
+                  itemBuilder: (context, index) {
+                    final provider = providers[index];
+                    return ServiceProviderCard(
+                      id: provider.id,
+                      name: provider.name,
+                      service: provider.category,
+                      distance: "${provider.serviceDistance}km",
+                      rating: provider.reviews.averageRating.toString(),
+                      reviews: provider.reviews.totalReviews.toString(),
+                      price: "RSD ${provider.price.toStringAsFixed(0)}",
+                      imageUrl: provider.image != null
+                          ? ApiEndPoint.socketUrl + provider.image!
+                          : "assets/images/item_image.png",
+                      onTap: () => controller.onProviderTap(provider.id),
+                      onFavorite: () => controller.favouriteItem(provider.id), // Changed from toggleFavorite to favouriteItem
+                    );
+                  },
+                ),
               );
             }),
           ],

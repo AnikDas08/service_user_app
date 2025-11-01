@@ -61,8 +61,8 @@ class ViewDetailsUpcoming extends StatelessWidget {
                           Container(
                             decoration: BoxDecoration(shape: BoxShape.circle),
                             child: CircleAvatar(
-                              backgroundImage: controller.providerImage.value.isNotEmpty
-                                  ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage.value)
+                              backgroundImage: controller.providerImage.isNotEmpty
+                                  ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage)
                                   : AssetImage("assets/images/item_image.png") as ImageProvider,
                               radius: 45,
                             ),
@@ -74,7 +74,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CommonText(
-                                  text: controller.providerName.value,
+                                  text: controller.providerName,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.black400,
@@ -117,7 +117,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                                     ),
                                     SizedBox(width: 8.w),
                                     CommonText(
-                                      text: "(${controller.reviewCount.value.toString()})",
+                                      text: "(${controller.reviewCount!.value.toString()??"0"})",
                                       fontSize: 12.sp,
                                       color: AppColors.black200,
                                       fontWeight: FontWeight.w400,
@@ -241,57 +241,16 @@ class ViewDetailsUpcoming extends StatelessWidget {
                   fontSize: 18,
                   isSelected: true,
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: AppColors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          content: CommonText(
-                            maxLines: 4,
-                            text: AppString.cancel_booking_detail,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          actions: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomButton(
-                                    text: AppString.no_button,
-                                    isSelected: false,
-                                    onTap: () {
-                                      Get.back();
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 25),
-                                Expanded(
-                                  child: CustomButton(
-                                    text: AppString.yes_button,
-                                    isSelected: true,
-                                    onTap: () async {
-                                      // Cancel the booking first
-                                      await controller.cancelBooking();
+                    Get.toNamed(
+                        AppRoutes.message,
+                        parameters: {
+                                        "id":controller.chantId
+                                      },
+                    arguments: {
+                      "name":controller.providerName,
+                      "image":controller.providerImage,
+                                      });
 
-                                      final appointmentController = Get.find<AppointmentController>();
-
-                                      // Change filter to Cancel tab
-                                      appointmentController.changeFilter(2);
-
-                                      // Navigate to home screen
-                                      Get.offAllNamed(AppRoutes.homeNav);
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    );
                   },
                 ),
               ),

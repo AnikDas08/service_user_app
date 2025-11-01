@@ -18,12 +18,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final HomeController controller = Get.find<HomeController>();
 
   String? selectedCategory;
+  String? selectedCategoryid;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? selectedLocation;
   double priceRange = 500;
   final double maxPrice = 1000;
-  TextEditingController locationControllers=TextEditingController();
+  TextEditingController locationControllers = TextEditingController();
 
   final List<String> locations = [
     'Select location',
@@ -110,7 +111,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     // Location Section
                     _buildSectionTitle('Location'),
                     SizedBox(height: 12.h),
-                    //_buildLocationDropdown(),
                     CommonTextField(
                       controller: locationControllers,
                       hintText: AppString.hint_type_here,
@@ -171,6 +171,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       }
 
       final categories = controller.categories.map((cat) => cat['name'] as String).toList();
+      final categoriesid = controller.categories.map((cat) => cat['id'] as String).toList();
 
       return Container(
         width: double.infinity,
@@ -209,6 +210,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             onChanged: (String? newValue) {
               setState(() {
                 selectedCategory = newValue;
+                selectedCategoryid = categoriesid[categories.indexWhere((element) => element == newValue)];
               });
             },
           ),
@@ -278,53 +280,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               size: 18.sp,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLocationDropdown() {
-    return Container(
-      height: 44,
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.black100, width: 1),
-        borderRadius: BorderRadius.circular(4.r),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedLocation,
-          hint: CommonText(
-            text: 'Select location',
-            fontSize: 14,
-            color: AppColors.black200,
-            textAlign: TextAlign.left,
-          ),
-          icon: Icon(
-            Icons.keyboard_arrow_down,
-            color: AppColors.black300,
-            size: 20.sp,
-          ),
-          isExpanded: true,
-          items: locations.map((String location) {
-            return DropdownMenuItem<String>(
-              value: location == 'Select location' ? null : location,
-              child: CommonText(
-                text: location,
-                fontSize: 14,
-                color: location == 'Select location'
-                    ? AppColors.black400
-                    : AppColors.black200,
-                textAlign: TextAlign.left,
-              ),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              selectedLocation = newValue;
-            });
-          },
         ),
       ),
     );
@@ -456,16 +411,44 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   void _applyFilters() {
+    // Format date to ISO 8601 string
+    String? formattedDate;
+    if (selectedDate != null) {
+      formattedDate = selectedDate!.toIso8601String();
+    }
+
+    // Format time to ISO 8601 string with current date
+    String? formattedTime;
+    if (selectedTime != null) {
+      final now = DateTime.now();
+      final timeDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime!.hour,
+        selectedTime!.minute,
+      );
+      formattedTime = timeDateTime.toIso8601String();
+    }
+
     // Create filter data to pass back
     Map<String, dynamic> filterData = {
-      'category': selectedCategory,
-      'date': selectedDate,
-      'time': selectedTime,
-      'location': selectedLocation,
-      'priceRange': priceRange,
+      'categoryId': selectedCategoryid,
+      'date': formattedDate,
+      'time': formattedTime,
+      'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
+      'userLng': "90.3890144", // Default value
+      'userLat': "23.7643863", // Default value
+      'minPrice': "0",
+      'maxPrice': priceRange.toString(),
     };
 
-    // Pass the filter data back and close bottom sheet
-    Get.back(result: filterData);
+    print("Filter data : $filterData");
+
+    // Call the controller method to apply filters and fetch from API
+    controller.applyFiltersWithAPI(filterData);
+
+    // Close bottom sheet
+    Get.back();
   }
 }

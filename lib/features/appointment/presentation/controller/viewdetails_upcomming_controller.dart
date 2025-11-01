@@ -11,16 +11,17 @@ class ViewdetailsUpcommingController extends GetxController {
 
   // Parsed fields for easy access - make them observable
   var bookingId = ''.obs;
-  var providerName = ''.obs;
-  var providerImage = ''.obs;
+  var providerName = '';
+  var providerImage = '';
   var providerLocation = ''.obs;
   var serviceName = ''.obs;
   var date = ''.obs;
   var time = ''.obs;
   var duration = '60 Minutes Duration'.obs;
   var amount = ''.obs;
-  RxDouble rating = 0.0.obs;
+  RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
+  String chantId="";
 
   @override
   void onInit() {
@@ -41,12 +42,11 @@ class ViewdetailsUpcommingController extends GetxController {
 
       if (response.statusCode == 200 && response.data != null) {
         // API returns data as a List, get the first item
-        if (response.data['data'] is List && response.data['data'].isNotEmpty) {
           bookingData.value = response.data['data'][0];
-          rating.value = response.data['data'][0]['ratings']["averageRating"]??0.0;
+          rating.value = response.data['data'][0]['ratings']["averageRating"].toString()??"";
           reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
+          chantId=response.data['data'][0]['chatId']??"";
           _parseBookingData();
-        }
       }
     } catch (e) {
       print('Error fetching booking details: $e');
@@ -64,12 +64,12 @@ class ViewdetailsUpcommingController extends GetxController {
   void _parseBookingData() {
     // Provider details
     if (bookingData['provider'] != null && bookingData['provider'] is Map) {
-      providerName.value = bookingData['provider']['name'] ?? 'Provider';
-      providerImage.value = bookingData['provider']['image'] ?? '';
+      providerName = bookingData['provider']['name'] ?? 'Provider';
+      providerImage = bookingData['provider']['image'] ?? '';
       providerLocation.value = bookingData['provider']['primaryLocation'] ?? 'Location';
     }
 
-    print("provider name : 😍😍😍😍${providerName.value}");
+    print("provider name : 😍😍😍😍${providerName}");
 
     // Service name from category
     if (bookingData['services'] != null && bookingData['services'] is List) {

@@ -27,79 +27,81 @@ class SignUpScreen extends StatelessWidget {
       body: GetBuilder<SignUpController>(
         builder: (controller) {
           return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: Column(
-              children: [
-                /// Logo text here
-                CustomAppBar(title: "",onBackTap: (){
-                  Get.offAllNamed(AppRoutes.onboarding);
-                },),
-                const CommonText(
-                  text: AppString.onboarding_text,
-                  fontSize: 24,
-                  color: AppColors.primaryColor,
-                  fontWeight: FontWeight.w600,
-                  maxLines: 2,
-                ).center,
-                SizedBox(height: 12,),
-                /// Sign Up Container here
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 10.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: AppColors.black50),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0x408E8E8E),
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        /// Sign UP Instructions here
-                        const CommonText(
-                          text: AppString.signup_text,
-                          fontSize: 18,
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.w500,
-                        ).center,
-
-                        SizedBox(height: 20,),
-
-                        /// All Text Filed here
-                        SignUpAllField(controller: controller),
-
-                        16.height,
-
-                        /// Submit Button Here
-                        CommonButton(
-                          titleText: AppString.continue_button,
-                          isLoading: controller.isLoading,
-                          onTap: (){
-                            if(formKey.currentState!.validate()){
-                              controller.signUpUser();
-                            }
-                          },
+            child: SafeArea(
+              child: Column(
+                children: [
+                  /// Logo text here
+                  CustomAppBar(title: "",onBackTap: (){
+                    Get.offAllNamed(AppRoutes.onboarding);
+                  },),
+                  const CommonText(
+                    text: AppString.onboarding_text,
+                    fontSize: 24,
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 2,
+                  ).center,
+                  SizedBox(height: 12,),
+                  /// Sign Up Container here
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(color: AppColors.black50),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x408E8E8E),
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
                         ),
-                        24.height,
-
-                        ///  Sign In Instruction here
-                        const AlreadyAccountRichText(),
-                        30.height,
                       ],
                     ),
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        children: [
+                          /// Sign UP Instructions here
+                          const CommonText(
+                            text: AppString.signup_text,
+                            fontSize: 18,
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ).center,
+              
+                          SizedBox(height: 20,),
+              
+                          /// All Text Filed here
+                          SignUpAllField(controller: controller),
+              
+                          16.height,
+              
+                          /// Submit Button Here
+                          CommonButton(
+                            titleText: AppString.continue_button,
+                            isLoading: controller.isLoading,
+                            onTap: (){
+                              if(formKey.currentState!.validate()){
+                                controller.signUpUser();
+                              }
+                            },
+                          ),
+                          24.height,
+              
+                          ///  Sign In Instruction here
+                          const AlreadyAccountRichText(),
+                          30.height,
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

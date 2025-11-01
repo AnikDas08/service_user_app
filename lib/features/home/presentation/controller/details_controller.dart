@@ -61,7 +61,7 @@ class DetailsController extends GetxController {
       errorMessage.value = "";
 
       final response = await ApiService.get(
-        '${ApiEndPoint.provider}?categoryId=${id.value}',
+        '${ApiEndPoint.provider}?categoryId=${id.value}&verified=true&isActive=true&isOnline=true',
         header: {
           'Content-Type': 'application/json',
           "Authorization": "Bearer ${LocalStorage.token}",

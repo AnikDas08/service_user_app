@@ -106,18 +106,22 @@ class ViewDetailsPending extends StatelessWidget {
                                       color: Colors.amber,
                                     ),
                                     SizedBox(width: 4.w),
-                                    CommonText(
-                                      text: controller.rating.value.toString(),
-                                      fontSize: 12.sp,
-                                      color: AppColors.black300,
-                                      fontWeight: FontWeight.w400,
+                                    Obx(
+                                      () => CommonText(
+                                        text: controller.rating.value.toString(),
+                                        fontSize: 12.sp,
+                                        color: AppColors.black300,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                     SizedBox(width: 12.w),
-                                    CommonText(
-                                      text: "(${controller.reviewCount.value})",
-                                      fontSize: 12.sp,
-                                      color: AppColors.black200,
-                                      fontWeight: FontWeight.w400,
+                                    Obx(
+                                      () => CommonText(
+                                        text: "(${controller.reviewCount.value.toString()})",
+                                        fontSize: 12.sp,
+                                        color: AppColors.black200,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                   ],
                                 ),

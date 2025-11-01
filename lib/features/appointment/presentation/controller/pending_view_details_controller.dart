@@ -21,8 +21,8 @@ class PendingViewDetailsController extends GetxController {
   var time = ''.obs;
   var duration = '60 Minutes Duration'.obs;
   var amount = ''.obs;
-  var rating = 0.0.obs;
-  var reviewCount = 0.obs;
+  RxString rating = "".obs;
+  RxInt reviewCount = 0.obs;
 
   @override
   void onInit() {
@@ -45,8 +45,8 @@ class PendingViewDetailsController extends GetxController {
         // API returns data as a List, get the first item
         if (response.data['data'] is List && response.data['data'].isNotEmpty) {
           bookingData.value = response.data['data'][0];
-          rating.value = response.data['data'][0]['ratings']["averageRating"];
-          reviewCount.value = response.data['data'][0]['totalReviews'];
+          rating.value = response.data['data'][0]['ratings']["averageRating"].toString()??"";
+          reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
           _parseBookingData();
         }
       }

@@ -10,7 +10,7 @@ import '../screen/service_details_screen.dart';
 
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
-  static final HomeController instance=HomeController();
+  static final HomeController instance = HomeController();
 
   // Favorite list using provider IDs
   final RxList<String> favoriteIds = <String>[].obs;
@@ -34,7 +34,7 @@ class HomeController extends GetxController {
     fetchCategories();
     fetchServiceProviders();
     getProfile();
-    fetchFavorites(); // Fetch favorites on init
+    fetchFavorites();
     searchController.addListener(_onSearchChanged);
   }
 
@@ -55,19 +55,15 @@ class HomeController extends GetxController {
   Future<void> fetchFavorites() async {
     try {
       final response = await ApiService.get(
-        ApiEndPoint.favourite, // Your endpoint to get favorites
+        ApiEndPoint.favourite,
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
         },
       );
 
       if (response.statusCode == 200 && response.data['success'] == true) {
-        // Extract provider IDs from the providerIds array
         final List<dynamic> providerIds = response.data['data']['providerIds'] ?? [];
-
-        // Map to get only the _id from each provider object
         favoriteIds.value = providerIds.map((item) => item.toString()).toList();
-
         update();
       }
     } catch (e) {
@@ -78,7 +74,6 @@ class HomeController extends GetxController {
   // Add/Remove favorite with API call
   Future<void> favouriteItem(String providerId) async {
     try {
-      // Optimistically update UI
       final wasFavorite = favoriteIds.contains(providerId);
       if (wasFavorite) {
         favoriteIds.remove(providerId);
@@ -88,7 +83,7 @@ class HomeController extends GetxController {
       update();
 
       final response = await ApiService.post(
-        ApiEndPoint.favourite, // Replace with correct favorite endpoint
+        ApiEndPoint.favourite,
         body: {
           "providerId": providerId,
         },
@@ -99,7 +94,6 @@ class HomeController extends GetxController {
 
       if (response.statusCode == 200) {
       } else {
-        // Revert on failure
         if (wasFavorite) {
           favoriteIds.add(providerId);
         } else {
@@ -116,7 +110,6 @@ class HomeController extends GetxController {
         );
       }
     } catch (e) {
-      // Revert on error
       final wasFavorite = !favoriteIds.contains(providerId);
       if (wasFavorite) {
         favoriteIds.add(providerId);
@@ -135,12 +128,14 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> fetchServiceProviders() async {
+  Future<void> fetchServiceProviders({String? filterUrl}) async {
     try {
       isLoadingProviders.value = true;
 
+      String url = filterUrl ?? ApiEndPoint.provider + "?verified=true&isActive=true&isOnline=true";
+
       final response = await ApiService.get(
-        ApiEndPoint.provider,
+        url,
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
         },
@@ -210,7 +205,7 @@ class HomeController extends GetxController {
       isLoadingCategories.value = true;
 
       final response = await ApiService.get(
-        ApiEndPoint.category,
+        ApiEndPoint.category+"?limit=20",
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
         },
@@ -250,17 +245,14 @@ class HomeController extends GetxController {
     }
   }
 
-  // Check if a provider is favorite by matching provider ID with favorite list
   bool isFavorite(String providerId) {
     return favoriteIds.contains(providerId);
   }
 
-  // Get all favorite providers
   List<ProviderModel> get favoriteProviders {
     return serviceProviders.where((provider) => isFavorite(provider.id)).toList();
   }
 
-  // Filter by category
   void onServiceCategoryTap(String category) {
     if (category == "All") {
       filteredProviders.value = serviceProviders;
@@ -273,12 +265,69 @@ class HomeController extends GetxController {
     }
   }
 
-  // Navigate to provider details
   void onProviderTap(String id) {
     Get.to(() => const ServiceDetailsScreen(), arguments: id);
   }
 
-  // Apply filters from bottom sheet
+  // New method to apply filters with API call
+  Future<void> applyFiltersWithAPI(Map<String, dynamic> filterData) async {
+    try {
+      // Build query parameters
+      List<String> queryParams = ["verified=true", "isActive=true", "isOnline=true"];
+
+      if (filterData['categoryId'] != null && filterData['categoryId'].toString().isNotEmpty) {
+        queryParams.add("categoryId=${filterData['categoryId']}");
+      }
+
+      /*if (filterData['userLng'] != null && filterData['userLng'].toString().isNotEmpty) {
+        queryParams.add("userLng=${filterData['userLng']}");
+      }
+
+      if (filterData['userLat'] != null && filterData['userLat'].toString().isNotEmpty) {
+        queryParams.add("userLat=${filterData['userLat']}");
+      }*/
+
+      if (filterData['minPrice'] != null && filterData['minPrice'].toString().isNotEmpty) {
+        queryParams.add("minPrice=${filterData['minPrice']}");
+      }
+
+      if (filterData['maxPrice'] != null && filterData['maxPrice'].toString().isNotEmpty) {
+        queryParams.add("maxPrice=${filterData['maxPrice']}");
+      }
+
+      if (filterData['date'] != null && filterData['date'].toString().isNotEmpty) {
+        queryParams.add("date=${filterData['date']}");
+      }
+
+      if (filterData['time'] != null && filterData['time'].toString().isNotEmpty) {
+        queryParams.add("time=${filterData['time']}");
+      }
+
+      if (filterData['location'] != null && filterData['location'].toString().isNotEmpty) {
+        queryParams.add("location=${filterData['location']}");
+      }
+
+      // Build the complete URL
+      String filterUrl = ApiEndPoint.provider + "?" + queryParams.join("&");
+      print("sdjkfkjfk 😂😂😂😂 $filterUrl");
+
+      print("Filter URL: $filterUrl");
+
+      // Call fetchServiceProviders with the filter URL
+      await fetchServiceProviders(filterUrl: filterUrl);
+
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to apply filters: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Original applyFilters method (for local filtering if needed)
   void applyFilters(Map<String, dynamic> filterData) {
     List<ProviderModel> filtered = List.from(serviceProviders);
 
@@ -291,26 +340,15 @@ class HomeController extends GetxController {
           .toList();
     }
 
-    if (filterData['location'] != null) {
-      final selectedLocation = filterData['location'] as String;
-    }
-
     if (filterData['priceRange'] != null) {
       final maxPrice = filterData['priceRange'] as double;
       filtered = filtered.where((provider) => provider.price <= maxPrice).toList();
-    }
-
-    if (filterData['date'] != null) {
-    }
-
-    if (filterData['time'] != null) {
     }
 
     filteredProviders.value = filtered;
     update();
   }
 
-  // Refresh data
   Future<void> refreshData() async {
     await Future.wait([
       fetchCategories(),

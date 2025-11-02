@@ -19,6 +19,14 @@ class HomeController extends GetxController {
   final RxList<ProviderModel> serviceProviders = <ProviderModel>[].obs;
   final RxList<ProviderModel> filteredProviders = <ProviderModel>[].obs;
   final RxBool isLoadingProviders = false.obs;
+  final RxBool isLoadingMore = false.obs;
+
+  // Pagination variables
+  final RxInt currentPage = 1.obs;
+  final RxInt totalPages = 1.obs;
+  final RxInt totalProviders = 0.obs;
+  final int limit = 20;
+  final RxBool hasMoreData = true.obs;
 
   // Categories from API
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
@@ -27,6 +35,9 @@ class HomeController extends GetxController {
   var name = "".obs;
   var image = "".obs;
   ProfileData? profileData;
+
+  // Store current filter URL for pagination
+  String? currentFilterUrl;
 
   @override
   void onInit() {
@@ -128,11 +139,36 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> fetchServiceProviders({String? filterUrl}) async {
+  Future<void> fetchServiceProviders({String? filterUrl, bool loadMore = false}) async {
     try {
-      isLoadingProviders.value = true;
+      // Prevent multiple simultaneous requests
+      if (loadMore && isLoadingMore.value) return;
+      if (!loadMore && isLoadingProviders.value) return;
 
-      String url = filterUrl ?? ApiEndPoint.provider + "?verified=true&isActive=true&isOnline=true";
+      // Check if there's more data to load
+      if (loadMore && !hasMoreData.value) return;
+
+      if (loadMore) {
+        isLoadingMore.value = true;
+      } else {
+        isLoadingProviders.value = true;
+        currentPage.value = 1;
+        serviceProviders.clear();
+      }
+
+      // Store filter URL for pagination
+      if (filterUrl != null) {
+        currentFilterUrl = filterUrl;
+      }
+
+      // Build URL with pagination
+      String baseUrl = currentFilterUrl ??
+          (ApiEndPoint.provider + "?verified=true&isActive=true&isOnline=true");
+
+      // Add pagination parameters
+      String separator = baseUrl.contains('?') ? '&' : '?';
+      String url = baseUrl +
+          "${separator}page=${currentPage.value}&limit=$limit";
 
       final response = await ApiService.get(
         url,
@@ -145,8 +181,25 @@ class HomeController extends GetxController {
         final providersResponse = ProvidersResponse.fromJson(response.data);
 
         if (providersResponse.success) {
-          serviceProviders.value = providersResponse.data;
-          filteredProviders.value = providersResponse.data;
+          // Update pagination info
+          if (response.data['pagination'] != null) {
+            totalPages.value = response.data['pagination']['totalPage'] ?? 1;
+            totalProviders.value = response.data['pagination']['total'] ?? 0;
+
+            // Check if there's more data
+            hasMoreData.value = currentPage.value < totalPages.value;
+          }
+
+          if (loadMore) {
+            // Append new data
+            serviceProviders.addAll(providersResponse.data);
+            filteredProviders.addAll(providersResponse.data);
+          } else {
+            // Replace data
+            serviceProviders.value = providersResponse.data;
+            filteredProviders.value = providersResponse.data;
+          }
+
           update();
         } else {
           Get.snackbar(
@@ -175,7 +228,19 @@ class HomeController extends GetxController {
         colorText: Colors.white,
       );
     } finally {
-      isLoadingProviders.value = false;
+      if (loadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isLoadingProviders.value = false;
+      }
+    }
+  }
+
+  // Load next page
+  Future<void> loadMoreProviders() async {
+    if (hasMoreData.value && !isLoadingMore.value) {
+      currentPage.value++;
+      await fetchServiceProviders(loadMore: true);
     }
   }
 
@@ -190,7 +255,7 @@ class HomeController extends GetxController {
         final profileModel = ProfileModel.fromJson(response.data);
         profileData = profileModel.data;
         name.value = response.data["data"]["name"];
-        image.value = response.data["data"]["image"];
+        image.value = response.data["data"]["image"]??"";
       } else {
         Utils.errorSnackBar(response.statusCode, response.message);
       }
@@ -279,14 +344,6 @@ class HomeController extends GetxController {
         queryParams.add("categoryId=${filterData['categoryId']}");
       }
 
-      /*if (filterData['userLng'] != null && filterData['userLng'].toString().isNotEmpty) {
-        queryParams.add("userLng=${filterData['userLng']}");
-      }
-
-      if (filterData['userLat'] != null && filterData['userLat'].toString().isNotEmpty) {
-        queryParams.add("userLat=${filterData['userLat']}");
-      }*/
-
       if (filterData['minPrice'] != null && filterData['minPrice'].toString().isNotEmpty) {
         queryParams.add("minPrice=${filterData['minPrice']}");
       }
@@ -309,11 +366,11 @@ class HomeController extends GetxController {
 
       // Build the complete URL
       String filterUrl = ApiEndPoint.provider + "?" + queryParams.join("&");
-      print("sdjkfkjfk 😂😂😂😂 $filterUrl");
-
       print("Filter URL: $filterUrl");
 
-      // Call fetchServiceProviders with the filter URL
+      // Reset pagination and fetch with new filters
+      currentPage.value = 1;
+      hasMoreData.value = true;
       await fetchServiceProviders(filterUrl: filterUrl);
 
     } catch (e) {
@@ -350,6 +407,9 @@ class HomeController extends GetxController {
   }
 
   Future<void> refreshData() async {
+    currentPage.value = 1;
+    hasMoreData.value = true;
+    currentFilterUrl = null;
     await Future.wait([
       fetchCategories(),
       fetchServiceProviders(),
@@ -359,6 +419,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
+    searchController.dispose();
     super.onClose();
   }
 }

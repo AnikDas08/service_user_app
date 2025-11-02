@@ -61,6 +61,7 @@ class SignUpController extends GetxController {
   );
 
 
+
   @override
   void dispose() {
     _timer?.cancel();

@@ -22,6 +22,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      // Load more when user is 200px from bottom
+      Get.find<HomeController>().loadMoreProviders();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
@@ -34,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onRefresh: controller.refreshData,
               color: AppColors.primaryColor,
               child: SingleChildScrollView(
+                controller: _scrollController,
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,6 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     // Service Providers Grid
                     _buildServiceProviders(),
 
+                    // Loading more indicator
+                    _buildLoadMoreIndicator(controller),
+
                     SizedBox(height: 20.h),
                   ],
                 ),
@@ -81,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
             shape: BoxShape.circle,
           ),
           child: Obx(
-            ()=> ClipOval(
+                ()=> ClipOval(
               child: controller.image.value!=""?Image.network(
                 ApiEndPoint.socketUrl+controller.image.value,
                 width: 46.w,
@@ -106,13 +133,13 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
-                  ()=>CommonText(
-                    text: controller.name.value,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.black300,
-                    textAlign: TextAlign.left,
-                  ),
+                    ()=>CommonText(
+                  text: controller.name.value,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.black300,
+                  textAlign: TextAlign.left,
+                ),
               ),
               SizedBox(height: 2.h),
               CommonText(
@@ -130,9 +157,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Get.toNamed(AppRoutes.notifications);
           },
           child: Icon(
-              Icons.notifications_outlined,
-              color: AppColors.black300,
-              size: 24.sp,
+            Icons.notifications_outlined,
+            color: AppColors.black300,
+            size: 24.sp,
           ),
         )
       ],
@@ -258,16 +285,22 @@ class _HomeScreenState extends State<HomeScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CommonText(
-              text: AppString.avaliable_ite,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.primaryColor,
-              textAlign: TextAlign.left,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CommonText(
+                  text: AppString.avaliable_ite,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primaryColor,
+                  textAlign: TextAlign.left,
+                ),
+              ],
             ),
             SizedBox(height: 14.h),
             Obx(() {
-              if (controller.isLoadingProviders.value) {
+              if (controller.isLoadingProviders.value &&
+                  controller.serviceProviders.isEmpty) {
                 return Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -296,7 +329,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  // 🔁 Call your controller function to refresh providers list
                   await controller.fetchServiceProviders();
                 },
                 child: GridView.builder(
@@ -323,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? ApiEndPoint.socketUrl + provider.image!
                           : "assets/images/item_image.png",
                       onTap: () => controller.onProviderTap(provider.id),
-                      onFavorite: () => controller.favouriteItem(provider.id), // Changed from toggleFavorite to favouriteItem
+                      onFavorite: () => controller.favouriteItem(provider.id),
                     );
                   },
                 ),
@@ -335,6 +367,23 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildLoadMoreIndicator(HomeController controller) {
+    return Obx(() {
+      if (controller.isLoadingMore.value) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h),
+            child: CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+          ),
+        );
+      }
+
+      return const SizedBox.shrink();
+    });
+  }
+
   void _showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -343,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => const FilterBottomSheet(),
     ).then((filterData) {
       if (filterData != null) {
-        Get.find<HomeController>().applyFilters(filterData);
+        Get.find<HomeController>().applyFiltersWithAPI(filterData);
       }
     });
   }

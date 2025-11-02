@@ -92,7 +92,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Category Section
-                    _buildSectionTitle('Category'),
+                    _buildSectionTitle(AppString.category),
                     SizedBox(height: 12.h),
                     _buildCategoryDropdown(),
 
@@ -109,7 +109,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     SizedBox(height: 16.h),
 
                     // Location Section
-                    _buildSectionTitle('Location'),
+                    _buildSectionTitle(AppString.location_text),
                     SizedBox(height: 12.h),
                     CommonTextField(
                       controller: locationControllers,
@@ -119,7 +119,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     SizedBox(height: 16.h),
 
                     // Price Section
-                    _buildSectionTitle('Price'),
+                    _buildSectionTitle(AppString.price),
                     SizedBox(height: 5.h),
                     _buildPriceSlider(),
                     SizedBox(height: 30.h),
@@ -236,7 +236,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             CommonText(
               text: selectedDate != null
                   ? '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'
-                  : 'Date',
+                  : AppString.date,
               fontSize: 14,
               color: selectedDate != null ? AppColors.black400 : AppColors.black200,
               textAlign: TextAlign.left,
@@ -269,7 +269,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             CommonText(
               text: selectedTime != null
                   ? selectedTime!.format(context)
-                  : 'Time',
+                  : AppString.time,
               fontSize: 14,
               color: selectedTime != null ? AppColors.black400 : AppColors.black200,
               textAlign: TextAlign.left,
@@ -346,7 +346,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           elevation: 0,
         ),
         child: CommonText(
-          text: 'Apply',
+          text: AppString.apply_button,
           fontSize: 16,
           fontWeight: FontWeight.w500,
           color: AppColors.white,

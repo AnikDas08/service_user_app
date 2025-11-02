@@ -107,7 +107,11 @@ class AppString {
   static const String hints_name = "Enter Your Full Name...";
   static const String phone_number_text = "Phone Number";
   static const String hint_phone_number = "7674334";
-  static const String location_text = "Location";
+  static const String location_text = "Location ";
+  static const String price = "Price ";
+  static const String apply_button = "Apply";
+  static const String time = "Time";
+  static const String date = "Date";
   static const String referral_code_text = "Referral Code";
   static const String referral_code_hint = "Enter Referral Code";
   static const String location_hint = "Choose City";
@@ -199,6 +203,8 @@ class AppString {
   static const String photo_customer_four = "Service Fee";
   static const String book_now_button = "Book Now";
   static const String total_amount = "Total  Money Earned";
+  static const String category = "Category";
+  static const String subCategory = "Sub Category";
   static const String view_profile_text = "View Profile";
   static const String avilable_button = "Availability";
   static const String service_fee = "Service Fee";

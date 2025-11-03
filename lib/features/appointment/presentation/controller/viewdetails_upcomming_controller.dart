@@ -104,10 +104,18 @@ class ViewdetailsUpcommingController extends GetxController {
     // Parse time (start time) - 24 hour format
     if (bookingData['slots'] != null && bookingData['slots'].isNotEmpty) {
       try {
-        DateTime startTime = DateTime.parse(bookingData['slots'][0]['start']);
-        int hour = startTime.hour;
-        int minute = startTime.minute;
-        time.value = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+        List<String> timeSlots = [];
+
+        for (var slot in bookingData['slots']) {
+          DateTime startTime = DateTime.parse(slot['start']);
+          int hour = startTime.hour;
+          int minute = startTime.minute;
+          String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+          timeSlots.add(formattedTime);
+        }
+
+        // Join all time slots with comma
+        time.value = timeSlots.join(', ');
       } catch (e) {
         time.value = '10:00';
       }

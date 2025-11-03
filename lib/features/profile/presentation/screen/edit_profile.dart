@@ -22,14 +22,22 @@ class EditProfile extends StatelessWidget {
       init: EditProfileController(),
       builder: (controller) {
         return Scaffold(
-          body:SafeArea(
-            child: Padding(
+          body: SafeArea(
+            child: controller.isProfileLoading
+                ? Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primaryColor,
+              ),
+            )
+                : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    CustomAppBar(title: AppString.edit_profile_button,),
-                    SizedBox(height: 20,),
+                    CustomAppBar(
+                      title: AppString.edit_profile_button,
+                    ),
+                    SizedBox(height: 20),
                     Obx(
                           () => Stack(
                         children: [
@@ -46,11 +54,13 @@ class EditProfile extends StatelessWidget {
                               )
                                   : controller.profileData?.image != null
                                   ? Image.network(
-                                ApiEndPoint.imageUrl + controller.profileData!.image!,
+                                ApiEndPoint.imageUrl +
+                                    controller.profileData!.image!,
                                 width: 120.w,
                                 height: 120.h,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
+                                errorBuilder:
+                                    (context, error, stackTrace) {
                                   return Image.asset(
                                     "assets/images/profile_image.jpg",
                                     width: 120.w,
@@ -58,13 +68,20 @@ class EditProfile extends StatelessWidget {
                                     fit: BoxFit.cover,
                                   );
                                 },
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
+                                loadingBuilder: (context, child,
+                                    loadingProgress) {
+                                  if (loadingProgress == null)
+                                    return child;
                                   return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
+                                    child:
+                                    CircularProgressIndicator(
+                                      value: loadingProgress
+                                          .expectedTotalBytes !=
+                                          null
+                                          ? loadingProgress
+                                          .cumulativeBytesLoaded /
+                                          loadingProgress
+                                              .expectedTotalBytes!
                                           : null,
                                     ),
                                   );
@@ -86,7 +103,8 @@ class EditProfile extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: AppColors.primaryColor,
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border:
+                                Border.all(color: Colors.white, width: 2),
                               ),
                               child: GestureDetector(
                                 onTap: () {
@@ -104,21 +122,21 @@ class EditProfile extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 20.h,),
+                    SizedBox(height: 20.h),
                     Container(
                       width: double.infinity,
                       padding: EdgeInsets.all(14),
                       constraints: BoxConstraints(),
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow:[
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 2,
-                              offset: Offset(0, 1),
-                            ),
-                          ]
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,19 +150,38 @@ class EditProfile extends StatelessWidget {
                               color: AppColors.primaryColor,
                             ),
                           ),
-                          SizedBox(height: 12,),
-                          EditPersonal(title: AppString.full_name, controller: controller.nameController,),
-                          SizedBox(height: 12,),
-                          EditPersonal(title: AppString.contact_number_text, controller: controller.numberController,),
-                          SizedBox(height: 12,),
-                          EditPersonal(title: AppString.multiple_location, controller: controller.locationController,),
-                          SizedBox(height: 12,),
-                          EditPersonal(title: AppString.add_primary_locatiopn, controller: controller.primaryLocationController,),
-                          SizedBox(height: 20.h,),
-                          CustomButton(text: AppString.confirm_button, isSelected: true, onTap: (){
-                            controller.editProfileRepo();
-                            controller.update();
-                          })
+                          SizedBox(height: 12),
+                          EditPersonal(
+                            title: AppString.full_name,
+                            controller: controller.nameController,
+                          ),
+                          SizedBox(height: 12),
+                          // Phone number with country code picker
+                          _buildPhoneNumberField(controller, context),
+                          SizedBox(height: 12),
+                          EditPersonal(
+                            title: AppString.multiple_location,
+                            controller: controller.locationController,
+                          ),
+                          SizedBox(height: 12),
+                          EditPersonal(
+                            title: AppString.add_primary_locatiopn,
+                            controller: controller.primaryLocationController,
+                          ),
+                          SizedBox(height: 20.h),
+                          controller.isLoading
+                              ? Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
+                          )
+                              : CustomButton(
+                            text: AppString.confirm_button,
+                            isSelected: true,
+                            onTap: () {
+                              controller.editProfileRepo();
+                            },
+                          )
                         ],
                       ),
                     ),
@@ -157,6 +194,101 @@ class EditProfile extends StatelessWidget {
       },
     );
   }
+
+  // Phone number field with country code picker
+  Widget _buildPhoneNumberField(
+      EditProfileController controller, BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CommonText(
+          text: AppString.contact_number_text,
+          fontSize: 14.sp,
+          textAlign: TextAlign.center,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black400,
+        ),
+        SizedBox(height: 6),
+        Container(
+          height: 50.h,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.black100, width: 1),
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: Row(
+            children: [
+              // Country Code Picker with Flag
+              InkWell(
+                onTap: () {
+                  controller.openCountryPicker(context);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  child: Row(
+                    children: [
+                      Obx(
+                            () => Text(
+                          controller.countryFlag.value,
+                          style: TextStyle(fontSize: 24.sp),
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      Obx(
+                            () => Text(
+                          controller.countryCode.value,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.black400,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      Icon(
+                        Icons.arrow_drop_down,
+                        color: AppColors.black300,
+                        size: 24.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Divider
+              Container(
+                height: 50.h,
+                width: 1,
+                color: AppColors.black100,
+              ),
+              // Phone Number TextField
+              Expanded(
+                child: TextField(
+                  controller: controller.numberController,
+                  keyboardType: TextInputType.phone,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: AppColors.black400,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Phone Number',
+                    hintStyle: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.black200,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 12.h,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildLocationDropdown(EditProfileController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,37 +309,39 @@ class EditProfile extends StatelessWidget {
             borderRadius: BorderRadius.circular(4.r),
           ),
           child: DropdownButtonHideUnderline(
-            child: Obx(() => DropdownButton<String>(
-              value: controller.selectedLocation.value.isEmpty
-                  ? null
-                  : controller.selectedLocation.value,
-              hint: CommonText(
-                text: 'Select Location',
-                fontSize: 12,
-                color: AppColors.black200,
-                textAlign: TextAlign.left,
+            child: Obx(
+                  () => DropdownButton<String>(
+                value: controller.selectedLocation.value.isEmpty
+                    ? null
+                    : controller.selectedLocation.value,
+                hint: CommonText(
+                  text: 'Select Location',
+                  fontSize: 12,
+                  color: AppColors.black200,
+                  textAlign: TextAlign.left,
+                ),
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: AppColors.black300,
+                  size: 24.sp,
+                ),
+                isExpanded: true,
+                items: controller.locations.map((String location) {
+                  return DropdownMenuItem<String>(
+                    value: location,
+                    child: CommonText(
+                      text: location,
+                      fontSize: 14,
+                      color: AppColors.black400,
+                      textAlign: TextAlign.left,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  controller.setSelectedLocation(newValue ?? '');
+                },
               ),
-              icon: Icon(
-                Icons.keyboard_arrow_down,
-                color: AppColors.black300,
-                size: 24.sp,
-              ),
-              isExpanded: true,
-              items: controller.locations.map((String location) {
-                return DropdownMenuItem<String>(
-                  value: location,
-                  child: CommonText(
-                    text: location,
-                    fontSize: 14,
-                    color: AppColors.black400,
-                    textAlign: TextAlign.left,
-                  ),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                controller.setSelectedLocation(newValue ?? '');
-              },
-            )),
+            ),
           ),
         ),
       ],
@@ -221,7 +355,7 @@ class EditPersonal extends StatelessWidget {
   const EditPersonal({
     super.key,
     required this.title,
-    required this.controller
+    required this.controller,
   });
 
   @override
@@ -236,11 +370,10 @@ class EditPersonal extends StatelessWidget {
           fontWeight: FontWeight.w400,
           color: AppColors.black400,
         ),
-        SizedBox(height: 6,),
+        SizedBox(height: 6),
         CommonTextField(
           controller: controller,
           hintTextColor: AppColors.black400,
-          //height: 44,
         )
       ],
     );

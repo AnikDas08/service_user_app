@@ -48,7 +48,7 @@ void showReviewDialog() {
               Align(
                 alignment: Alignment.topLeft,
                 child: CommonText(
-                  text: "Give Your Feedback",
+                  text: AppString.feed_back,
                   fontSize: 18.sp,
                   textAlign: TextAlign.left,
                   fontWeight: FontWeight.w500,
@@ -81,7 +81,7 @@ void showReviewDialog() {
               Align(
                 alignment: Alignment.centerLeft,
                 child: CommonText(
-                  text: "Type Review",
+                  text: AppString.type_review,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black400,

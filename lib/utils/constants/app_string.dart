@@ -149,6 +149,7 @@ class AppString {
   static const String hint_type_here = "Type Here...";
   static const String type_first = "Type...";
   static const String service_text = "Service Type";
+  static const String service = "Service";
   static const String service_hint = "Type of Service";
   static const String additional_service_text = "Additional Service Type";
   static const String additional_service_hints = "Type of Services";
@@ -193,6 +194,13 @@ class AppString {
   static const String canceled_button = "Canceled";
   static const String cancel_button = "Cancel";
   static const String view_status = "View Status";
+  static const String service_provider_either = "No service providers found";
+  static const String search = "Search Here";
+  static const String category_available_top = "No categories available";
+  static const String invoice_text = "Invoice";
+  static const String use_promocode = "Use Promo Code (Optional)";
+  static const String promo_code_hints = "Enter Promo Code";
+  static const String pay_button = "Pay";
 
   /// Overview Screen
   static const String overview_button = "My Overview";
@@ -300,6 +308,8 @@ class AppString {
   static const String feedback_text = "Give Your Feedback";
   static const String type_feedback = "Type Feedback";
   static const String qr_id = "User ID : ";
+  static const String feed_back = "Give Your Feedback";
+  static const String type_review = "Type Review";
   static const String privacy_policy_texts =
       "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim.";
 }

@@ -6,6 +6,7 @@ import 'package:haircutmen_user_app/component/text_field/common_text_field.dart'
 import 'package:haircutmen_user_app/features/home/presentation/controller/invoice_controller.dart';
 import 'package:haircutmen_user_app/features/home/widget/custom_button_home.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import '../../../../config/api/api_end_point.dart';
 
@@ -26,7 +27,7 @@ class InvoiceScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  CustomAppBar(title: "Invoice"),
+                  CustomAppBar(title: AppString.invoice_text),
 
                   SizedBox(height: 10.h),
 
@@ -40,7 +41,7 @@ class InvoiceScreen extends StatelessWidget {
 
                   CommonText(
                     textAlign: TextAlign.start,
-                    text: "Use Promo Code (Optional)",
+                    text: AppString.use_promocode,
                     fontWeight: FontWeight.w500,
                     fontSize: 16.sp,
                     color: AppColors.black400,
@@ -50,7 +51,7 @@ class InvoiceScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: CommonTextField(
-                          hintText: "Enter Promo Code",
+                          hintText: AppString.promo_code_hints,
                           controller: controller.promoCode,
                           borderRadius: 4,
                           paddingHorizontal: 10,
@@ -60,7 +61,7 @@ class InvoiceScreen extends StatelessWidget {
                       SizedBox(width: 16.w),
                       IntrinsicWidth(
                         child: CustomButton(
-                          text: "Apply",
+                          text: AppString.apply_button,
                           isSelected: true,
                           onTap: () {
                             controller.applyPromoCode();
@@ -80,7 +81,7 @@ class InvoiceScreen extends StatelessWidget {
                   SizedBox(height: 50.h),
 
                   CustomButton(
-                    text: "Pay",
+                    text: AppString.pay_button,
                     isSelected: true,
                     onTap: () {
                       controller.processPayment();
@@ -145,12 +146,12 @@ class InvoiceScreen extends StatelessWidget {
     return Column(
       children: [
         RowDetail(
-          title: "Date",
+          title: AppString.date,
           value: ": ${controller.bookingDate}",
         ),
         SizedBox(height: 10.h),
         RowDetail(
-          title: "Time",
+          title: AppString.time,
           value: ": ${controller.bookingTime}",
         ),
       ],
@@ -188,7 +189,7 @@ class InvoiceScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(12.w),
                 child: CommonText(
-                  text: "Service",
+                  text: AppString.service,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.black400,
@@ -198,7 +199,7 @@ class InvoiceScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(12.w),
                 child: CommonText(
-                  text: "Service Type",
+                  text: AppString.service_type,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.black400,

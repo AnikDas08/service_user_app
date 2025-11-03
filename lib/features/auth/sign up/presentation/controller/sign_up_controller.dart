@@ -70,6 +70,9 @@ class SignUpController extends GetxController {
 
   onCountryChange(Country value) {
     countryCode = value.dialCode.toString();
+    print("Contry Code 😍😍😍😍 ${countryCode}");
+    print("Contry Code 😍😍😍😍 ${countryFlag}");
+    update();
   }
 
   setSelectedRole(value) {
@@ -86,12 +89,15 @@ class SignUpController extends GetxController {
     //Get.toNamed(AppRoutes.verifyUser);
     //return;
     isLoading = true;
+    print("😂😂😂😂${countryCode}");
+    print("😍😍😍😍 ${countryFlag}");
     update();
     Map<String, String> body = {
       "role":"USER",
       "name":nameController.text,
       "email":emailController.text,
       "contact":phoneNumberController.text,
+      "countryCode":countryCode,
       "location":locationController.text,
       "password":passwordController.text,
       "referralCode":"O-BQ7LRC"

@@ -36,6 +36,8 @@ class ProfileController extends GetxController {
   var location = "".obs;
   RxDouble credit = 0.0.obs;
   var imageUser = "".obs;
+  var countrCode = "".obs;
+  var fullNumber = "".obs;
 
   ProfileData? profileData; // will hold the fetched profile data
   bool isProfileLoading = false; // for loading state
@@ -104,10 +106,13 @@ class ProfileController extends GetxController {
         email.value = profileData?.email ?? "";
         location.value = profileData?.location ?? "";
         imageUser.value = profileData?.image ?? "";
+        countrCode.value = response.data["data"]["countryCode"];
         credit.value = (profileData?.credits ?? 0).toDouble();
+        fullNumber.value = countrCode.value +" "+ number.value;
         LocalStorage.myName = profileData?.name ?? "";
         LocalStorage.myEmail = profileData?.email ?? "";
         LocalStorage.myImage = profileData?.image ?? "";
+        print("kdkdfjkdf 😂😂😂😂 ${countrCode.value}");
       } else {
         ///rtrfgg
         Utils.errorSnackBar(response.statusCode, response.message);

@@ -325,10 +325,18 @@ class AppointmentController extends GetxController {
   String getFormattedTime(Map<String, dynamic> booking) {
     if (booking['slots'] != null && booking['slots'].isNotEmpty) {
       try {
-        DateTime startTime = DateTime.parse(booking['slots'][0]['start']);
-        int hour = startTime.hour;
-        int minute = startTime.minute;
-        return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+        List<String> timeSlots = [];
+
+        for (var slot in booking['slots']) {
+          DateTime startTime = DateTime.parse(slot['start']);
+          int hour = startTime.hour;
+          int minute = startTime.minute;
+          String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+          timeSlots.add(formattedTime);
+        }
+
+        // Join all time slots with comma
+        return timeSlots.join(', ');
       } catch (e) {
         return '10:00';
       }

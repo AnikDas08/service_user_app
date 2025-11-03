@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: CommonTextField(
               controller: controller.searchController,
-              hintText: "Search Here",
+              hintText: AppString.search,
               borderRadius: 30,
               height: 36,
               hintTextColor: AppColors.black200,
@@ -237,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (controller.categories.isEmpty) {
             return Center(
               child: CommonText(
-                text: "No categories available",
+                text: AppString.category_available_top,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 color: AppColors.black300,
@@ -318,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.h),
                     child: CommonText(
-                      text: "No service providers found",
+                      text: AppString.service_provider_either,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: AppColors.black600,

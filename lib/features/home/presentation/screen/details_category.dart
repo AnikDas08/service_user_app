@@ -6,6 +6,8 @@ import 'package:haircutmen_user_app/features/home/presentation/controller/detail
 import 'package:haircutmen_user_app/features/home/presentation/widgets/service_provider_category.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 
+import '../../../../utils/constants/app_string.dart';
+
 class DetailsCategoryScreen extends StatelessWidget {
   const DetailsCategoryScreen({super.key});
 
@@ -80,7 +82,7 @@ class DetailsCategoryScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 16.h),
                             Text(
-                              'No service providers found',
+                              AppString.service_provider_either,
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 color: Colors.grey[600],

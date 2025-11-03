@@ -161,10 +161,10 @@ class _BookingDialogState extends State<BookingDialog> {
         }
       } else {
         Get.snackbar(
-          'Error',
-          'Failed to fetch schedule: ${response.statusCode}',
+          'Not Found',
+          'Provider has no schedule for this date: ${response.message}',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.amber,
           colorText: AppColors.white,
         );
       }
@@ -491,6 +491,7 @@ class _BookingDialogState extends State<BookingDialog> {
   }
 
   void _showTimeSlotDialog() {
+    int requiredSlots = serviceController.selectedServiceIds.length;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -516,6 +517,35 @@ class _BookingDialogState extends State<BookingDialog> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 8.h),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                      color: AppColors.primaryColor.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 18.sp,
+                        color: AppColors.primaryColor,
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: CommonText(
+                          text: "Select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primaryColor,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 CommonText(
                   text: "Choose your preferred time slots",
                   fontSize: 14.sp,
@@ -559,6 +589,19 @@ class _BookingDialogState extends State<BookingDialog> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
+                          // VALIDATE BEFORE CLOSING
+                          if (selectedSlots.length != requiredSlots) {
+                            Get.snackbar(
+                              'Invalid Selection',
+                              'Please select exactly $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} to match your $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.red,
+                              colorText: AppColors.white,
+                              duration: Duration(seconds: 3),
+                            );
+                            return;
+                          }
+
                           _updateTimeControllerText();
                           Navigator.pop(context);
                         },
@@ -645,6 +688,20 @@ class _BookingDialogState extends State<BookingDialog> {
             ScheduleSlot slot = availableSlots[index];
             return GestureDetector(
               onTap: () {
+                  int requiredSlots = serviceController.selectedServiceIds.length;
+
+                  if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
+                    // Show warning that they can't select more slots
+                    Get.snackbar(
+                      'Slot Limit Reached',
+                      'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.orange,
+                      colorText: AppColors.white,
+                      duration: Duration(seconds: 2),
+                    );
+                    return;
+                  }
                 slot.isSelected = !slot.isSelected;
                 if (slot.isSelected) {
                   if (!selectedSlots.contains(slot)) {
@@ -733,17 +790,6 @@ class _BookingDialogState extends State<BookingDialog> {
       return;
     }
 
-    if (selectedSlots.isEmpty) {
-      Get.snackbar(
-        "Error",
-        "Please select at least one time slot",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: AppColors.white,
-      );
-      return;
-    }
-
     if (serviceController.selectedServiceIds.isEmpty) {
       Get.snackbar(
         "Error",
@@ -755,7 +801,32 @@ class _BookingDialogState extends State<BookingDialog> {
       return;
     }
 
-    // Prepare booking data for invoice (NO API CALL)
+    // NEW VALIDATION: Check if slots match services count
+    int requiredSlots = serviceController.selectedServiceIds.length;
+    if (selectedSlots.length != requiredSlots) {
+      Get.snackbar(
+        "Invalid Time Slots",
+        "You must select exactly $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+        duration: Duration(seconds: 3),
+      );
+      return;
+    }
+
+    if (selectedSlots.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select at least one time slot",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+      return;
+    }
+
+    // Rest of your existing code...
     DateTime bookingDateUtc = DateTime.utc(
       selectedDate!.year,
       selectedDate!.month,
@@ -787,14 +858,9 @@ class _BookingDialogState extends State<BookingDialog> {
       'image': _selectedImage?.path,
     };
 
-
     print("📄 Invoice Data Prepared: $invoiceData");
-    print("📄dfd dsf df Invoice Data Prepared: ${serviceController.selectedServiceIds.toList()}");
 
-    // Close dialog
     Get.back();
-
-    // Navigate to invoice screen
     Get.toNamed(AppRoutes.invoice, arguments: invoiceData);
 
     Get.snackbar(

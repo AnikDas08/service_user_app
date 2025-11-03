@@ -411,31 +411,51 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   void _applyFilters() {
-    // Format date to ISO 8601 string
+    // Format date and time
     String? formattedDate;
-    if (selectedDate != null) {
-      formattedDate = selectedDate!.toIso8601String();
-    }
 
-    // Format time to ISO 8601 string with current date
-    String? formattedTime;
-    if (selectedTime != null) {
+    if (selectedDate != null && selectedTime != null) {
+      // Both date and time are selected
+      final dateTime = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+        selectedTime!.hour,
+        selectedTime!.minute,
+        0,
+      );
+      formattedDate = dateTime.toIso8601String();
+    } else if (selectedDate != null && selectedTime == null) {
+      // Only date is selected (no time)
+      final dateOnly = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+        0,
+        0,
+        0,
+      );
+      formattedDate = dateOnly.toIso8601String();
+    } else if (selectedDate == null && selectedTime != null) {
+      // Only time is selected (use current date with selected time)
       final now = DateTime.now();
-      final timeDateTime = DateTime(
+      final dateTime = DateTime(
         now.year,
         now.month,
         now.day,
         selectedTime!.hour,
         selectedTime!.minute,
+        0,
       );
-      formattedTime = timeDateTime.toIso8601String();
+      formattedDate = dateTime.toIso8601String();
     }
+
+    print("Date: $formattedDate");
 
     // Create filter data to pass back
     Map<String, dynamic> filterData = {
       'categoryId': selectedCategoryid,
       'date': formattedDate,
-      'time': formattedTime,
       'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
       'userLng': "90.3890144", // Default value
       'userLat': "23.7643863", // Default value

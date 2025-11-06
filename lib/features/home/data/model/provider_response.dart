@@ -37,7 +37,7 @@ class ProvidersData {
   final List<String> serviceLanguage;
   final String primaryLocation;
   final LocationData location;
-  final int serviceDistance;
+  final  num serviceDistance;
   final double pricePerHour;
   final List<String> serviceImages;
   final bool isRead;

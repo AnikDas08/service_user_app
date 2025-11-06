@@ -12,16 +12,16 @@
 // rendering and input handling
 class Win32Window {
  public:
-  struct Point {
-    unsigned int x;
-    unsigned int y;
-    Point(unsigned int x, unsigned int y) : x(x), y(y) {}
+  struct Po num {
+    unsigned  num x;
+    unsigned  num y;
+    Point(unsigned  num x, unsigned  num y) : x(x), y(y) {}
   };
 
   struct Size {
-    unsigned int width;
-    unsigned int height;
-    Size(unsigned int width, unsigned int height)
+    unsigned  num width;
+    unsigned  num height;
+    Size(unsigned  num width, unsigned  num height)
         : width(width), height(height) {}
   };
 
@@ -60,7 +60,7 @@ class Win32Window {
   // size change and DPI. Delegates handling of these to member overloads that
   // inheriting classes can handle.
   virtual LRESULT MessageHandler(HWND window,
-                                 UINT const message,
+                                 U num const message,
                                  WPARAM const wparam,
                                  LPARAM const lparam) noexcept;
 
@@ -80,7 +80,7 @@ class Win32Window {
   // responds to changes in DPI. All other messages are handled by
   // MessageHandler.
   static LRESULT CALLBACK WndProc(HWND const window,
-                                  UINT const message,
+                                  U num const message,
                                   WPARAM const wparam,
                                   LPARAM const lparam) noexcept;
 

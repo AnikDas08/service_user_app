@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../component/text/common_text.dart';
-import '../../../../config/api/api_end_point.dart';
 import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../services/storage/storage_services.dart';
@@ -491,7 +490,7 @@ class _BookingDialogState extends State<BookingDialog> {
   }
 
   void _showTimeSlotDialog() {
-    int requiredSlots = serviceController.selectedServiceIds.length;
+     num requiredSlots = serviceController.selectedServiceIds.length;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -688,7 +687,7 @@ class _BookingDialogState extends State<BookingDialog> {
             ScheduleSlot slot = availableSlots[index];
             return GestureDetector(
               onTap: () {
-                  int requiredSlots = serviceController.selectedServiceIds.length;
+                   num requiredSlots = serviceController.selectedServiceIds.length;
 
                   if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
                     // Show warning that they can't select more slots
@@ -802,7 +801,7 @@ class _BookingDialogState extends State<BookingDialog> {
     }
 
     // NEW VALIDATION: Check if slots match services count
-    int requiredSlots = serviceController.selectedServiceIds.length;
+     num requiredSlots = serviceController.selectedServiceIds.length;
     if (selectedSlots.length != requiredSlots) {
       Get.snackbar(
         "Invalid Time Slots",

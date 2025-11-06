@@ -23,8 +23,8 @@ class ScheduleData {
   final DateTime date;
   final DateTime startTime;
   final DateTime endTime;
-  final int duration;
-  final int count;
+  final  num duration;
+  final  num count;
   final bool isActive;
 
   ScheduleData({
@@ -59,7 +59,7 @@ class ScheduleData {
 
   String get formattedTimeRange {
     String formatTime(DateTime time) {
-      int hour = time.hour;
+       num hour = time.hour;
       String period = hour >= 12 ? 'PM' : 'AM';
       if (hour > 12) hour -= 12;
       if (hour == 0) hour = 12;

@@ -32,8 +32,8 @@ class InvoiceController extends GetxController {
   final RxInt convenienceFee = 0.obs;
   final RxInt arrivalFee = 0.obs;
   final RxDouble credits = 0.0.obs;
-  int runningTotal = 0;
-  int amountTotal = 0;
+   num runningTotal = 0;
+   num amountTotal = 0;
 
   @override
   void onInit() {
@@ -57,8 +57,8 @@ class InvoiceController extends GetxController {
       );
     }
 
-    int calculatedSubTotal = invoiceData['totalPrice'] ?? 0;
-    subTotal.value = calculatedSubTotal;
+     num calculatedSubTotal = invoiceData['totalPrice'] ?? 0;
+    subTotal.value = calculatedSubTotal.toInt();
 
     print("💰 SubTotal: ${subTotal.value}");
     print("🎯 Services: $selectedServices");
@@ -129,14 +129,14 @@ class InvoiceController extends GetxController {
     print("💵 Step 3c - After Arrival Fee (${arrivalFee.value}): $runningTotal");
 
     // Step 4: Calculate how much credit can be applied
-    int creditToApply = credits.value.toInt();
+     num creditToApply = credits.value.toInt();
     if (creditToApply > runningTotal) {
       creditToApply = runningTotal; // Don't apply more credit than total
     }
     if (runningTotal < 0) {
       creditToApply = 0; // Don't apply credit if total is already negative
     }
-    creditApplied.value = creditToApply;
+    creditApplied.value = creditToApply.toInt();
     print("💵 Step 4 - Credit Available: ${credits.value}, Applied: $creditToApply");
 
     // Step 5: Subtract applied credit from total
@@ -149,7 +149,7 @@ class InvoiceController extends GetxController {
       runningTotal = 0;
     }
 
-    totalPrice.value = runningTotal;
+    totalPrice.value = runningTotal.toInt();
 
     print("💵 ============ FINAL CALCULATION ============");
     print("💵 SubTotal: ${subTotal.value}");
@@ -251,10 +251,10 @@ class InvoiceController extends GetxController {
       if (response.statusCode == 200 && response.data['success'] == true) {
         final promoData = response.data['data'];
 
-        int discountValue = promoData['discount'] ?? 0;
+         num discountValue = promoData['discount'] ?? 0;
         String promoCodeValue = promoData['code'] ?? code;
 
-        discountPercent.value = discountValue;
+        discountPercent.value = discountValue.toInt();
         discount.value = ((subTotal.value * discountPercent.value) / 100).round();
         _calculateTotalPrice();
         isPromoApplied.value = true;
@@ -501,7 +501,7 @@ class InvoiceController extends GetxController {
       print("📡 Credit API Status: ${response.statusCode}");
       print("📦 Credit API Response: ${response.data}");
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         dynamic data = response.data;
 
         if (data is Map && data.containsKey('data')) {
@@ -597,10 +597,6 @@ class InvoiceController extends GetxController {
       }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        if (response.data == null) {
-          throw Exception("Response data is null");
-        }
-
         String? checkoutUrl;
 
         if (response.data['data'] != null && response.data['data'] is String) {

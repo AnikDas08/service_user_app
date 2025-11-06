@@ -2,7 +2,7 @@ class ProviderModel {
   final String id;
   final String primaryLocation;
   final LocationData location;
-  final int serviceDistance;
+  final  num serviceDistance;
   final double pricePerHour;
   final bool isActive;
   final bool isOnline;
@@ -12,7 +12,7 @@ class ProviderModel {
   final String subCategory;
   final double price;
   // final double rating;
-  // final int review;
+  // final  num review;
   final Reviews reviews;
 
   ProviderModel({
@@ -40,14 +40,14 @@ class ProviderModel {
       primaryLocation: json['primaryLocation'] ?? '',
       location: LocationData.fromJson(json['location'] ?? {}),
       serviceDistance: json['serviceDistance'] ?? 0,
-      pricePerHour: (json['pricePerHour'] ?? 0).toDouble(),
+      pricePerHour: (json['pricePerHour'] ?? 0.0).toDouble(),
       isActive: json['isActive'] ?? false,
       isOnline: json['isOnline'] ?? false,
       name: json['name'] ?? '',
       image: json['image'],
       category: json['category'] ?? '',
       subCategory: json['subCategory'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
+      price: (json['price'] ?? 0.0).toDouble(),
       // rating: (json['reviews']['averageRating'] ?? 0).toDouble(),
       // review: (json['reviews']['totalReviews'] ?? 0).toInt(),
       reviews: Reviews.fromJson(json['reviews'] ?? {}),
@@ -134,8 +134,8 @@ class ProvidersResponse {
 }
 
 class Reviews {
-  final double averageRating;
-  final int totalReviews;
+  final  num averageRating;
+  final  num totalReviews;
 
   Reviews({
     required this.averageRating,
@@ -144,7 +144,7 @@ class Reviews {
 
   factory Reviews.fromJson(Map<String, dynamic> json) {
     return Reviews(
-      averageRating: (json['averageRating'] ?? 0).toDouble(),
+      averageRating: (json['averageRating'] ?? 0.0).toDouble(),
       totalReviews: json['totalReviews'] ?? 0,
     );
   }

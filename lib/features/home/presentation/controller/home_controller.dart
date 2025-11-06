@@ -23,14 +23,20 @@ class HomeController extends GetxController {
 
   // Pagination variables
   final RxInt currentPage = 1.obs;
-  final RxInt totalPages = 1.obs;
+  final RxInt totalPages = 1.obs;  // Changed from Rx num to RxDouble
   final RxInt totalProviders = 0.obs;
-  final int limit = 20;
+  final  num limit = 20;
   final RxBool hasMoreData = true.obs;
 
   // Categories from API
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingCategories = false.obs;
+
+  // Subcategories from API
+  final RxMap<String, List<Map<String, dynamic>>> subCategoriesMap =
+      <String, List<Map<String, dynamic>>>{}.obs;
+  final RxMap<String, bool> isLoadingSubCategories = <String, bool>{}.obs;
+
   final RxBool isProfileLoading = false.obs;
   var name = "".obs;
   var image = "".obs;
@@ -182,18 +188,18 @@ class HomeController extends GetxController {
 
         if (providersResponse.success) {
           // Update pagination info
+          // Update pagination info
+          // Update pagination info
           if (response.data['pagination'] != null) {
-            totalPages.value = response.data['pagination']['totalPage'] ?? 1;
-            totalProviders.value = response.data['pagination']['total'] ?? 0;
-
-            // Check if there's more data
-            hasMoreData.value = currentPage.value < totalPages.value;
+            totalPages.value = (response.data['pagination']['totalPage'] ?? 1).toInt();
+            totalProviders.value = (response.data['pagination']['total'] ?? 0).toInt();
+            hasMoreData.value = currentPage.value < totalPages.value.toInt();
           }
 
           if (loadMore) {
             // Append new data
-            serviceProviders.addAll(providersResponse.data);
-            filteredProviders.addAll(providersResponse.data);
+            //serviceProviders.addAll(providersResponse.data);
+            //filteredProviders.addAll(providersResponse.data);
           } else {
             // Replace data
             serviceProviders.value = providersResponse.data;
@@ -254,7 +260,7 @@ class HomeController extends GetxController {
       if (response.statusCode == 200) {
         final profileModel = ProfileModel.fromJson(response.data);
         profileData = profileModel.data;
-        name.value = response.data["data"]["name"];
+        name.value = response.data["data"]["name"]??"";
         image.value = response.data["data"]["image"]??"";
       } else {
         Utils.errorSnackBar(response.statusCode, response.message);
@@ -310,6 +316,52 @@ class HomeController extends GetxController {
     }
   }
 
+  // Fetch subcategories for a specific category
+  Future<void> fetchSubCategories(String categoryId) async {
+    try {
+      isLoadingSubCategories[categoryId] = true;
+      isLoadingSubCategories.refresh();
+
+      print("Fetching subcategories for category: $categoryId");
+
+      final response = await ApiService.get(
+        "${ApiEndPoint.subCatrgory}?category=$categoryId",
+        header: {"Authorization": "Bearer ${LocalStorage.token}"},
+      );
+
+      print("Subcategory response status: ${response.statusCode}");
+      print("Subcategory response data: ${response.data}");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['success'] == true && data['data'] != null) {
+          subCategoriesMap[categoryId] = List<Map<String, dynamic>>.from(
+            data['data'],
+          );
+          subCategoriesMap.refresh();
+          print(
+            "Subcategories loaded: ${subCategoriesMap[categoryId]?.length ?? 0}",
+          );
+        } else {
+          print("No subcategories found for category: $categoryId");
+          subCategoriesMap[categoryId] = [];
+          subCategoriesMap.refresh();
+        }
+      } else {
+        print("Failed to fetch subcategories. Status: ${response.statusCode}");
+        Get.snackbar("Error", "Failed to load subcategories");
+      }
+    } catch (e) {
+      print("Error fetching subcategories: $e");
+      Get.snackbar("Error", "Failed to load subcategories: $e");
+      subCategoriesMap[categoryId] = [];
+      subCategoriesMap.refresh();
+    } finally {
+      isLoadingSubCategories[categoryId] = false;
+      isLoadingSubCategories.refresh();
+    }
+  }
+
   bool isFavorite(String providerId) {
     return favoriteIds.contains(providerId);
   }
@@ -342,6 +394,10 @@ class HomeController extends GetxController {
 
       if (filterData['categoryId'] != null && filterData['categoryId'].toString().isNotEmpty) {
         queryParams.add("categoryId=${filterData['categoryId']}");
+      }
+
+      if (filterData['subCategoryId'] != null && filterData['subCategoryId'].toString().isNotEmpty) {
+        queryParams.add("subCategoryId=${filterData['subCategoryId']}");
       }
 
       if (filterData['minPrice'] != null && filterData['minPrice'].toString().isNotEmpty) {

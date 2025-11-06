@@ -7,7 +7,6 @@ import '../../../../../../utils/extensions/extension.dart';
 import '../../../../../component/button/common_button.dart';
 import '../../../../../component/text/common_text.dart';
 import '../../../../../component/text_field/common_text_field.dart';
-import '../../../change_password/presentation/widget/popup_button.dart';
 import '../controller/forget_password_controller.dart';
 import '../../../../../../utils/constants/app_string.dart';
 import '../../../../../../utils/helpers/other_helper.dart';

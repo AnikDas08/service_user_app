@@ -55,7 +55,7 @@ class ProfileController extends GetxController {
   }
 
   /// select language  function here
-  selectLanguage(int index) {
+  selectLanguage( int index) {
     selectedLanguage = languages[index];
     update();
     Get.back();

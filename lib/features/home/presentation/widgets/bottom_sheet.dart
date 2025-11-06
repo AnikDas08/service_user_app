@@ -18,7 +18,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final HomeController controller = Get.find<HomeController>();
 
   String? selectedCategory;
-  String? selectedCategoryid;
+  String? selectedCategoryId;
+  String? selectedSubCategory;
+  String? selectedSubCategoryId;
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? selectedLocation;
@@ -26,19 +28,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final double maxPrice = 1000;
   TextEditingController locationControllers = TextEditingController();
 
-  final List<String> locations = [
-    'Select location',
-    'Dhaka',
-    'Chittagong',
-    'Sylhet',
-    'Rajshahi',
-    'Khulna'
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.60,
+      height: MediaQuery.of(context).size.height * 0.70,
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(
@@ -97,6 +90,14 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     _buildCategoryDropdown(),
 
                     SizedBox(height: 16.h),
+
+                    // Subcategory Section (only show if category is selected)
+                    if (selectedCategoryId != null) ...[
+                      _buildSectionTitle("Subcategory"),
+                      SizedBox(height: 12.h),
+                      _buildSubCategoryDropdown(),
+                      SizedBox(height: 16.h),
+                    ],
 
                     // Date Section
                     _buildDateField(),
@@ -171,7 +172,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       }
 
       final categories = controller.categories.map((cat) => cat['name'] as String).toList();
-      final categoriesid = controller.categories.map((cat) => cat['id'] as String).toList();
+      final categoriesId = controller.categories.map((cat) => cat['id'] as String).toList();
 
       return Container(
         width: double.infinity,
@@ -210,7 +211,119 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             onChanged: (String? newValue) {
               setState(() {
                 selectedCategory = newValue;
-                selectedCategoryid = categoriesid[categories.indexWhere((element) => element == newValue)];
+                selectedCategoryId = categoriesId[categories.indexWhere((element) => element == newValue)];
+
+                // Reset subcategory when category changes
+                selectedSubCategory = null;
+                selectedSubCategoryId = null;
+
+                // Fetch subcategories for the selected category
+                if (selectedCategoryId != null) {
+                  controller.fetchSubCategories(selectedCategoryId!);
+                }
+              });
+            },
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildSubCategoryDropdown() {
+    return Obx(() {
+      // Check if subcategories are loading for the selected category
+      bool isLoading = controller.isLoadingSubCategories[selectedCategoryId] ?? false;
+
+      if (isLoading) {
+        return Container(
+          width: double.infinity,
+          height: 44,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.black100, width: 1),
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: Center(
+            child: SizedBox(
+              height: 20.h,
+              width: 20.w,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Get subcategories for the selected category
+      List<Map<String, dynamic>> subCategories =
+          controller.subCategoriesMap[selectedCategoryId] ?? [];
+
+      // If no subcategories available
+      if (subCategories.isEmpty) {
+        return Container(
+          width: double.infinity,
+          height: 44,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.black100, width: 1),
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: Center(
+            child: CommonText(
+              text: 'No subcategories available',
+              fontSize: 12,
+              color: AppColors.black200,
+              textAlign: TextAlign.left,
+            ),
+          ),
+        );
+      }
+
+      return Container(
+        width: double.infinity,
+        height: 44,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.black100, width: 1),
+          borderRadius: BorderRadius.circular(4.r),
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            value: selectedSubCategory,
+            hint: CommonText(
+              text: 'Select Subcategory',
+              fontSize: 12,
+              color: AppColors.black200,
+              textAlign: TextAlign.left,
+            ),
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: AppColors.black300,
+              size: 24.sp,
+            ),
+            isExpanded: true,
+            items: subCategories.map((Map<String, dynamic> subCat) {
+              return DropdownMenuItem<String>(
+                value: subCat['subCategoryName'],
+                child: CommonText(
+                  text: subCat['subCategoryName'],
+                  fontSize: 14,
+                  color: AppColors.black400,
+                  textAlign: TextAlign.left,
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedSubCategory = newValue;
+                // Find the subcategory ID
+                final subCat = subCategories.firstWhere(
+                      (s) => s['subCategoryName'] == newValue,
+                  orElse: () => {},
+                );
+                selectedSubCategoryId = subCat['_id'];
               });
             },
           ),
@@ -454,7 +567,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     // Create filter data to pass back
     Map<String, dynamic> filterData = {
-      'categoryId': selectedCategoryid,
+      'categoryId': selectedCategoryId,
+      'subCategoryId': selectedSubCategoryId, // NEW: Added subcategory ID
       'date': formattedDate,
       'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
       'userLng': "90.3890144", // Default value

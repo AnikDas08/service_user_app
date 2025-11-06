@@ -1,5 +1,4 @@
 // screens/message_screen.dart
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,8 +11,6 @@ import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
-import '../../data/model/chart_message_model.dart';
-import '../../data/model/chat_message_model.dart';
 import '../controller/message_controller.dart';
 
 class MessageScreen extends StatelessWidget {

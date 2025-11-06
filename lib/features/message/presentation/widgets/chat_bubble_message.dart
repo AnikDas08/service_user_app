@@ -10,8 +10,8 @@ class ChatBubbleMessage extends StatelessWidget {
   final String text;
   final String image;
   final bool isMe;
-  final int index;
-  final int messageIndex;
+  final  num index;
+  final  num messageIndex;
 
   final VoidCallback onTap;
 

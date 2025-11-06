@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
-import 'package:haircutmen_user_app/config/route/app_routes.dart';
-import 'package:haircutmen_user_app/features/appointment/presentation/controller/appointment_controller.dart';
 import 'package:haircutmen_user_app/features/appointment/presentation/controller/pending_view_details_controller.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 

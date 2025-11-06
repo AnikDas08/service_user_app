@@ -10,12 +10,13 @@ class AppointmentController extends GetxController {
   // Loading state
   bool isLoading = false;
   bool isLoadingMore = false;
+  String image="";
 
   // Online status
   bool isOnline = true;
 
   // Selected filter (0: Upcoming, 1: Pending, 2: Canceled)
-  int selectedFilter = 0;
+   num selectedFilter = 0;
 
   // Calendar state
   DateTime focusedDay = DateTime.now();
@@ -24,7 +25,6 @@ class AppointmentController extends GetxController {
   // All bookings from API (raw data)
   List<Map<String, dynamic>> allBookings = [];
   RxString name="".obs;
-  RxString image="".obs;
 
   // Pagination data
   Map<String, int> currentPage = {
@@ -115,7 +115,7 @@ class AppointmentController extends GetxController {
     update();
 
     try {
-      int nextPage = currentPage[statusFilter]! + 1;
+       int nextPage = currentPage[statusFilter]! + 1;
       await fetchBookingsByStatus(statusFilter, page: nextPage);
       currentPage[statusFilter] = nextPage;
     } catch (e) {
@@ -127,7 +127,7 @@ class AppointmentController extends GetxController {
   }
 
   // Fetch bookings by status with pagination
-  Future<void> fetchBookingsByStatus(String status, {int page = 1}) async {
+  Future<void> fetchBookingsByStatus(String status, { num page = 1}) async {
     try {
       // Format selected date for API
       String dateParam = '';
@@ -140,8 +140,9 @@ class AppointmentController extends GetxController {
 
       final response = await ApiService.get('booking?status=$status&page=$page$dateParam');
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         final List<dynamic> bookingsData = response.data['data'] ?? [];
+        image=response.data['data'][0]['provider']['image']??"";
 
         // Update pagination info
         if (response.data['pagination'] != null) {
@@ -185,7 +186,7 @@ class AppointmentController extends GetxController {
   }
 
   // Change filter tab
-  void changeFilter(int index) {
+  void changeFilter( num index) {
     selectedFilter = index;
     update();
 
@@ -196,7 +197,7 @@ class AppointmentController extends GetxController {
   }
 
   // Get status string from filter index
-  String _getStatusFromFilter(int filterIndex) {
+  String _getStatusFromFilter( num filterIndex) {
     switch (filterIndex) {
       case 0: // Upcoming
         return 'Upcoming';
@@ -228,8 +229,8 @@ class AppointmentController extends GetxController {
   // Get pagination info text
   String getPaginationInfo() {
     String statusFilter = _getStatusFromFilter(selectedFilter);
-    int showing = getFilteredBookings().length;
-    int total = totalItems[statusFilter]!;
+     num showing = getFilteredBookings().length;
+     num total = totalItems[statusFilter]!;
     return 'Showing $showing of $total';
   }
 
@@ -280,13 +281,9 @@ class AppointmentController extends GetxController {
 
   // Get provider image
   String getProviderImage(Map<String, dynamic> booking) {
-    if (booking['provider'] != null && booking['provider'] is Map) {
       String? imageUrl = booking['provider']['image'];
-      if (imageUrl != null && imageUrl.isNotEmpty) {
-        return imageUrl;
-      }
-    }
-    return 'assets/images/item_image.png';
+        return imageUrl!;
+
   }
 
   // Get service categories (comma-separated)
@@ -329,8 +326,8 @@ class AppointmentController extends GetxController {
 
         for (var slot in booking['slots']) {
           DateTime startTime = DateTime.parse(slot['start']);
-          int hour = startTime.hour;
-          int minute = startTime.minute;
+           num hour = startTime.hour;
+           num minute = startTime.minute;
           String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
           timeSlots.add(formattedTime);
         }

@@ -41,7 +41,7 @@ class PendingViewDetailsController extends GetxController {
     try {
       final response = await ApiService.get('booking/$id');
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         // API returns data as a List, get the first item
         if (response.data['data'] is List && response.data['data'].isNotEmpty) {
           bookingData.value = response.data['data'][0];
@@ -110,8 +110,8 @@ class PendingViewDetailsController extends GetxController {
 
         for (var slot in bookingData['slots']) {
           DateTime startTime = DateTime.parse(slot['start']);
-          int hour = startTime.hour;
-          int minute = startTime.minute;
+           num hour = startTime.hour;
+           num minute = startTime.minute;
           String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
           timeSlots.add(formattedTime);
         }

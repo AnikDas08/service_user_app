@@ -28,50 +28,74 @@ class HomeNavScreen extends StatelessWidget {
       builder: (controller) {
         return Scaffold(
           body: IndexedStack(
-            index: controller.selectedIndex,
+            index: controller.selectedIndex.toInt(),
             children: [
-              HomeScreen(),
-              controller.selectedIndex == 1 ?AppointmentScreen():Container(),
+              controller.selectedIndex== 0 ?HomeScreen():Container(),
+              controller.selectedIndex == 1 ? AppointmentScreen() : Container(),
               controller.selectedIndex == 2 ? ScanScreen() : Container(),
-              controller.selectedIndex == 3 ?ChatListScreen():Container(),
-              controller.selectedIndex == 4 ? ProfileScreen():Container(),
+              controller.selectedIndex == 3 ? ChatListScreen() : Container(),
+              controller.selectedIndex == 4 ? ProfileScreen() : Container(),
             ],
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.primaryColor,
-            currentIndex: controller.selectedIndex,
-            onTap: controller.changeIndex,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white54,
-            selectedLabelStyle: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 10.sp,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 12.sp,
-            ),
-            iconSize: 22, // slightly larger icons
-            items: List.generate(_navItems.length, (index) {
-              return BottomNavigationBarItem(
-                icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 10,top: 10),
-                  child: SvgPicture.asset(
-                    _navItems[index]["icon"]!,
-                    width: 22,
-                    height: 22,
-                    colorFilter: ColorFilter.mode(
-                      controller.selectedIndex == index
-                          ? Colors.white
-                          : Colors.white54,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+
+          /// 🟢 Bottom Navigation with Card Design
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, -2),
                 ),
-                label: _navItems[index]["label"],
-              );
-            }),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+              child: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Colors.white,
+                currentIndex: controller.selectedIndex,
+                onTap: controller.changeIndex,
+                selectedItemColor: AppColors.primaryColor,
+                unselectedItemColor: Colors.black,
+                selectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.sp, // Bigger text for selected item
+                ),
+                unselectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 10.sp, // Smaller text for unselected item
+                ),
+                iconSize: 22,
+                items: List.generate(_navItems.length, (index) {
+                  return BottomNavigationBarItem(
+                    icon: Padding(
+                      padding: const EdgeInsets.only(bottom: 10, top: 10),
+                      child: SvgPicture.asset(
+                        _navItems[index]["icon"]!,
+                        width: 22,
+                        height: 22,
+                        colorFilter: ColorFilter.mode(
+                          controller.selectedIndex == index
+                              ? AppColors.primaryColor
+                              : Colors.black,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                    label: _navItems[index]["label"],
+                  );
+                }),
+              ),
+            ),
           ),
         );
       },

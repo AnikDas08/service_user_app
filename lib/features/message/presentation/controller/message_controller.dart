@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +16,7 @@ class MessageController extends GetxController {
   String chatId = "";
   String image = "";
   String name = "";
-  int page = 1;
+   num page = 1;
   Sender? senderdata;
 
   ScrollController scrollController = ScrollController();

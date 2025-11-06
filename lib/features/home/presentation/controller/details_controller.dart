@@ -35,7 +35,7 @@ class DetailsController extends GetxController {
   Future<void> fetchFavorites() async {
     try {
       final response = await ApiService.get(
-        ApiEndPoint.favourite, // Your endpoint to get favorites
+        ApiEndPoint.favourite, // Your endpo num to get favorites
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
         },
@@ -68,7 +68,7 @@ class DetailsController extends GetxController {
         },
       );
 
-      if (response.statusCode == 200 && response.data != null) {
+      if (response.statusCode == 200) {
         final providersResponse = ProvidersResponse.fromJson(response.data);
 
         if (providersResponse.success) {
@@ -176,7 +176,7 @@ class DetailsController extends GetxController {
 
   // Helper method to calculate distance
   String getDistance(ProviderModel provider) {
-    return "${provider.serviceDistance}km";
+    return "${provider.serviceDistance.toStringAsFixed(2)}km";
   }
 
   // Retry loading providers

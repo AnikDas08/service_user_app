@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
-import '../../../../component/image/common_image.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../component/text_field/common_text_field.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -347,7 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       id: provider.id,
                       name: provider.name,
                       service: provider.category,
-                      distance: "${provider.serviceDistance}km",
+                      distance: "${provider.serviceDistance.toStringAsFixed(2)}km",
                       rating: provider.reviews.averageRating.toString(),
                       reviews: provider.reviews.totalReviews.toString(),
                       price: "RSD ${provider.price.toStringAsFixed(0)}",

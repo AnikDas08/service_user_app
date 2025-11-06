@@ -22,6 +22,7 @@ class ApiEndPoint {
   static const allFavourite = "fav-list/fav-list-with-details";
   static const favourite = "fav-list";
   static const resendOtp = "auth/resend-otp";
+  static const subCatrgory = "sub-category";
   static const providerSchedule = "schedule/provider-schedule";
   static const chats = "chats/my-chats";
   static const messages = "messages";

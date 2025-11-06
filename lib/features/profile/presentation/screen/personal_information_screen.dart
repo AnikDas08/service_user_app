@@ -7,7 +7,6 @@ import 'package:haircutmen_user_app/features/profile/presentation/controller/pro
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 
 import '../../../../config/api/api_end_point.dart';
-import '../../../../utils/constants/app_images.dart';
 import '../../../../utils/constants/app_string.dart';
 import '../../../../utils/custom_appbar/custom_appbar.dart';
 import '../../../home/widget/custom_button_home.dart';
@@ -36,7 +35,7 @@ class PersonalInformationScreen extends StatelessWidget {
                           child:  CircleAvatar(
                             radius: 60.sp,
                             backgroundColor: Colors.transparent,
-                            backgroundImage: controller.imageUser.value == ""|| controller.imageUser.value==null
+                            backgroundImage: controller.imageUser.value == ""
                                 ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
                                 : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
                           ),

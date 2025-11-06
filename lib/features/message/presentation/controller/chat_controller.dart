@@ -18,7 +18,7 @@ class ChatControllers extends GetxController {
   TextEditingController searchController = TextEditingController();
 
   /// page no here
-  int page = 1;
+   num page = 1;
 
   /// Chat List here
   List chats = [];

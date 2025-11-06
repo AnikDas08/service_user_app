@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/home/data/model/provider_response.dart';
+import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
 import 'package:haircutmen_user_app/services/api/api_service.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../config/api/api_end_point.dart';
@@ -152,6 +154,9 @@ class ServiceDetailsController extends GetxController {
           // Convert API services to local format - only services with category
           _convertServicesToLocalFormat();
 
+          // Check if this provider is in favorites
+          await checkIfFavorite();
+
           fetchReviews();
 
           // Update service images if available
@@ -179,6 +184,103 @@ class ServiceDetailsController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  // Check if current provider is in user's favorites
+  Future<void> checkIfFavorite() async {
+    if (providerData?.id == null) return;
+
+    try {
+      final response = await ApiService.get(
+        ApiEndPoint.favourite,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final List<dynamic> providerIds = response.data['data']['providerIds'] ?? [];
+        final favoriteIdsList = providerIds.map((item) => item.toString()).toList();
+
+        // Check if current provider is in favorites
+        isFavorite.value = favoriteIdsList.contains(providerData!.id);
+        update();
+      }
+    } catch (e) {
+      print("Error checking favorite status: $e");
+    }
+  }
+
+  // Toggle favorite status with API call
+  Future<void> toggleFavorite() async {
+    if (providerData?.id == null) {
+      Get.snackbar(
+        "Error",
+        "Provider information not available",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    try {
+      final wasFavorite = isFavorite.value;
+
+      // Optimistic update
+      isFavorite.value = !wasFavorite;
+      update();
+
+      final response = await ApiService.post(
+        ApiEndPoint.favourite,
+        body: {
+          "providerId": providerData!.id,
+        },
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Get.find<HomeController>().fetchFavorites();
+        // Success - show appropriate message
+        Get.snackbar(
+          "Success",
+          isFavorite.value
+              ? "Added to favorites"
+              : "Removed from favorites",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+        );
+      } else {
+        // Revert on failure
+        isFavorite.value = wasFavorite;
+        update();
+
+        Get.snackbar(
+          "Error",
+          response.message ?? "Failed to update favorite",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      // Revert on error
+      isFavorite.value = !isFavorite.value;
+      update();
+
+      Get.snackbar(
+        "Error",
+        "An error occurred: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   // NEW METHOD: Load provider schedule from API
   Future<void> loadProviderSchedule() async {
     if (providerData?.user.id == null) {
@@ -236,7 +338,7 @@ class ServiceDetailsController extends GetxController {
         .where((service) => service.category != null)
         .map((service) {
       // Calculate duration based on price per hour and service price
-      int durationMinutes = 60; // Default 1 hour
+       num durationMinutes = 60; // Default 1 hour
       if (providerData!.pricePerHour > 0 && service.price > 0) {
         durationMinutes = ((service.price / providerData!.pricePerHour) * 60).round();
       }
@@ -261,7 +363,7 @@ class ServiceDetailsController extends GetxController {
 
   // Toggle service selection
   void toggleServiceSelection(String serviceId) {
-    int index = services.indexWhere((service) => service['id'] == serviceId);
+     int index = services.indexWhere((service) => service['id'] == serviceId);
     if (index != -1) {
       bool currentSelection = services[index]['selected'] ?? false;
       services[index]['selected'] = !currentSelection;
@@ -297,8 +399,8 @@ class ServiceDetailsController extends GetxController {
     update();
   }
 
-  int getTotalPrice() {
-    int total = 0;
+   num getTotalPrice() {
+     num total = 0;
     for (var service in getSelectedServices()) {
       if (service['rawPrice'] != null) {
         total += (service['rawPrice'] as double).toInt();
@@ -311,13 +413,13 @@ class ServiceDetailsController extends GetxController {
   }
 
   String getTotalDuration() {
-    int totalMinutes = 0;
+     num totalMinutes = 0;
     for (var service in getSelectedServices()) {
       String duration = service['duration'].toString();
       RegExp regExp = RegExp(r'\d+');
       String? match = regExp.stringMatch(duration);
       if (match != null) {
-        int minutes = int.tryParse(match) ?? 0;
+         num minutes = int.tryParse(match) ?? 0;
         if (duration.toLowerCase().contains('hour')) {
           totalMinutes += minutes * 60;
         } else {
@@ -327,8 +429,8 @@ class ServiceDetailsController extends GetxController {
     }
 
     if (totalMinutes >= 60) {
-      int hours = totalMinutes ~/ 60;
-      int minutes = totalMinutes % 60;
+       num hours = totalMinutes ~/ 60;
+       num minutes = totalMinutes % 60;
       return minutes > 0 ? '${hours}Hr ${minutes}Min' : '${hours}Hr';
     } else {
       return '${totalMinutes}Min';
@@ -362,10 +464,10 @@ class ServiceDetailsController extends GetxController {
 
   List<TimeSlot> _generateHourlySlots(String day, String startTime, String endTime) {
     List<TimeSlot> slots = [];
-    int startHour = _parseTimeToHour(startTime);
-    int endHour = _parseTimeToHour(endTime);
+     num startHour = _parseTimeToHour(startTime);
+     num endHour = _parseTimeToHour(endTime);
 
-    for (int hour = startHour; hour < endHour; hour++) {
+    for ( num hour = startHour; hour < endHour; hour++) {
       String slotStart = _formatHour24(hour);
       String slotEnd = _formatHour24(hour + 1);
 
@@ -379,14 +481,14 @@ class ServiceDetailsController extends GetxController {
     return slots;
   }
 
-  int _parseTimeToHour(String time) {
+   num _parseTimeToHour(String time) {
     // Parse 24-hour format time (e.g., "09:00" or "14:00")
     String timePart = time.split(':')[0];
-    int hour = int.parse(timePart);
+     num hour = int.parse(timePart);
     return hour;
   }
 
-  String _formatHour24(int hour) {
+  String _formatHour24( num hour) {
     // Format hour in 24-hour format with leading zero
     return '${hour.toString().padLeft(2, '0')}:00';
   }
@@ -416,10 +518,6 @@ class ServiceDetailsController extends GetxController {
       return 'Select Time Slots';
     }
     return selectedTimeSlots.map((slot) => slot.fullDisplayTime).join(', ');
-  }
-
-  void toggleFavorite() {
-    isFavorite.value = !isFavorite.value;
   }
 
   void bookNow() {
@@ -456,9 +554,6 @@ class ServiceDetailsController extends GetxController {
     };
   }
 
-
-// Add this method to fetch reviews
-  // Add this method to fetch reviews
   Future<void> fetchReviews() async {
     try {
       isLoadingReviews.value = true;
@@ -509,6 +604,5 @@ class ServiceDetailsController extends GetxController {
   String get spokenLanguagesText => spokenLanguages.join(", ");
   bool get isVerified => providerData?.verified ?? false;
   bool get isOnline => providerData?.isOnline ?? false;
-  //double get rating => 4.5; // TODO: Get from actual reviews when available
-  int get reviewCount => 200; // TODO: Get from actual reviews when available
+   num get reviewCount => 200; // TODO: Get from actual reviews when available
 }

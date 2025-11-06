@@ -4,7 +4,6 @@ import 'package:haircutmen_user_app/features/appointment/presentation/screen/vie
 import 'package:haircutmen_user_app/features/appointment/presentation/screen/viewdetailse_upcomming.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/details_category.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/invoice_screen.dart';
-import 'package:haircutmen_user_app/features/profile/presentation/screen/contract_support_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/favourite_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/language_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/personal_information_screen.dart';
@@ -59,7 +58,6 @@ class AppRoutes {
   static const String canceldetails_screen = "/canceldetails_screen";
   static const String personal_information_screen = "/personal_information_screen";
   static const String language_screen = "/language_screen";
-  static const String contract_support_screen = "/contract_support_screen";
   static const String favourite_screen = "/favourite_screen";
   static const String invoice = "/invoice";
 
@@ -91,7 +89,7 @@ class AppRoutes {
     GetPage(name: canceldetails_screen, page: () => CancelDetailsScreen()),
     GetPage(name: personal_information_screen, page: () => PersonalInformationScreen()),
     GetPage(name: language_screen, page: () => LanguageSelectionScreen()),
-    GetPage(name: contract_support_screen, page: () => ContractsScreen()),
+    //GetPage(name: contract_support_screen, page: () => ContractsScreen()),
     GetPage(name: favourite_screen, page: () => FavouriteScreen()),
     GetPage(name: invoice, page: () => InvoiceScreen()),
   ];

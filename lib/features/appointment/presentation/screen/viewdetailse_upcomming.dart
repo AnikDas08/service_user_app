@@ -4,8 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
-import 'package:haircutmen_user_app/features/appointment/presentation/controller/appointment_controller.dart';
-import 'package:haircutmen_user_app/features/appointment/presentation/controller/pending_view_details_controller.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 
 import '../../../../component/text/common_text.dart';
@@ -117,7 +115,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                                     ),
                                     SizedBox(width: 8.w),
                                     CommonText(
-                                      text: "(${controller.reviewCount!.value.toString()??"0"})",
+                                      text: "(${controller.reviewCount.value.toString()??"0"})",
                                       fontSize: 12.sp,
                                       color: AppColors.black200,
                                       fontWeight: FontWeight.w400,

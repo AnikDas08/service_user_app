@@ -6,7 +6,7 @@ import '../../../../utils/constants/app_colors.dart';
 
 class ReviewCard extends StatelessWidget {
   final String name;
-  final int rating;
+  final  num rating;
   final String comment;
   final String avatarUrl;
 

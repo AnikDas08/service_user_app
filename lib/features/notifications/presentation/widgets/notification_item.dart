@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:haircutmen_user_app/features/scan/presentation/widgets/review_scan_bottomsheet.dart';
 import '../../../../component/text/common_text.dart';
 import '../../data/model/notification_model.dart';
 import '../../../../utils/extensions/extension.dart';

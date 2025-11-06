@@ -8,7 +8,7 @@ class ApiResponseModel {
 
   bool get isSuccess => _statusCode == 200;
 
-  int get statusCode => _statusCode ?? 500;
+   num get statusCode => _statusCode ?? 500;
 
   String get message {
     if (_statusCode == 502) {

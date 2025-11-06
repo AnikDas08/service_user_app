@@ -6,7 +6,6 @@ import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/home/widget/custom_button_home.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import 'package:share_plus/share_plus.dart';
-import '../../../../component/image/common_image.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
@@ -143,6 +142,8 @@ class ServiceDetailsScreen extends StatelessWidget {
     );
   }
 
+  // Update the _buildProfileInfo method in ServiceDetailsScreen
+
   Widget _buildProfileInfo(ServiceDetailsController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,6 +160,20 @@ class ServiceDetailsScreen extends StatelessWidget {
             ),
             Row(
               children: [
+                // Favorite Icon with Obx wrapper
+                Obx(
+                      () => GestureDetector(
+                    onTap: () => controller.toggleFavorite(),
+                    child: Icon(
+                      controller.isFavorite.value
+                          ? Icons.favorite
+                          : Icons.favorite_outline,
+                      size: 24,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20.w),
                 Icon(
                   Icons.star,
                   size: 24,
@@ -166,7 +181,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 4.w),
                 Obx(
-                 ()=> CommonText(
+                      () => CommonText(
                     text: controller.averageRating.value.toString(),
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -175,7 +190,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 4.w),
                 Obx(
-                ()=> CommonText(
+                      () => CommonText(
                     text: "(${controller.totalReviews.value.toString()})",
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -217,7 +232,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 height: 30,
                 isSmall: true,
                 isSelected: false,
-                onTap: ()async{
+                onTap: () async {
                   await controller.showAvailability();
                   // Then show dialog
                   _showAvailabilityBottomSheet(Get.context!);
@@ -924,13 +939,13 @@ class ServiceDetailsScreen extends StatelessWidget {
       } else if (difference.inDays < 7) {
         return '${difference.inDays} days ago';
       } else if (difference.inDays < 30) {
-        int weeks = (difference.inDays / 7).floor();
+         num weeks = (difference.inDays / 7).floor();
         return '$weeks ${weeks == 1 ? "week" : "weeks"} ago';
       } else if (difference.inDays < 365) {
-        int months = (difference.inDays / 30).floor();
+         num months = (difference.inDays / 30).floor();
         return '$months ${months == 1 ? "month" : "months"} ago';
       } else {
-        int years = (difference.inDays / 365).floor();
+         num years = (difference.inDays / 365).floor();
         return '$years ${years == 1 ? "year" : "years"} ago';
       }
     } catch (e) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/scan/presentation/widgets/review_scan_bottomsheet.dart';
-import '../../../../config/api/api_end_point.dart';
 import '../../../../services/api/api_service.dart';
 import '../../data/model/notification_model.dart';
 import '../../repository/notification_repository.dart';
@@ -20,7 +19,7 @@ class NotificationsController extends GetxController {
   bool hasNoData = false;
 
   /// page no here
-  int page = 0;
+   num page = 0;
 
   /// Notification Scroll Controller
   ScrollController scrollController = ScrollController();
@@ -100,8 +99,8 @@ class NotificationsController extends GetxController {
   }
 
   /// Set rating
-  void setRating(int rating) {
-    selectedRating.value = rating;
+  void setRating( num rating) {
+    selectedRating.value = rating.toInt();
   }
 
   /// Show review bottom sheet

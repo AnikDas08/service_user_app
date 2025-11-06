@@ -3,10 +3,8 @@ import 'package:haircutmen_user_app/features/auth/sign%20in/presentation/control
 import 'package:haircutmen_user_app/utils/extensions/extension.dart';
 import '../../../config/route/app_routes.dart';
 import 'package:get/get.dart';
-import '../../../utils/constants/app_images.dart';
 import '../../component/image/common_image.dart';
 import '../../services/storage/storage_services.dart';
-import '../profile/presentation/controller/profile_controller.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,7 +37,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CommonImage(imageSrc: AppImages.noImage, size: 70).center,
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: CommonImage(imageSrc: "assets/images/flash_image_service.png",height: double.infinity,width: double.infinity,).center,
+      ),
     );
   }
 }

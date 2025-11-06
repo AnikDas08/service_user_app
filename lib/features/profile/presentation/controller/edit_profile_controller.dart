@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/features/home/presentation/controller/home_nav_controller.dart';
 import 'package:haircutmen_user_app/features/profile/data/profiles_model.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/profile_controller.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
@@ -11,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:country_picker/country_picker.dart';
 
 import '../../../../config/api/api_end_point.dart';
-import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../utils/app_utils.dart';
 
@@ -133,7 +131,7 @@ class EditProfileController extends GetxController {
   }
 
   /// select language function here
-  selectLanguage(int index) {
+  selectLanguage( int index) {
     selectedLanguage = languages[index];
     update();
     Get.back();
@@ -315,7 +313,7 @@ class EditProfileController extends GetxController {
   /// update profile function here
   Future<void> editProfileRepo() async {
     final token = LocalStorage.token;
-    if (token == null || token.isEmpty) {
+    if (token.isEmpty) {
       Utils.errorSnackBar(0, "Token not found, please login again");
       return;
     }

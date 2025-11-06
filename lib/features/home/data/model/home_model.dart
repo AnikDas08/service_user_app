@@ -4,8 +4,8 @@ class HomeModel {
   final String name;
   final String service;
   final String distance;
-  final double rating;
-  final int reviews;
+  final num rating;
+  final num reviews;
   final String price;
   final String image;
   final bool isFavorite;

@@ -27,13 +27,13 @@ constexpr const wchar_t kGetPreferredBrightnessRegKey[] =
 constexpr const wchar_t kGetPreferredBrightnessRegValue[] = L"AppsUseLightTheme";
 
 // The number of Win32Window objects that currently exist.
-static int g_active_window_count = 0;
+static  num g_active_window_count = 0;
 
 using EnableNonClientDpiScaling = BOOL __stdcall(HWND hwnd);
 
 // Scale helper to convert logical scaler values to physical using passed in
 // scale factor
-int Scale(int source, double scale_factor) {
+ num Scale( num source, double scale_factor) {
   return static_cast<int>(source * scale_factor);
 }
 
@@ -128,10 +128,10 @@ bool Win32Window::Create(const std::wstring& title,
   const wchar_t* window_class =
       WindowClassRegistrar::GetInstance()->GetWindowClass();
 
-  const POINT target_point = {static_cast<LONG>(origin.x),
+  const PO num target_po num = {static_cast<LONG>(origin.x),
                               static_cast<LONG>(origin.y)};
   HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
-  UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
+  U num dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = dpi / 96.0;
 
   HWND window = CreateWindow(
@@ -155,7 +155,7 @@ bool Win32Window::Show() {
 
 // static
 LRESULT CALLBACK Win32Window::WndProc(HWND const window,
-                                      UINT const message,
+                                      U num const message,
                                       WPARAM const wparam,
                                       LPARAM const lparam) noexcept {
   if (message == WM_NCCREATE) {
@@ -175,7 +175,7 @@ LRESULT CALLBACK Win32Window::WndProc(HWND const window,
 
 LRESULT
 Win32Window::MessageHandler(HWND hwnd,
-                            UINT const message,
+                            U num const message,
                             WPARAM const wparam,
                             LPARAM const lparam) noexcept {
   switch (message) {

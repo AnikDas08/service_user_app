@@ -272,10 +272,10 @@ class AvailabilityDialog extends StatelessWidget {
     );
   }
 
-  String _getMonthShort(int month) {
+  String _getMonthShort( num month) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months[month - 1];
+    return months[month.toInt() - 1];
   }
 
   String _format24HourTime(String timeRange) {
@@ -314,7 +314,7 @@ class AvailabilityDialog extends StatelessWidget {
     List<String> timeParts = timePart.split(':');
     if (timeParts.isEmpty) return time12;
 
-    int hour = int.tryParse(timeParts[0]) ?? 0;
+     num hour = int.tryParse(timeParts[0]) ?? 0;
     String minute = timeParts.length > 1 ? timeParts[1] : '00';
 
     // Convert to 24-hour format

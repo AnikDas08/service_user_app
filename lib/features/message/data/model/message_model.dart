@@ -32,7 +32,7 @@ class MessageModel {
   final bool isSeen;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final int version;
+  final  num version;
 
   MessageModel({
     required this.id,

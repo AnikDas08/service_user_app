@@ -30,7 +30,7 @@ class PopUpMenu extends StatelessWidget {
   final Color iconColor;
   final Color unselectedColor;
   final double height;
-  final Function(int index) onTap;
+  final Function( num index) onTap;
   final TextStyle? style;
   final bool isContainer;
   final IconData iconData;

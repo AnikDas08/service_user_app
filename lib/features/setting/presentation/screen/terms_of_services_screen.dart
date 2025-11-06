@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
-import '../../../../component/other_widgets/common_loader.dart';
-import '../../../../component/screen/error_screen.dart';
-import '../../../../component/text/common_text.dart';
-import '../controller/terms_of_services_controller.dart';
+import 'package:haircutmen_user_app/features/setting/presentation/controller/terms_of_services_controller.dart';
 import '../../../../../utils/constants/app_string.dart';
-import '../../../../../utils/enum/enum.dart';
+import 'package:flutter_html/flutter_html.dart';
+
+import '../../../../utils/custom_appbar/custom_appbar.dart';
 
 class TermsOfServicesScreen extends StatelessWidget {
   const TermsOfServicesScreen({super.key});
@@ -14,38 +12,22 @@ class TermsOfServicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// App Bar Section starts here
-      appBar: AppBar(
-        centerTitle: true,
-        title: CommonText(
-          text: AppString.termsOfServices,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-
-      /// Body Section starts here
-      body: GetBuilder<TermsOfServicesController>(
-        builder:
-            (controller) => switch (controller.status) {
-              /// Loading bar here
-              Status.loading => const CommonLoader(),
-
-              /// Error Handle here
-              Status.error => ErrorScreen(
-                onTap:
-                    TermsOfServicesController.instance.geTermsOfServicesRepo(),
-              ),
-
-              /// Show main data here
-              Status.completed => SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 24,
-                  horizontal: 20,
+      body:  Padding(
+        padding: const EdgeInsets.all(20),
+        child: SafeArea(
+          child: GetBuilder<TermsOfServicesController>(
+            init: TermsOfServicesController(),
+           builder: (controller) => Column(
+              children: [
+                CustomAppBar(title: AppString.term_condition_text,),
+                SizedBox(height: 20,),
+                Html(
+                  data: controller.data.content,
                 ),
-                child: Html(data: controller.data.content),
-              ),
-            },
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

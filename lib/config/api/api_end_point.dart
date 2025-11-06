@@ -13,8 +13,8 @@ class ApiEndPoint {
   static const changePassword = "auth/change-password";
   static const user = "user/profile";
   static const notifications = "notifications";
-  static const privacyPolicies = "privacy-policies";
-  static const termsOfServices = "terms-and-conditions";
+  static const privacyPolicies = "settings/privacyPolicy";
+  static const termsOfServices = "settings/termsAndConditions";
   static const myProvider = "provider/my-provider";
   static const provider = "provider";
   static const service = "service";

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/setting/data/model/privacy_policy_model.dart';
 import '../../data/model/html_model.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../config/api/api_end_point.dart';
@@ -10,7 +11,7 @@ class PrivacyPolicyController extends GetxController {
   Status status = Status.completed;
 
   ///  HTML model initialize here
-  HtmlModel data = HtmlModel.fromJson({});
+  PrivacyPolicyModel data = PrivacyPolicyModel.fromJson({});
 
   /// Privacy Policy Controller instance create here
   static PrivacyPolicyController get instance =>
@@ -18,15 +19,14 @@ class PrivacyPolicyController extends GetxController {
 
   /// Privacy Policy Api call here
   getPrivacyPolicyRepo() async {
-    return;
     status = Status.loading;
     update();
 
     var response = await ApiService.get(ApiEndPoint.privacyPolicies);
 
     if (response.statusCode == 200) {
-      data = HtmlModel.fromJson(response.data['data']['attributes']);
-
+      data = PrivacyPolicyModel.fromJson(response.data['data']);
+      print("dkljkldjfkdf 😍😍😍😍");
       status = Status.completed;
       update();
     } else {

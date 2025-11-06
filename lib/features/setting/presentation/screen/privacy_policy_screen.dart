@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
-import '../../../../component/other_widgets/common_loader.dart';
-import '../../../../component/screen/error_screen.dart';
-import '../../../../component/text/common_text.dart';
-import '../controller/privacy_policy_controller.dart';
+import 'package:haircutmen_user_app/features/setting/presentation/controller/privacy_policy_controller.dart';
+import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../utils/constants/app_string.dart';
-import '../../../../../utils/enum/enum.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -14,38 +11,32 @@ class PrivacyPolicyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /// App Bar Section stats here
-      appBar: AppBar(
-        centerTitle: true,
-        title: CommonText(
-          text: AppString.privacyPolicy,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
 
       /// Body Section stats here
-      body: GetBuilder<PrivacyPolicyController>(
-        builder:
-            (controller) => switch (controller.status) {
-              /// Loading bar here
-              Status.loading => const CommonLoader(),
-
-              /// Error Handle here
-              Status.error => ErrorScreen(
-                onTap: PrivacyPolicyController.instance.getPrivacyPolicyRepo(),
-              ),
-
-              /// Show main data here
-              Status.completed => SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 24,
-                  horizontal: 20,
+      body: SafeArea(
+        child: GetBuilder<PrivacyPolicyController>(
+          init: PrivacyPolicyController(),
+          builder: (controller) => Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                AppBar(
+                  title: Text(AppString.privacy_policy),
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                    onPressed: () => Get.back(),
+                  ),
+                  centerTitle: true,
                 ),
-                child: Html(data: controller.data.content),
-              ),
-            },
-      ),
+                SizedBox(height: 20,),
+                Html(
+                  data: controller.data.content,
+                ),
+              ],
+            ),
+          ),
+        ),
+      )
     );
   }
 }

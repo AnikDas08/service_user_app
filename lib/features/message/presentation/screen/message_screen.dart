@@ -8,6 +8,7 @@ import 'package:haircutmen_user_app/component/other_widgets/common_loader.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/message/data/model/message_model.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -42,7 +43,7 @@ class MessageScreen extends StatelessWidget {
                     : controller.messages.isEmpty
                     ? Center(
                   child: CommonText(
-                    text: "No messages yet\nStart a conversation!",
+                    text: AppString.start_message,
                     fontSize: 16,
                     color: AppColors.black400,
                     textAlign: TextAlign.center,
@@ -469,10 +470,48 @@ class MessageScreen extends StatelessWidget {
   }
 
   String _formatTime(DateTime dateTime) {
-    final hour = dateTime.hour == 0
-        ? 12
-        : (dateTime.hour > 12 ? dateTime.hour - 12 : dateTime.hour);
-    final amPm = dateTime.hour >= 12 ? 'Pm' : 'Am';
-    return '${hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')} $amPm';
+    // Convert to local timezone - works for ANY country
+    // Automatically detects device timezone and converts accordingly
+    final localTime = dateTime.toLocal();
+
+    // 24-hour format: HH:mm (e.g., 14:30, 09:05)
+    return '${localTime.hour.toString().padLeft(2, '0')}:${localTime.minute.toString().padLeft(2, '0')}';
+  }
+
+// How .toLocal() works for different countries:
+//
+// Example: API sends UTC time 12:00 (noon UTC)
+//
+// 🇷🇸 Serbia (UTC+1/+2):     Shows 13:00 (winter) or 14:00 (summer)
+// 🇺🇸 New York (UTC-5/-4):   Shows 07:00 (winter) or 08:00 (summer)
+// 🇯🇵 Tokyo (UTC+9):         Shows 21:00
+// 🇬🇧 London (UTC+0/+1):     Shows 12:00 (winter) or 13:00 (summer)
+// 🇮🇳 India (UTC+5:30):      Shows 17:30
+// 🇦🇺 Sydney (UTC+10/+11):   Shows 22:00 (winter) or 23:00 (summer)
+// 🇧🇩 Bangladesh (UTC+6):    Shows 18:00
+// 🇦🇪 Dubai (UTC+4):         Shows 16:00
+// 🇧🇷 Brazil (UTC-3):        Shows 09:00
+
+// ✅ Advantages of .toLocal():
+// 1. Works automatically for any country
+// 2. Handles Daylight Saving Time (DST) automatically
+// 3. Respects user's device timezone settings
+// 4. No manual timezone calculations needed
+// 5. No maintenance required when DST rules change
+
+// ⚠️ Important Requirement:
+// Your API MUST send timestamps in UTC format (ISO 8601)
+// Example: "2025-11-08T12:00:00.000Z"
+
+// Alternative: If you want to show seconds as well
+  String _formatTimeWithSeconds(DateTime dateTime) {
+    // 24-hour format with seconds: HH:mm:ss (e.g., 14:30:45)
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
+  }
+
+// Alternative: If you want to show date and time
+  String _formatDateAndTime(DateTime dateTime) {
+    // Format: DD/MM/YYYY HH:mm
+    return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

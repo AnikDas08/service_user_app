@@ -95,14 +95,14 @@ class ProfileScreen extends StatelessWidget {
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          CommonText(
-                             text: "Present Credit: ${controller.credit.value}",
+                             text: "${AppString.present_credit}: ${controller.credit.value}",
                            fontSize: 16,
                            fontWeight: FontWeight.w500,
                            color: AppColors.black400
                          ),
                          SizedBox(height: 18,),
                          CommonText(
-                             text: "One Credit equal 1 RSD",
+                             text: AppString.one_credit,
                            fontSize: 16,
                            fontWeight: FontWeight.w500,
                            color: AppColors.black100,

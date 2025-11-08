@@ -32,8 +32,14 @@ class InvoiceController extends GetxController {
   final RxInt convenienceFee = 0.obs;
   final RxInt arrivalFee = 0.obs;
   final RxDouble credits = 0.0.obs;
-   num runningTotal = 0;
-   num amountTotal = 0;
+
+  // ✅ NEW: Track which fees are enabled
+  final RxBool isWeatherFeeOn = false.obs;
+  final RxBool isConvenienceFeeOn = false.obs;
+  final RxBool isArrivalFeeOn = false.obs;
+
+  num runningTotal = 0;
+  num amountTotal = 0;
 
   @override
   void onInit() {
@@ -57,7 +63,7 @@ class InvoiceController extends GetxController {
       );
     }
 
-     num calculatedSubTotal = invoiceData['totalPrice'] ?? 0;
+    num calculatedSubTotal = invoiceData['totalPrice'] ?? 0;
     subTotal.value = calculatedSubTotal.toInt();
 
     print("💰 SubTotal: ${subTotal.value}");
@@ -81,22 +87,33 @@ class InvoiceController extends GetxController {
       if (response.statusCode == 200 && response.data['success'] == true) {
         final data = response.data['data'];
 
+        // ✅ Weather Fee - only set if isOn is true
         if (data['weatherFee'] != null) {
-          weatherFee.value = data['weatherFee']['amount'] ?? 0;
-          print("weather fee ${weatherFee.value}");
+          bool isOn = data['weatherFee']['isOn'] ?? false;
+          isWeatherFeeOn.value = isOn;
+          weatherFee.value = isOn ? (data['weatherFee']['amount'] ?? 0) : 0;
+          print("🌤️ Weather Fee - isOn: $isOn, amount: ${weatherFee.value}");
         }
 
+        // ✅ Convenience Fee - only set if isOn is true
         if (data['convenienceFee'] != null) {
-          convenienceFee.value = data['convenienceFee']['amount'] ?? 0;
+          bool isOn = data['convenienceFee']['isOn'] ?? false;
+          isConvenienceFeeOn.value = isOn;
+          convenienceFee.value = isOn ? (data['convenienceFee']['amount'] ?? 0) : 0;
+          print("💼 Convenience Fee - isOn: $isOn, amount: ${convenienceFee.value}");
         }
 
+        // ✅ Arrival Fee - only set if isOn is true
         if (data['arrivalFee'] != null) {
-          arrivalFee.value = data['arrivalFee']['amount'] ?? 0;
+          bool isOn = data['arrivalFee']['isOn'] ?? false;
+          isArrivalFeeOn.value = isOn;
+          arrivalFee.value = isOn ? (data['arrivalFee']['amount'] ?? 0) : 0;
+          print("🚗 Arrival Fee - isOn: $isOn, amount: ${arrivalFee.value}");
         }
 
         _calculateTotalPrice();
 
-        print("✅ Fees loaded - Weather: ${weatherFee.value}, Convenience: ${convenienceFee.value}, Arrival: ${arrivalFee.value}");
+        print("✅ Fees loaded successfully");
       } else {
         print("⚠️ Failed to load system fees");
         _calculateTotalPrice();
@@ -118,18 +135,24 @@ class InvoiceController extends GetxController {
     runningTotal -= discount.value;
     print("💵 Step 2 - After Discount (${discount.value}): $runningTotal");
 
-    // Step 3: Add all Fees
-    runningTotal += weatherFee.value;
-    print("💵 Step 3a - After Weather Fee (${weatherFee.value}): $runningTotal");
+    // Step 3: Add all Fees (only if they are enabled)
+    if (isWeatherFeeOn.value) {
+      runningTotal += weatherFee.value;
+      print("💵 Step 3a - After Weather Fee (${weatherFee.value}): $runningTotal");
+    }
 
-    runningTotal += convenienceFee.value;
-    print("💵 Step 3b - After Convenience Fee (${convenienceFee.value}): $runningTotal");
+    if (isConvenienceFeeOn.value) {
+      runningTotal += convenienceFee.value;
+      print("💵 Step 3b - After Convenience Fee (${convenienceFee.value}): $runningTotal");
+    }
 
-    runningTotal += arrivalFee.value;
-    print("💵 Step 3c - After Arrival Fee (${arrivalFee.value}): $runningTotal");
+    if (isArrivalFeeOn.value) {
+      runningTotal += arrivalFee.value;
+      print("💵 Step 3c - After Arrival Fee (${arrivalFee.value}): $runningTotal");
+    }
 
     // Step 4: Calculate how much credit can be applied
-     num creditToApply = credits.value.toInt();
+    num creditToApply = credits.value.toInt();
     if (creditToApply > runningTotal) {
       creditToApply = runningTotal; // Don't apply more credit than total
     }
@@ -154,9 +177,9 @@ class InvoiceController extends GetxController {
     print("💵 ============ FINAL CALCULATION ============");
     print("💵 SubTotal: ${subTotal.value}");
     print("💵 - Discount: ${discount.value}");
-    print("💵 + Weather Fee: ${weatherFee.value}");
-    print("💵 + Convenience Fee: ${convenienceFee.value}");
-    print("💵 + Arrival Fee: ${arrivalFee.value}");
+    if (isWeatherFeeOn.value) print("💵 + Weather Fee: ${weatherFee.value}");
+    if (isConvenienceFeeOn.value) print("💵 + Convenience Fee: ${convenienceFee.value}");
+    if (isArrivalFeeOn.value) print("💵 + Arrival Fee: ${arrivalFee.value}");
     print("💵 - Credit Applied: $creditToApply");
     print("💵 = TOTAL TO PAY: ${totalPrice.value}");
     print("💵 ==========================================");
@@ -251,7 +274,7 @@ class InvoiceController extends GetxController {
       if (response.statusCode == 200 && response.data['success'] == true) {
         final promoData = response.data['data'];
 
-         num discountValue = promoData['discount'] ?? 0;
+        num discountValue = promoData['discount'] ?? 0;
         String promoCodeValue = promoData['code'] ?? code;
 
         discountPercent.value = discountValue.toInt();
@@ -557,7 +580,7 @@ class InvoiceController extends GetxController {
         barrierDismissible: false,
       );
 
-      // Prepare booking request body
+      // ✅ Prepare booking request body with only enabled fees
       Map<String, dynamic> bookingBody = {
         "provider": invoiceData['providerId'],
         "services": invoiceData['selectedServiceIds'],
@@ -566,12 +589,12 @@ class InvoiceController extends GetxController {
           return {"start": slot['start'], "end": slot['end']};
         }).toList(),
         "amount": amountTotal,
-        "weatherFee": weatherFee.value,
-        "convenienceFee": convenienceFee.value,
-        "arrivalFee": arrivalFee.value,
+        "weatherFee": isWeatherFeeOn.value ? weatherFee.value : 0,
+        "convenienceFee": isConvenienceFeeOn.value ? convenienceFee.value : 0,
+        "arrivalFee": isArrivalFeeOn.value ? arrivalFee.value : 0,
         "discount": discount.value,
         "subTotal": subTotal.value,
-        "creditApplied": creditApplied.value, // ✅ Send credit applied
+        "creditApplied": creditApplied.value,
       };
 
       if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
@@ -613,9 +636,8 @@ class InvoiceController extends GetxController {
 
         if (checkoutUrl == null || checkoutUrl.isEmpty) {
           // Payment completed with credit only
-          //_showSuccessDialog(response.data);
           Utils.successSnackBar("Success", "Payment completed successfully using credit");
-          Get.find<ProfileController>().getProfile(); // Refresh user profile to update credit
+          Get.find<ProfileController>().getProfile();
           Get.offAllNamed(AppRoutes.homeNav);
           return;
         }
@@ -627,7 +649,7 @@ class InvoiceController extends GetxController {
 
         if (result == 'success') {
           _showSuccessDialog(response.data);
-          Get.find<ProfileController>().getProfile(); // Refresh user profile
+          Get.find<ProfileController>().getProfile();
           Get.offAllNamed(AppRoutes.homeNav);
         } else if (result == 'failed') {
           Utils.errorSnackBar("Error", "Payment failed. Please try again.");

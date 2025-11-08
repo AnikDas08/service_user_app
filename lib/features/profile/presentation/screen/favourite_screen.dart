@@ -44,7 +44,7 @@ class FavouriteScreen extends StatelessWidget {
                       if (controller.serviceProviders.isEmpty) {
                         return Center(
                           child: CommonText(
-                            text: "No favourite providers found",
+                            text: AppString.favourite_item,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                             color: AppColors.black600,

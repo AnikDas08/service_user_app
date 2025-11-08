@@ -61,8 +61,8 @@ class HomeController extends GetxController {
       filteredProviders.value = serviceProviders;
     } else {
       filteredProviders.value = serviceProviders.where((provider) {
-        return provider.name.toLowerCase().contains(query) ||
-            provider.category.toLowerCase().contains(query) ||
+        // Search only by category and subcategory (removed name search)
+        return provider.category.toLowerCase().contains(query) ||
             provider.subCategory.toLowerCase().contains(query);
       }).toList();
     }
@@ -287,9 +287,9 @@ class HomeController extends GetxController {
 
         categories.value = data.map((item) {
           return {
-            "id": item['_id'],
-            "name": item['name'],
-            "icon": item['icon'],
+            "id": item['_id']??"",
+            "name": item['name']??"",
+            "icon": item['icon']??"assets/images/noImage.png",
           };
         }).toList();
 
@@ -475,7 +475,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    searchController.dispose();
+    //searchController.dispose();
     super.onClose();
   }
 }

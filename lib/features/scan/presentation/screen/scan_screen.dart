@@ -33,6 +33,7 @@ class ScanScreen extends StatelessWidget {
                         CommonText(
                           text: AppString.qr_details,
                           fontSize: 16,
+                          maxLines: 2,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primaryColor,
                         ),

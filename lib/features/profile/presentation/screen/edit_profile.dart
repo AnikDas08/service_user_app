@@ -269,7 +269,7 @@ class EditProfile extends StatelessWidget {
                     color: AppColors.black400,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Phone Number',
+                    hintText: AppString.phone_number_hints,
                     hintStyle: TextStyle(
                       fontSize: 14.sp,
                       color: AppColors.black200,

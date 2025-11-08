@@ -293,84 +293,86 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Weather Fee
-        SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CommonText(
-              textAlign: TextAlign.start,
-              text: "Weather Fee",
-              fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
-              color: AppColors.black400,
-            ),
-            SizedBox(
-              width: 100.w,
-              child: CommonText(
-                textAlign: TextAlign.end,
-                text:
-                "RSD ${controller.weatherFee}",
+        // ✅ Weather Fee - Only show if enabled
+        if (controller.isWeatherFeeOn.value) ...[
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CommonText(
+                textAlign: TextAlign.start,
+                text: "Weather Fee",
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
               ),
-            ),
-          ],
-        ),
+              SizedBox(
+                width: 100.w,
+                child: CommonText(
+                  textAlign: TextAlign.end,
+                  text: "RSD ${controller.weatherFee}",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
+                  color: AppColors.black400,
+                ),
+              ),
+            ],
+          ),
+        ],
 
-        // Convenience Fee
-        SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CommonText(
-              textAlign: TextAlign.start,
-              text: "Convenience Fee",
-              fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
-              color: AppColors.black400,
-            ),
-            SizedBox(
-              width: 100.w,
-              child: CommonText(
-                textAlign: TextAlign.end,
-                text:
-                "RSD ${controller.convenienceFee}",
-
+        // ✅ Convenience Fee - Only show if enabled
+        if (controller.isConvenienceFeeOn.value) ...[
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CommonText(
+                textAlign: TextAlign.start,
+                text: "Convenience Fee",
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
               ),
-            ),
-          ],
-        ),
+              SizedBox(
+                width: 100.w,
+                child: CommonText(
+                  textAlign: TextAlign.end,
+                  text: "RSD ${controller.convenienceFee}",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
+                  color: AppColors.black400,
+                ),
+              ),
+            ],
+          ),
+        ],
 
-        // Arrival Fee
-        SizedBox(height: 10.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CommonText(
-              textAlign: TextAlign.start,
-              text: "Arrival Fee",
-              fontWeight: FontWeight.w400,
-              fontSize: 14.sp,
-              color: AppColors.black400,
-            ),
-            SizedBox(
-              width: 100.w,
-              child: CommonText(
-                textAlign: TextAlign.end,
-                text: "RSD ${controller.arrivalFee}",
-
+        // ✅ Arrival Fee - Only show if enabled
+        if (controller.isArrivalFeeOn.value) ...[
+          SizedBox(height: 10.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CommonText(
+                textAlign: TextAlign.start,
+                text: "Arrival Fee",
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
               ),
-            ),
-          ],
-        ),
+              SizedBox(
+                width: 100.w,
+                child: CommonText(
+                  textAlign: TextAlign.end,
+                  text: "RSD ${controller.arrivalFee}",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
+                  color: AppColors.black400,
+                ),
+              ),
+            ],
+          ),
+        ],
 
         // Discount
         SizedBox(height: 10.h),
@@ -401,7 +403,7 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Credit (NEW)
+        // Credit
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -49,7 +49,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/flash_image_service.png"
+  image_path: "assets/images/H - Full black.svg"
 
 
   flutter_lints: ^5.0.0

@@ -26,7 +26,7 @@ class SettingScreen extends StatelessWidget {
               child: Column(
                 children: [
 
-                  CustomAppBar(title: "Settings",),
+                  CustomAppBar(title: AppString.setting,),
 
                   SizedBox(height: 30.h,),
 

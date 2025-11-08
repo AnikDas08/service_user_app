@@ -31,7 +31,7 @@ class OnboardingScreen extends StatelessWidget {
 
               // Illustration Sectio_buildIllustrationSection(),
               Image.asset(
-                "assets/images/signin_signup_image.png",
+                "assets/images/flash_image_service.png",
                 width: 260,
                 height: 190,
               ),

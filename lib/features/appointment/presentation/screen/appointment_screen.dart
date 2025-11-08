@@ -361,12 +361,12 @@ class AppointmentScreen extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                             ),
                             SizedBox(width: 12.w),
-                            CommonText(
-                              text: 'RSD: ${controller.getAmount(booking)}',
-                              fontSize: 12.sp,
-                              color: AppColors.black400,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            // CommonText(
+                            //   text: 'RSD: ${controller.getAmount(booking)}',
+                            //   fontSize: 12.sp,
+                            //   color: AppColors.black400,
+                            //   fontWeight: FontWeight.w500,
+                            // ),
                           ],
                         ),
                       ),

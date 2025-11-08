@@ -24,115 +24,122 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? selectedLocation;
-  double priceRange = 500;
-  final double maxPrice = 1000;
+  double priceRange = 500;        // Starts at 500
+  final double minPrice = 500;    // Minimum price constant
+  final double maxPrice = 15000;
   TextEditingController locationControllers = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.70,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Column(
-        children: [
-          // Handle bar and close button
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(),
-                Container(
-                  width: 40.w,
-                  height: 4.h,
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: AppColors.black100,
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => Get.back(),
-                  child: Container(
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.70,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
+          ),
+        ),
+        child: Column(
+          children: [
+            // Handle bar and close button
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(),
+                  Container(
+                    width: 40.w,
+                    height: 4.h,
                     padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                      color: AppColors.red50,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Icon(
-                      Icons.close,
-                      size: 24.sp,
-                      color: AppColors.primaryColor,
+                      color: AppColors.black100,
+                      borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          // Content
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Category Section
-                    _buildSectionTitle(AppString.category),
-                    SizedBox(height: 12.h),
-                    _buildCategoryDropdown(),
-
-                    SizedBox(height: 16.h),
-
-                    // Subcategory Section (only show if category is selected)
-                    if (selectedCategoryId != null) ...[
-                      _buildSectionTitle("Subcategory"),
-                      SizedBox(height: 12.h),
-                      _buildSubCategoryDropdown(),
-                      SizedBox(height: 16.h),
-                    ],
-
-                    // Date Section
-                    _buildDateField(),
-
-                    SizedBox(height: 16.h),
-
-                    // Time Section
-                    _buildTimeField(),
-
-                    SizedBox(height: 16.h),
-
-                    // Location Section
-                    _buildSectionTitle(AppString.location_text),
-                    SizedBox(height: 12.h),
-                    CommonTextField(
-                      controller: locationControllers,
-                      hintText: AppString.hint_type_here,
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: AppColors.red50,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        size: 24.sp,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
+                  ),
+                ],
+              ),
+            ),
 
-                    SizedBox(height: 16.h),
+            // Content
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Category Section
+                      _buildSectionTitle(AppString.category),
+                      SizedBox(height: 12.h),
+                      _buildCategoryDropdown(),
 
-                    // Price Section
-                    _buildSectionTitle(AppString.price),
-                    SizedBox(height: 5.h),
-                    _buildPriceSlider(),
-                    SizedBox(height: 30.h),
-                    // Apply Button
-                    _buildApplyButton(),
-                    SizedBox(height: 20.h),
-                  ],
+                      SizedBox(height: 16.h),
+
+                      // Subcategory Section (only show if category is selected)
+                      if (selectedCategoryId != null) ...[
+                        _buildSectionTitle("Subcategory"),
+                        SizedBox(height: 12.h),
+                        _buildSubCategoryDropdown(),
+                        SizedBox(height: 16.h),
+                      ],
+
+                      // Date Section
+                      _buildDateField(),
+
+                      SizedBox(height: 16.h),
+
+                      // Time Section
+                      _buildTimeField(),
+
+                      SizedBox(height: 16.h),
+
+                      // Location Section
+                      _buildSectionTitle(AppString.location_text),
+                      SizedBox(height: 12.h),
+                      CommonTextField(
+                        controller: locationControllers,
+                        hintText: AppString.hint_type_here,
+                      ),
+
+                      SizedBox(height: 16.h),
+
+                      // Price Section
+                      _buildSectionTitle(AppString.price),
+                      SizedBox(height: 5.h),
+                      _buildPriceSlider(),
+                      SizedBox(height: 30.h),
+                      // Apply Button
+                      _buildApplyButton(),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -412,9 +419,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
           child: Slider(
             value: priceRange,
-            min: 0,
-            max: maxPrice,
-            divisions: 20,
+            min: minPrice,      // Changed from 0 to minPrice (500)
+            max: maxPrice,      // Changed to 15000
+            divisions: 290,     // (15000 - 500) / 50 = 290 divisions for 50 RSD steps
             onChanged: (double value) {
               setState(() {
                 priceRange = value;
@@ -568,17 +575,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     // Create filter data to pass back
     Map<String, dynamic> filterData = {
       'categoryId': selectedCategoryId,
-      'subCategoryId': selectedSubCategoryId, // NEW: Added subcategory ID
+      'subCategoryId': selectedSubCategoryId,
       'date': formattedDate,
       'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
       'userLng': "90.3890144", // Default value
       'userLat': "23.7643863", // Default value
-      'minPrice': "0",
+      'minPrice': minPrice.toString(),           // Changed from "0" to minPrice
       'maxPrice': priceRange.toString(),
     };
-
     print("Filter data : $filterData");
-
     // Call the controller method to apply filters and fetch from API
     controller.applyFiltersWithAPI(filterData);
 

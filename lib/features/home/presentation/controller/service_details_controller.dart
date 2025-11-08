@@ -599,7 +599,7 @@ class ServiceDetailsController extends GetxController {
   String? get providerImage => providerData?.user.image ?? "assets/images/image_here.png";
   String get providerAbout => providerData?.aboutMe ?? "No information available";
   String get providerLocation => providerData?.primaryLocation ?? "Location not set";
-  String get providerDistance => "${providerData?.serviceDistance ?? 0}Km";
+  String get providerDistance => "${providerData?.serviceDistance.toStringAsFixed(2) ?? 0}Km";
   List<String> get spokenLanguages => providerData?.serviceLanguage ?? [];
   String get spokenLanguagesText => spokenLanguages.join(", ");
   bool get isVerified => providerData?.verified ?? false;

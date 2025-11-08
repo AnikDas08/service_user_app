@@ -113,7 +113,7 @@ class ChatListScreen extends StatelessWidget {
                   if (controller.chats.isEmpty) {
                     return Center(
                       child: Text(
-                        "No messages found",
+                        AppString.message_not,
                         style: GoogleFonts.roboto(
                           fontSize: 14.sp,
                           color: AppColors.black100,

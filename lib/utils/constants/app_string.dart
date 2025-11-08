@@ -91,7 +91,7 @@ class AppString {
       "\"We’ve Sent A One-Time Password (OTP) To Your Email. Please Enter It Below To Continue.\"";
 
   /// On boarding text
-  static const String onboarding_text = "TvojeVreme\nPartner";
+  static const String onboarding_text = "Velodora ";
 
   /// Login text
   static const String login_text = "Log In";
@@ -178,12 +178,15 @@ class AppString {
   static const String overview_text = "Overview";
   static const String qr_texrt = "QR Code";
   static const String message_text = "Message";
+  static const String message_not = "Message Not Found";
+  static const String start_message = "No messages yet\nStart a conversation!";
   static const String profile_text = "Profile";
   static const String upcoming_button = "UpComing";
   static const String pending_button = "Pending";
   static const String view_details_text = "View Details";
   static const String contact_details_text = "Contact Details";
   static const String contact_number_text = "Contact Number";
+  static const String phone_number_hints = "Phone Number";
   static const String multiple_location = "Location";
   static const String add_primary_locatio = "Add Primary Location";
   static const String add_primary_hint = "Type Your address";
@@ -260,6 +263,9 @@ class AppString {
   static const String setting = "Setting";
   static const String contact_support = "Contact and Support";
   static const String favourite_list = "All Favourite List";
+  static const String favourite_item = "No favourite providers found";
+  static const String present_credit = "Present Credit";
+  static const String one_credit = "One Credit equal 1 RSD";
   static const String full_name = "Full Name";
   static const String hints_full_name = "Enter Your Full  Name";
   static const String contact_hint = "Enter Your Phone Number";
@@ -301,8 +307,8 @@ class AppString {
 
   /// QR Scan
   static const String qr_text = "QR Code";
-  static const String qr_details = "Please Scan QR Code Below";
-  static const String scan_qr = "Please scan Your QR code";
+  static const String qr_details = "Service completed? Please allow provider to scan your QR code ";
+  static const String scan_qr = "Service completed? Please allow PRO to scan your QR code";
   static const String barcode_text = "Type Service Provider Id";
   static const String qr_name = "MD Kamran khan";
   static const String feedback_text = "Give Your Feedback";

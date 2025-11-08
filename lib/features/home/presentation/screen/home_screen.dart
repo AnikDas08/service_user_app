@@ -51,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (controller) {
         return Scaffold(
           backgroundColor: AppColors.background,
+          resizeToAvoidBottomInset: true,
           body: SafeArea(
             child: RefreshIndicator(
               onRefresh: controller.refreshData,
@@ -186,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: controller.searchController,
               hintText: AppString.search,
               borderRadius: 30,
-              height: 36,
+              height: 44,
               hintTextColor: AppColors.black200,
             ),
           ),

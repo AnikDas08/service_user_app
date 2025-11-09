@@ -25,7 +25,7 @@ class ChangePasswordScreen extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    CustomAppBar(title: "Change Password",),
+                    CustomAppBar(title: AppString.change_password,),
                     Column(
                       children: [
                         SizedBox(height: 100.h,),
@@ -62,14 +62,14 @@ class ChangePasswordScreen extends StatelessWidget {
                 
                                   /// current Password section
                                   CommonText(
-                                    text: "Old Password",
+                                    text: AppString.oldPassword,
                                     bottom: 8,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
                                   CommonTextField(
                                     controller: controller.currentPasswordController,
-                                    hintText: "Enter Old Password",
+                                    hintText: AppString.enterOld,
                                     hintTextColor: AppColors.black200,
                                     validator: OtherHelper.passwordValidator,
                                     isPassword: true,

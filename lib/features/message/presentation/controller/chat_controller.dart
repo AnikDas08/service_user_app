@@ -18,7 +18,7 @@ class ChatControllers extends GetxController {
   TextEditingController searchController = TextEditingController();
 
   /// page no here
-   num page = 1;
+  int page = 1;
 
   /// Chat List here
   List chats = [];
@@ -57,10 +57,22 @@ class ChatControllers extends GetxController {
       var data = response.data['data'] ?? [];
 
       for (var item in data) {
-        var chatModel = ChatModel.fromJson(item);
-        chats.add(chatModel);
-        name = chatModel.participant.name;
-        image = chatModel.participant.image;
+        chats.add(ChatModel.fromJson(item));
+
+        // ✅ participants is List, so access using index
+        final participants = item['participants'];
+        if (participants is List && participants.isNotEmpty) {
+          final user = participants[0];  // first participant
+          name = user['name'] ?? "";
+          image = user['image'] ?? "";
+        }
+
+        // ✅ if you need last message safely
+        final lastMessage = item['lastMessage'];
+        if (lastMessage is Map && lastMessage['sender'] is Map) {
+          var sender = lastMessage['sender'];
+          print("Last sender name: ${sender['name']}");
+        }
       }
 
       page = page + 1;
@@ -92,6 +104,7 @@ class ChatControllers extends GetxController {
   @override
   void onInit() {
     getChatRepo();
+    listenChat();
     super.onInit();
   }
 }

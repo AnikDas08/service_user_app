@@ -2,7 +2,7 @@ class ChatModel {
   final String id;
   final Participant participant;   // Assuming first participant
   final LatestMessage latestMessage;
-  final  num unreadCount;
+  final int unreadCount;
   final DateTime updatedAt;
 
   ChatModel({

@@ -24,9 +24,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   String? selectedLocation;
-  double priceRange = 500;        // Starts at 500
-  final double minPrice = 500;    // Minimum price constant
-  final double maxPrice = 15000;
+  double priceRange = 500;
+  final double minPrice = 500;
+  final double maxPrice = 150000;
   TextEditingController locationControllers = TextEditingController();
 
   @override
@@ -36,7 +36,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.70,
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.85,
+          minHeight: 200,
+        ),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.only(
@@ -45,6 +48,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Handle bar and close button
             Container(
@@ -82,59 +86,60 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             ),
 
             // Content
-            Expanded(
-              child: Padding(
+            Flexible(
+              child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: SingleChildScrollView(
-                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Category Section
-                      _buildSectionTitle(AppString.category),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Category Section
+                    _buildSectionTitle(AppString.category),
+                    SizedBox(height: 12.h),
+                    _buildCategoryDropdown(),
+
+                    SizedBox(height: 16.h),
+
+                    // Subcategory Section (only show if category is selected)
+                    if (selectedCategoryId != null) ...[
+                      _buildSectionTitle("Subcategory"),
                       SizedBox(height: 12.h),
-                      _buildCategoryDropdown(),
-
+                      _buildSubCategoryDropdown(),
                       SizedBox(height: 16.h),
-
-                      // Subcategory Section (only show if category is selected)
-                      if (selectedCategoryId != null) ...[
-                        _buildSectionTitle("Subcategory"),
-                        SizedBox(height: 12.h),
-                        _buildSubCategoryDropdown(),
-                        SizedBox(height: 16.h),
-                      ],
-
-                      // Date Section
-                      _buildDateField(),
-
-                      SizedBox(height: 16.h),
-
-                      // Time Section
-                      _buildTimeField(),
-
-                      SizedBox(height: 16.h),
-
-                      // Location Section
-                      _buildSectionTitle(AppString.location_text),
-                      SizedBox(height: 12.h),
-                      CommonTextField(
-                        controller: locationControllers,
-                        hintText: AppString.hint_type_here,
-                      ),
-
-                      SizedBox(height: 16.h),
-
-                      // Price Section
-                      _buildSectionTitle(AppString.price),
-                      SizedBox(height: 5.h),
-                      _buildPriceSlider(),
-                      SizedBox(height: 30.h),
-                      // Apply Button
-                      _buildApplyButton(),
-                      SizedBox(height: 20.h),
                     ],
-                  ),
+
+                    // Date Section
+                    _buildDateField(),
+
+                    SizedBox(height: 16.h),
+
+                    // Time Section
+                    _buildTimeField(),
+
+                    SizedBox(height: 16.h),
+
+                    // Location Section
+                    _buildSectionTitle(AppString.location_text),
+                    SizedBox(height: 12.h),
+                    CommonTextField(
+                      controller: locationControllers,
+                      hintText: AppString.hint_type_here,
+                    ),
+
+                    SizedBox(height: 16.h),
+
+                    // Price Section
+                    _buildSectionTitle(AppString.price),
+                    SizedBox(height: 5.h),
+                    _buildPriceSlider(),
+
+                    SizedBox(height: 30.h),
+
+                    // Apply Button
+                    _buildApplyButton(),
+                    SizedBox(height: 20.h),
+                  ],
                 ),
               ),
             ),
@@ -419,9 +424,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
           child: Slider(
             value: priceRange,
-            min: minPrice,      // Changed from 0 to minPrice (500)
-            max: maxPrice,      // Changed to 15000
-            divisions: 290,     // (15000 - 500) / 50 = 290 divisions for 50 RSD steps
+            min: minPrice,
+            max: maxPrice,
+            divisions: 290,
             onChanged: (double value) {
               setState(() {
                 priceRange = value;
@@ -578,12 +583,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       'subCategoryId': selectedSubCategoryId,
       'date': formattedDate,
       'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
-      'userLng': "90.3890144", // Default value
-      'userLat': "23.7643863", // Default value
-      'minPrice': minPrice.toString(),           // Changed from "0" to minPrice
+      'userLng': "90.3890144",
+      'userLat': "23.7643863",
+      'minPrice': minPrice.toString(),
       'maxPrice': priceRange.toString(),
     };
     print("Filter data : $filterData");
+
     // Call the controller method to apply filters and fetch from API
     controller.applyFiltersWithAPI(filterData);
 

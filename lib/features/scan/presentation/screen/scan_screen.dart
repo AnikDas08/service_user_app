@@ -23,7 +23,7 @@ class ScanScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  CustomAppBar(title: AppString.qr_text),
+                  CustomAppBar(title: AppString.qr_text,showBackButton: false,),
                   Expanded(
                     child: Column(
                       crossAxisAlignment:

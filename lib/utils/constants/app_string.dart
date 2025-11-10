@@ -10,9 +10,7 @@ class AppString {
   static const String enterYouPassword = "Enter you password";
   static const String cancel = "Cancel";
   static const String done = "Done";
-  static const String deleteDetails =
-      "All your changes will be deleted and you will no longer be able to access them.";
-
+  static const String deleteDetails = "All your changes will be deleted and you will no longer be able to access them.";
   static const String someThingWrong = "Some Thing Wrong";
   static const String tryAgain = "Try Again";
   static const String phoneNumber = "Phone Number";
@@ -37,7 +35,7 @@ class AppString {
   static const String verify = "Verify";
   static const String verifyNow = "Verify Now";
   static const String logIntoYourAccount = "Login to Your Account";
-  static const String logoText = "TvojeVreme\nPartner";
+  static const String logoText = "Velodora";
   static const String forgotThePassword = "Forgot the password";
   static const String signIn = "Sign in";
   static const String login = "Log In";
@@ -162,8 +160,7 @@ class AppString {
   static const String price_text = "Price";
   static const String price_hints = "Type Your Location";
   static const String price_hours = "Price(per hour)";
-  static const String add_new =
-      "Please Attach Your Work Photos (Not Mandatory) Maximum 10 Image";
+  static const String add_new = "Please Attach Your Work Photos (Not Mandatory) Maximum 10 Image";
   static const String upload_image_text = "Upload Image";
   static const String add_text = "Add";
   static const String continue_by = "By Continue";
@@ -172,7 +169,7 @@ class AppString {
   static const String term_condition_text = "Terms & Condition";
 
   /// Home Screen
-  static const String welcome_text = "Welcome To Veldora";
+  static const String welcome_text = "Welcome To Velodora";
   static const String avaliable_ite = "Available Service in My Range";
   static const String online_voew = "Online";
   static const String view_button = "View";
@@ -190,6 +187,7 @@ class AppString {
   static const String contact_number_text = "Contact Number";
   static const String phone_number_hints = "Phone Number";
   static const String multiple_location = "Location";
+  static const String location = "Location";
   static const String add_primary_locatio = "Add Primary Location";
   static const String add_primary_hint = "Type Your address";
   static const String appoint_scan_text = "Appointment\nSuccessfully Complete";
@@ -206,6 +204,12 @@ class AppString {
   static const String use_promocode = "Use Promo Code (Optional)";
   static const String promo_code_hints = "Enter Promo Code";
   static const String pay_button = "Pay";
+  static const String select_time_slot = "Select Time Slots";
+  static const String available_schedule = "Available Schedule";
+  static const String schedule_avaliable_do = "No schedule available";
+  static const String schedule_available = "The provider hasn't set up\ntheir schedule yet";
+  static const String time_slot_do = "No time slots available";
+  static const String clear = "Clear";
 
   /// Overview Screen
   static const String overview_button = "My Overview";
@@ -222,8 +226,10 @@ class AppString {
   static const String avilable_button = "Availability";
   static const String service_fee = "Service Fee";
   static const String appointment_text = "Appointment";
-  static const String cancel_booking_detail =
-      "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
+  static const String booking_here = "No bookings found";
+  static const String cancel_booking_detail = "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
+  static const String booking_id_here = "Booking ID";
+  static const String status_show = "View Status";
 
   ///
   static const String saturday_text = "Saturday";
@@ -309,7 +315,7 @@ class AppString {
 
   /// QR Scan
   static const String qr_text = "QR Code";
-  static const String qr_details = "Service completed? Please allow provider to scan your QR code ";
+  static const String qr_details = "Service completed? Please allow provider to scan your QR code";
   static const String scan_qr = "Service completed? Please allow PRO to scan your QR code";
   static const String barcode_text = "Type Service Provider Id";
   static const String qr_name = "MD Kamran khan";

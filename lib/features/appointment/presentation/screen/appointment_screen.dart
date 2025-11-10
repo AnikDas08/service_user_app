@@ -157,7 +157,7 @@ class AppointmentScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 16.h),
                         CommonText(
-                          text: 'No bookings found',
+                          text: AppString.booking_here,
                           fontSize: 16.sp,
                           color: Colors.grey[600]!,
                           fontWeight: FontWeight.w500,
@@ -355,7 +355,7 @@ class AppointmentScreen extends StatelessWidget {
                           children: [
                             CommonText(
                               text:
-                              'Booking ID: ${controller.getBookingId(booking)}',
+                              '${AppString.booking_id_here}: ${controller.getBookingId(booking)}',
                               fontSize: 12.sp,
                               color: AppColors.black300,
                               fontWeight: FontWeight.w400,

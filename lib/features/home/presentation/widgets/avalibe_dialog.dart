@@ -1,17 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/text/common_text.dart';
+import '../../../../config/route/app_routes.dart';
+import '../../../../services/api/api_service.dart';
+import '../../../../services/storage/storage_services.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../controller/service_details_controller.dart';
 
-class AvailabilityDialog extends StatelessWidget {
+class ScheduleSlot {
+  final String id;
+  final DateTime start;
+  final DateTime end;
+  bool isSelected;
+
+  ScheduleSlot({
+    required this.id,
+    required this.start,
+    required this.end,
+    this.isSelected = false,
+  });
+
+  String get displayTime {
+    // Convert UTC to local time
+    DateTime utcStart = start.toUtc();
+    DateTime utcEnd = end.toUtc();
+
+    String startHour = utcStart.hour.toString().padLeft(2, '0');
+    String startMinute = utcStart.minute.toString().padLeft(2, '0');
+    String endHour = utcEnd.hour.toString().padLeft(2, '0');
+    String endMinute = utcEnd.minute.toString().padLeft(2, '0');
+    return '$startHour:$startMinute - $endHour:$endMinute';
+  }
+}
+
+class AvailabilityDialog extends StatefulWidget {
   const AvailabilityDialog({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<ServiceDetailsController>();
+  State<AvailabilityDialog> createState() => _AvailabilityDialogState();
+}
 
+class _AvailabilityDialogState extends State<AvailabilityDialog> {
+  late ServiceDetailsController controller;
+
+  bool isLoadingSlots = false;
+  List<ScheduleSlot> availableSlots = [];
+  List<ScheduleSlot> selectedSlots = [];
+
+  DateTime? selectedDate;
+  dynamic selectedSchedule;
+  bool showingSlots = false;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ServiceDetailsController>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.r),
@@ -30,16 +79,45 @@ class AvailabilityDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with close button
+            // Header with close button and back button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CommonText(
-                  text: "Available Schedule",
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.black400,
-                  textAlign: TextAlign.left,
+                Row(
+                  children: [
+                    if (showingSlots)
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showingSlots = false;
+                            selectedDate = null;
+                            selectedSchedule = null;
+                            availableSlots.clear();
+                            selectedSlots.clear();
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(5.w),
+                          margin: EdgeInsets.only(right: 8.w),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(100.r),
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            size: 20.sp,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    CommonText(
+                      text: showingSlots ? AppString.select_time_slot : "Available Schedule",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black400,
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
                 ),
                 GestureDetector(
                   onTap: () => Get.back(),
@@ -61,75 +139,225 @@ class AvailabilityDialog extends StatelessWidget {
 
             SizedBox(height: 20.h),
 
-            // Content - Schedule list
+            // Content - Either schedule list or slots grid
             Flexible(
-              child: Obx(() {
-                // Show loading indicator
-                if (controller.isLoadingSchedule.value) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(
-                          color: AppColors.primaryColor,
-                        ),
-                        SizedBox(height: 16.h),
-                        CommonText(
-                          text: "Loading schedule...",
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.black300,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  );
-                }
+              child: showingSlots ? _buildSlotsView() : _buildScheduleList(),
+            ),
 
-                // Show empty state if no schedule
-                if (controller.providerSchedule.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.calendar_today_outlined,
-                          size: 64.sp,
-                          color: AppColors.black200,
-                        ),
-                        SizedBox(height: 16.h),
-                        CommonText(
-                          text: "No schedule available",
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.black300,
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 8.h),
-                        CommonText(
-                          text: "The provider hasn't set up\ntheir schedule yet",
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.black200,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  );
-                }
+            // Book Now button (only shown when slots are selected)
+            if (showingSlots && selectedSlots.isNotEmpty)
+              _buildBookingSection(),
+          ],
+        ),
+      ),
+    );
+  }
 
-                // Show schedule list
-                return ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: controller.providerSchedule.length,
-                  separatorBuilder: (context, index) => SizedBox(height: 12.h),
-                  itemBuilder: (context, index) {
-                    final schedule = controller.providerSchedule[index];
-                    return _buildScheduleItem(schedule);
-                  },
-                );
-              }),
+  Widget _buildScheduleList() {
+    return Obx(() {
+      if (controller.isLoadingSchedule.value) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: AppColors.primaryColor,
+              ),
+              SizedBox(height: 16.h),
+              CommonText(
+                text: "Loading schedule...",
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: AppColors.black300,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      }
+
+      if (controller.providerSchedule.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 64.sp,
+                color: AppColors.black200,
+              ),
+              SizedBox(height: 16.h),
+              CommonText(
+                text: AppString.schedule_avaliable_do,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.black300,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8.h),
+              CommonText(
+                text: AppString.schedule_available,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: AppColors.black200,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+              ),
+            ],
+          ),
+        );
+      }
+
+      return ListView.separated(
+        shrinkWrap: true,
+        itemCount: controller.providerSchedule.length,
+        separatorBuilder: (context, index) => SizedBox(height: 12.h),
+        itemBuilder: (context, index) {
+          final schedule = controller.providerSchedule[index];
+          return _buildScheduleItem(schedule);
+        },
+      );
+    });
+  }
+
+  Widget _buildScheduleItem(schedule) {
+    return GestureDetector(
+      onTap: () => _onScheduleItemTap(schedule),
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(
+            color: AppColors.black50,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 50.w,
+              height: 50.w,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CommonText(
+                    text: schedule.date.day.toString(),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryColor,
+                    textAlign: TextAlign.center,
+                  ),
+                  CommonText(
+                    text: _getMonthShort(schedule.date.month),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.primaryColor,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(width: 12.w),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 14.sp,
+                        color: AppColors.black300,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: schedule.dayOfWeek,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black400,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        size: 14.sp,
+                        color: AppColors.black300,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: _format24HourTime(schedule.formattedTimeRange),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.black300,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.timelapse,
+                        size: 14.sp,
+                        color: AppColors.black300,
+                      ),
+                      SizedBox(width: 4.w),
+                      CommonText(
+                        text: "${schedule.duration} minutes",
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.black300,
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: schedule.count == 0
+                        ? Colors.green.withOpacity(0.1)
+                        : Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: CommonText(
+                    text: schedule.count == 0 ? "Available" : "${schedule.count} booked",
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: schedule.count == 0 ? Colors.green : Colors.orange,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 14.sp,
+                  color: AppColors.primaryColor,
+                ),
+              ],
             ),
           ],
         ),
@@ -137,153 +365,422 @@ class AvailabilityDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildScheduleItem(schedule) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: AppColors.black50,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Date icon
-          Container(
-            width: 50.w,
-            height: 50.w,
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8.r),
+  Widget _buildSlotsView() {
+    if (isLoadingSlots) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              color: AppColors.primaryColor,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CommonText(
-                  text: schedule.date.day.toString(),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primaryColor,
-                  textAlign: TextAlign.center,
-                ),
-                CommonText(
-                  text: _getMonthShort(schedule.date.month),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.primaryColor,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(width: 12.w),
-
-          // Schedule details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 14.sp,
-                      color: AppColors.black300,
-                    ),
-                    SizedBox(width: 4.w),
-                    CommonText(
-                      text: schedule.dayOfWeek,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black400,
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 14.sp,
-                      color: AppColors.black300,
-                    ),
-                    SizedBox(width: 4.w),
-                    CommonText(
-                      text: _format24HourTime(schedule.formattedTimeRange),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.black300,
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 4.h),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.timelapse,
-                      size: 14.sp,
-                      color: AppColors.black300,
-                    ),
-                    SizedBox(width: 4.w),
-                    CommonText(
-                      text: "${schedule.duration} minutes",
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.black300,
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Status indicator
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: schedule.count == 0
-                  ? Colors.green.withOpacity(0.1)
-                  : Colors.orange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4.r),
-            ),
-            child: CommonText(
-              text: schedule.count == 0 ? "Available" : "${schedule.count} booked",
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: schedule.count == 0 ? Colors.green : Colors.orange,
+            SizedBox(height: 16.h),
+            CommonText(
+              text: "Loading time slots...",
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: AppColors.black300,
               textAlign: TextAlign.center,
             ),
+          ],
+        ),
+      );
+    }
+
+    if (availableSlots.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.event_busy,
+              size: 48.sp,
+              color: AppColors.black200,
+            ),
+            SizedBox(height: 12.h),
+            CommonText(
+              text: AppString.time_slot_do,
+              fontSize: 14.sp,
+              color: AppColors.black400,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    num requiredSlots = controller.selectedServiceIds.length;
+
+    return Column(
+      children: [
+        // Info banner
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(
+              color: AppColors.primaryColor.withOpacity(0.3),
+            ),
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: 18.sp,
+                color: AppColors.primaryColor,
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: CommonText(
+                  text: "Select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primaryColor,
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        SizedBox(height: 16.h),
+
+        // Slots grid
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8.w,
+              mainAxisSpacing: 8.h,
+              childAspectRatio: 2.5,
+            ),
+            itemCount: availableSlots.length,
+            itemBuilder: (context, index) {
+              ScheduleSlot slot = availableSlots[index];
+              return GestureDetector(
+                onTap: () => _onSlotTap(slot, requiredSlots),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    color: slot.isSelected
+                        ? AppColors.primaryColor.withOpacity(0.1)
+                        : Colors.transparent,
+                    border: Border.all(
+                      color: slot.isSelected
+                          ? AppColors.primaryColor
+                          : AppColors.black50,
+                      width: slot.isSelected ? 2 : 1,
+                    ),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Center(
+                    child: CommonText(
+                      text: slot.displayTime,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                      color: slot.isSelected
+                          ? AppColors.primaryColor
+                          : AppColors.black,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
-  String _getMonthShort( num month) {
+  Widget _buildBookingSection() {
+    num requiredSlots = controller.selectedServiceIds.length;
+    bool canBook = selectedSlots.length == requiredSlots;
+
+    return Column(
+      children: [
+        SizedBox(height: 16.h),
+
+        // Selected slots info
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(12.w),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(
+              color: AppColors.primaryColor.withOpacity(0.3),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CommonText(
+                    text: "Selected: ${selectedSlots.length}/$requiredSlots slots",
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: canBook ? Colors.green : AppColors.primaryColor,
+                  ),
+                  if (selectedSlots.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedSlots.clear();
+                          for (var slot in availableSlots) {
+                            slot.isSelected = false;
+                          }
+                        });
+                      },
+                      child: CommonText(
+                        text: AppString.clear,
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red,
+                      ),
+                    ),
+                ],
+              ),
+              if (selectedSlots.isNotEmpty) ...[
+                SizedBox(height: 6.h),
+                Wrap(
+                  spacing: 6.w,
+                  runSpacing: 6.h,
+                  children: selectedSlots.map((slot) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                      child: CommonText(
+                        text: slot.displayTime,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.white,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ],
+          ),
+        ),
+
+        SizedBox(height: 12.h),
+
+        // Book Now button
+        SizedBox(
+          width: double.infinity,
+          height: 48.h,
+          child: ElevatedButton(
+            onPressed: canBook ? _confirmBooking : null,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: canBook ? AppColors.primaryColor : Colors.grey[300],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              elevation: 0,
+            ),
+            child: CommonText(
+              text: canBook
+                  ? AppString.book_now_button
+                  : "Select $requiredSlots slot${requiredSlots > 1 ? 's' : ''}",
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: canBook ? AppColors.white : Colors.grey[600]!,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _onScheduleItemTap(schedule) async {
+    selectedSchedule = schedule;
+    selectedDate = schedule.date;
+
+    setState(() {
+      showingSlots = true;
+    });
+
+    await _fetchScheduleForDate(schedule.date);
+  }
+
+  void _onSlotTap(ScheduleSlot slot, num requiredSlots) {
+    if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
+      Get.snackbar(
+        'Slot Limit Reached',
+        'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: AppColors.white,
+        duration: Duration(seconds: 2),
+      );
+      return;
+    }
+
+    setState(() {
+      slot.isSelected = !slot.isSelected;
+      if (slot.isSelected) {
+        if (!selectedSlots.contains(slot)) {
+          selectedSlots.add(slot);
+        }
+      } else {
+        selectedSlots.remove(slot);
+      }
+    });
+  }
+
+  Future<void> _fetchScheduleForDate(DateTime date) async {
+    if (controller.providerData?.id == null) {
+      Get.snackbar(
+        'Error',
+        'Provider information not available',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        isLoadingSlots = true;
+        availableSlots.clear();
+        selectedSlots.clear();
+      });
+
+      DateTime startDateUtc = DateTime.utc(date.year, date.month, date.day);
+      String formattedDate = startDateUtc.toIso8601String();
+
+      String url = "schedule/provider-schedule-date/${controller.providerData!.id}?date=$formattedDate";
+
+      final response = await ApiService.get(
+        url,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data['success'] == true && data['data'] != null) {
+          final scheduleData = data['data'];
+
+          if (scheduleData['available_slots'] != null) {
+            List<dynamic> slots = scheduleData['available_slots'];
+
+            setState(() {
+              for (var slot in slots) {
+                availableSlots.add(ScheduleSlot(
+                  id: slot['_id'],
+                  start: DateTime.parse(slot['start']),
+                  end: DateTime.parse(slot['end']),
+                ));
+              }
+            });
+
+            if (availableSlots.isEmpty) {
+              Get.snackbar(
+                'No Availability',
+                'No time slots available for this date',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.orange,
+                colorText: AppColors.white,
+              );
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print("Error fetching schedule: $e");
+      Get.snackbar(
+        'Error',
+        'Failed to load available time slots',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+      );
+    } finally {
+      setState(() {
+        isLoadingSlots = false;
+      });
+    }
+  }
+
+  void _confirmBooking() {
+    num requiredSlots = controller.selectedServiceIds.length;
+
+    if (selectedSlots.length != requiredSlots) {
+      Get.snackbar(
+        "Invalid Time Slots",
+        "You must select exactly $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: AppColors.white,
+        duration: Duration(seconds: 3),
+      );
+      return;
+    }
+
+    DateTime bookingDateUtc = DateTime.utc(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+    );
+
+    List<Map<String, dynamic>> slotsData = selectedSlots.map((slot) {
+      return {
+        "start": slot.start.toIso8601String(),
+        "end": slot.end.toIso8601String(),
+        "displayTime": slot.displayTime,
+      };
+    }).toList();
+
+    String formattedDate = '${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}';
+
+    Map<String, dynamic> invoiceData = {
+      'providerId': controller.providerData!.id,
+      'provider': controller.providerData?.toJson(),
+      'providerName': controller.providerName,
+      'providerImage': controller.providerImage,
+      'date': formattedDate,
+      'dateIso': bookingDateUtc.toIso8601String(),
+      'timeSlots': selectedSlots.map((slot) => slot.displayTime).toList(),
+      'slotsData': slotsData,
+      'selectedServices': controller.getSelectedServices(),
+      'selectedServiceIds': controller.selectedServiceIds.toList(),
+      'totalPrice': controller.getTotalPrice(),
+      'totalDuration': controller.getTotalDuration(),
+      'description': '',
+      'image': null,
+    };
+
+    Get.back(); // Close the dialog
+    Get.toNamed(AppRoutes.invoice, arguments: invoiceData);
+
+    Get.snackbar(
+      "Success",
+      "Booking details prepared. Please review and confirm payment.",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: AppColors.primaryColor,
+      colorText: AppColors.white,
+    );
+  }
+
+  String _getMonthShort(num month) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month.toInt() - 1];
   }
 
   String _format24HourTime(String timeRange) {
-    // Convert time range from 12-hour format (e.g., "9:00 AM - 5:00 PM")
-    // to 24-hour format (e.g., "09:00 - 17:00")
-
     if (!timeRange.contains('AM') && !timeRange.contains('PM')) {
-      // Already in 24-hour format or no AM/PM markers
       return timeRange;
     }
 
@@ -296,28 +793,24 @@ class AvailabilityDialog extends StatelessWidget {
 
       return '$startTime24 - $endTime24';
     } catch (e) {
-      // If conversion fails, return original
       return timeRange;
     }
   }
 
   String _convertTo24Hour(String time12) {
-    // Remove extra spaces and split
     time12 = time12.trim();
 
     bool isPM = time12.toUpperCase().contains('PM');
     bool isAM = time12.toUpperCase().contains('AM');
 
-    // Extract time part (remove AM/PM)
     String timePart = time12.replaceAll(RegExp(r'(AM|PM|am|pm)', caseSensitive: false), '').trim();
 
     List<String> timeParts = timePart.split(':');
     if (timeParts.isEmpty) return time12;
 
-     num hour = int.tryParse(timeParts[0]) ?? 0;
+    num hour = int.tryParse(timeParts[0]) ?? 0;
     String minute = timeParts.length > 1 ? timeParts[1] : '00';
 
-    // Convert to 24-hour format
     if (isPM && hour != 12) {
       hour += 12;
     } else if (isAM && hour == 12) {

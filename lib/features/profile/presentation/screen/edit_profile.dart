@@ -160,7 +160,7 @@ class EditProfile extends StatelessWidget {
                           _buildPhoneNumberField(controller, context),
                           SizedBox(height: 12),
                           EditPersonal(
-                            title: AppString.multiple_location,
+                            title: "Location",
                             controller: controller.locationController,
                           ),
                           SizedBox(height: 12),

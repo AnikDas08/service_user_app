@@ -30,7 +30,7 @@ class ViewDetailsPending extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomAppBar(
-                  title: "View Status",
+                  title: AppString.status_show,
                   titleColor: AppColors.primaryColor,
                 ),
               ),
@@ -55,15 +55,15 @@ class ViewDetailsPending extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Container(
+                          controller.providerImage.value.isNotEmpty?Container(
                             decoration: BoxDecoration(shape: BoxShape.circle),
                             child: CircleAvatar(
                               backgroundImage: controller.providerImage.value.isNotEmpty
                                   ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage.value)
-                                  : AssetImage("assets/images/item_image.png") as ImageProvider,
+                                  : AssetImage("assets/images/noImage.png"),
                               radius: 45,
                             ),
-                          ),
+                          ):Image.asset("assets/images/noImage.png",width: 45,height: 45,),
                           SizedBox(width: 12.w),
                           // Booking Details
                           Expanded(

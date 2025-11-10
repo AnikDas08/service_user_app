@@ -31,7 +31,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomAppBar(
-                  title: "View Status",
+                  title: AppString.status_show,
                   titleColor: AppColors.primaryColor,
                 ),
               ),
@@ -170,7 +170,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                           Row(
                             children: [
                               CommonText(
-                                text: "Booking ID : ${controller.bookingId.value}",
+                                text: "${AppString.booking_id_here} : ${controller.bookingId.value}",
                                 fontSize: 14.sp,
                                 color: AppColors.black400,
                                 fontWeight: FontWeight.w500,

@@ -13,24 +13,29 @@ class ScheduleSlot {
   final String id;
   final DateTime start;
   final DateTime end;
+  final DateTime? date; // Add date field
   bool isSelected;
 
   ScheduleSlot({
     required this.id,
     required this.start,
     required this.end,
+    this.date,
     this.isSelected = false,
   });
 
+  // Check if slot is valid (has a date)
+  bool get isValid => date != null;
+
   String get displayTime {
     // Convert UTC to local time
-    DateTime utcStart = start.toUtc();
-    DateTime utcEnd = end.toUtc();
+    DateTime localStart = start.toLocal();
+    DateTime localEnd = end.toLocal();
 
-    String startHour = utcStart.hour.toString().padLeft(2, '0');
-    String startMinute = utcStart.minute.toString().padLeft(2, '0');
-    String endHour = utcEnd.hour.toString().padLeft(2, '0');
-    String endMinute = utcEnd.minute.toString().padLeft(2, '0');
+    String startHour = start.hour.toString().padLeft(2, '0');
+    String startMinute = start.minute.toString().padLeft(2, '0');
+    String endHour = end.hour.toString().padLeft(2, '0');
+    String endMinute = end.minute.toString().padLeft(2, '0');
     return '$startHour:$startMinute - $endHour:$endMinute';
   }
 }
@@ -611,6 +616,17 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
   }
 
   void _onSlotTap(ScheduleSlot slot, num requiredSlots) {
+    if (controller.selectedServiceIds.isEmpty) {
+      Get.snackbar(
+        'No Service Selected',
+        'Please select service type first',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: AppColors.white,
+        duration: Duration(seconds: 2),
+      );
+      return;
+    }
     if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
       Get.snackbar(
         'Slot Limit Reached',

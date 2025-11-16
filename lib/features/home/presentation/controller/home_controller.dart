@@ -9,7 +9,7 @@ import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
 
 class HomeController extends GetxController {
-  final TextEditingController searchController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   static final HomeController instance = HomeController();
 
   // Favorite list using provider IDs
@@ -144,7 +144,6 @@ class HomeController extends GetxController {
       );
     }
   }
-
   Future<void> fetchServiceProviders({String? filterUrl, bool loadMore = false}) async {
     try {
       // Prevent multiple simultaneous requests

@@ -25,7 +25,6 @@ class ScheduleSlot {
   });
 
   String get displayTime {
-    // Convert UTC to local time
     DateTime localStart = start.toLocal();
     DateTime localEnd = end.toLocal();
 
@@ -54,14 +53,17 @@ class _BookingDialogState extends State<BookingDialog> {
   final serviceController = Get.find<ServiceDetailsController>();
 
   final RxBool isLoadingSchedule = false.obs;
+  final RxBool isLoadingDates = false.obs;
   final RxList<ScheduleSlot> availableSlots = <ScheduleSlot>[].obs;
   final RxList<ScheduleSlot> selectedSlots = <ScheduleSlot>[].obs;
+  final RxSet<String> datesWithSlots = <String>{}.obs; // Store dates as strings "yyyy-MM-dd"
   DateTime? selectedDate;
 
   @override
   void initState() {
     super.initState();
     _updateTimeControllerText();
+    _loadAvailableDates();
   }
 
   void _updateTimeControllerText() {
@@ -72,6 +74,55 @@ class _BookingDialogState extends State<BookingDialog> {
         timeController.text = selectedSlots.map((slot) => slot.displayTime).join(', ');
       }
     });
+  }
+
+  // Load all dates that have available slots
+  Future<void> _loadAvailableDates() async {
+    if (serviceController.providerData?.user.id == null) {
+      return;
+    }
+
+    try {
+      isLoadingDates.value = true;
+
+      final response = await ApiService.get(
+        "schedule/provider-schedule/${serviceController.providerData!.user.id}",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      print("📡 Available Dates Response: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final data = response.data['data'];
+
+        if (data is List) {
+          datesWithSlots.clear();
+
+          for (var schedule in data) {
+            // Check if schedule is active and has count > 0 (or any count since count 0 might still be valid)
+            if (schedule['isActive'] == true && schedule['date'] != null) {
+              DateTime scheduleDate = DateTime.parse(schedule['date']);
+              String dateKey = "${scheduleDate.year}-${scheduleDate.month.toString().padLeft(2, '0')}-${scheduleDate.day.toString().padLeft(2, '0')}";
+              datesWithSlots.add(dateKey);
+            }
+          }
+
+          print("✅ Loaded ${datesWithSlots.length} dates with available slots");
+          print("📅 Dates: ${datesWithSlots.toList()}");
+        }
+      }
+    } catch (e) {
+      print("❌ Error loading available dates: $e");
+    } finally {
+      isLoadingDates.value = false;
+    }
+  }
+
+  bool _hasSlots(DateTime date) {
+    String dateKey = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+    return datesWithSlots.contains(dateKey);
   }
 
   Future<void> _fetchScheduleForDate(DateTime date) async {
@@ -91,14 +142,12 @@ class _BookingDialogState extends State<BookingDialog> {
       availableSlots.clear();
       selectedSlots.clear();
 
-      // Format date in UTC ISO format
       DateTime startDateUtc = DateTime.utc(date.year, date.month, date.day);
       String formattedDate = startDateUtc.toIso8601String();
 
       String url = "schedule/provider-schedule-date/${serviceController.providerData!.id}?date=$formattedDate";
 
       print("📥 Fetching schedule for date: $formattedDate");
-      print("🔗 Full URL: $url");
 
       final response = await ApiService.get(
         url,
@@ -108,7 +157,6 @@ class _BookingDialogState extends State<BookingDialog> {
       );
 
       print("📡 Response Status: ${response.statusCode}");
-      print("📦 Response Data: ${response.data}");
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -119,8 +167,6 @@ class _BookingDialogState extends State<BookingDialog> {
           if (scheduleData['available_slots'] != null) {
             List<dynamic> slots = scheduleData['available_slots'];
 
-            print("📊 Total available slots: ${slots.length}");
-
             for (var slot in slots) {
               availableSlots.add(ScheduleSlot(
                 id: slot['_id'],
@@ -130,42 +176,8 @@ class _BookingDialogState extends State<BookingDialog> {
             }
 
             print("✅ Loaded ${availableSlots.length} available slots");
-
-            if (availableSlots.isEmpty) {
-              Get.snackbar(
-                'No Availability',
-                'No time slots available for this date',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.orange,
-                colorText: AppColors.white,
-              );
-            }
-          } else {
-            Get.snackbar(
-              'No Slots',
-              'No available slots found for this date',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.orange,
-              colorText: AppColors.white,
-            );
           }
-        } else {
-          Get.snackbar(
-            'No Schedule',
-            'Provider has no schedule for this date',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.orange,
-            colorText: AppColors.white,
-          );
         }
-      } else {
-        Get.snackbar(
-          'Not Found',
-          'Provider has no schedule for this date: ${response.message}',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.amber,
-          colorText: AppColors.white,
-        );
       }
     } catch (e) {
       print("❌ Error fetching schedule: $e");
@@ -307,7 +319,7 @@ class _BookingDialogState extends State<BookingDialog> {
 
   Widget _buildDateField() {
     return GestureDetector(
-      onTap: _selectDate,
+      onTap: _showCustomDatePicker,
       child: Container(
         height: 48.h,
         width: double.infinity,
@@ -331,6 +343,163 @@ class _BookingDialogState extends State<BookingDialog> {
               color: AppColors.black300,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showCustomDatePicker() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CommonText(
+                      text: "Select Date",
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.black,
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.close, size: 24.sp),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                Obx(() {
+                  if (isLoadingDates.value) {
+                    return SizedBox(
+                      height: 300.h,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Check if there are no available dates
+                  if (datesWithSlots.isEmpty) {
+                    return SizedBox(
+                      height: 300.h,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.event_busy,
+                              size: 64.sp,
+                              color: AppColors.black200,
+                            ),
+                            SizedBox(height: 16.h),
+                            CommonText(
+                              text: "No Available Dates",
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.black400,
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8.h),
+                            CommonText(
+                              text: "Provider has no available dates\nat the moment",
+                              fontSize: 14.sp,
+                              color: AppColors.black200,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return _buildCalendar();
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCalendar() {
+    DateTime now = DateTime.now();
+    DateTime firstDay = DateTime(now.year, now.month, 1);
+    DateTime lastDay = DateTime(now.year, now.month + 3, 0); // 3 months ahead
+
+    // Find first available date for initialDate
+    DateTime initialDateToUse = now;
+    if (datesWithSlots.isNotEmpty) {
+      // Convert string dates to DateTime and find first valid one
+      List<DateTime> availableDates = datesWithSlots.map((dateStr) {
+        List<String> parts = dateStr.split('-');
+        return DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+      }).toList()..sort();
+
+      // Find first date that is today or in the future
+      for (DateTime date in availableDates) {
+        if (date.isAfter(now.subtract(Duration(days: 1)))) {
+          initialDateToUse = date;
+          break;
+        }
+      }
+    }
+
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: ColorScheme.light(
+          primary: AppColors.primaryColor, // Selected date background
+          onPrimary: AppColors.white, // Selected date text
+          surface: AppColors.white, // Calendar background
+          onSurface: AppColors.black, // Normal date text
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.primaryColor, // Action buttons color
+          ),
+        ),
+      ),
+      child: SizedBox(
+        height: 350.h,
+        child: CalendarDatePicker(
+          initialDate: initialDateToUse,
+          firstDate: now,
+          lastDate: lastDay,
+          onDateChanged: (DateTime date) {
+            if (_hasSlots(date)) {
+              setState(() {
+                selectedDate = date;
+                dateController.text = '${date.day}/${date.month}/${date.year}';
+                timeController.clear();
+                selectedSlots.clear();
+              });
+              Navigator.pop(context);
+              _fetchScheduleForDate(date);
+            } else {
+              Get.snackbar(
+                'No Availability',
+                'No time slots available for this date',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.grey,
+                colorText: AppColors.white,
+                duration: Duration(seconds: 2),
+              );
+            }
+          },
+          selectableDayPredicate: (DateTime date) {
+            return _hasSlots(date);
+          },
         ),
       ),
     );
@@ -456,41 +625,8 @@ class _BookingDialogState extends State<BookingDialog> {
     );
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.primaryColor,
-              onPrimary: AppColors.white,
-              surface: AppColors.white,
-              onSurface: AppColors.black400,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-        dateController.text = '${picked.day}/${picked.month}/${picked.year}';
-        timeController.clear();
-        selectedSlots.clear();
-      });
-
-      await _fetchScheduleForDate(picked);
-    }
-  }
-
   void _showTimeSlotDialog() {
-     num requiredSlots = serviceController.selectedServiceIds.length;
+    num requiredSlots = serviceController.selectedServiceIds.length;
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -545,6 +681,7 @@ class _BookingDialogState extends State<BookingDialog> {
                     ],
                   ),
                 ),
+                SizedBox(height: 8.h),
                 CommonText(
                   text: "Choose your preferred time slots",
                   fontSize: 14.sp,
@@ -588,7 +725,6 @@ class _BookingDialogState extends State<BookingDialog> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          // VALIDATE BEFORE CLOSING
                           if (selectedSlots.length != requiredSlots) {
                             Get.snackbar(
                               'Invalid Selection',
@@ -687,20 +823,19 @@ class _BookingDialogState extends State<BookingDialog> {
             ScheduleSlot slot = availableSlots[index];
             return GestureDetector(
               onTap: () {
-                   num requiredSlots = serviceController.selectedServiceIds.length;
+                num requiredSlots = serviceController.selectedServiceIds.length;
 
-                  if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
-                    // Show warning that they can't select more slots
-                    Get.snackbar(
-                      'Slot Limit Reached',
-                      'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: Colors.orange,
-                      colorText: AppColors.white,
-                      duration: Duration(seconds: 2),
-                    );
-                    return;
-                  }
+                if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
+                  Get.snackbar(
+                    'Slot Limit Reached',
+                    'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.orange,
+                    colorText: AppColors.white,
+                    duration: Duration(seconds: 2),
+                  );
+                  return;
+                }
                 slot.isSelected = !slot.isSelected;
                 if (slot.isSelected) {
                   if (!selectedSlots.contains(slot)) {
@@ -777,7 +912,6 @@ class _BookingDialogState extends State<BookingDialog> {
   }
 
   void _confirmBooking() {
-    // Validation
     if (selectedDate == null || dateController.text.isEmpty) {
       Get.snackbar(
         "Error",
@@ -800,8 +934,7 @@ class _BookingDialogState extends State<BookingDialog> {
       return;
     }
 
-    // NEW VALIDATION: Check if slots match services count
-     num requiredSlots = serviceController.selectedServiceIds.length;
+    num requiredSlots = serviceController.selectedServiceIds.length;
     if (selectedSlots.length != requiredSlots) {
       Get.snackbar(
         "Invalid Time Slots",
@@ -825,7 +958,6 @@ class _BookingDialogState extends State<BookingDialog> {
       return;
     }
 
-    // Rest of your existing code...
     DateTime bookingDateUtc = DateTime.utc(
       selectedDate!.year,
       selectedDate!.month,

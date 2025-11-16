@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/stripe_web_view_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/profile_controller.dart';
@@ -568,10 +569,6 @@ class InvoiceController extends GetxController {
                 children: [
                   CircularProgressIndicator(color: AppColors.primaryColor),
                   SizedBox(height: 16),
-                  Text(
-                    'Processing your booking...',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
                 ],
               ),
             ),

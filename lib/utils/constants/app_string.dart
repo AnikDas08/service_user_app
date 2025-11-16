@@ -27,6 +27,7 @@ class AppString {
   static const String password = "Password";
   static const String continues = "Continue";
   static const String email = "Email";
+  static const String messagenot = "No messages found";
   static const String codeHasBeenSendTo = "Code has been send to";
   static const String otpIsInValid = "Otp is inValid";
   static const String resendCode = "Resend Code";
@@ -230,6 +231,10 @@ class AppString {
   static const String cancel_booking_detail = "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
   static const String booking_id_here = "Booking ID";
   static const String status_show = "View Status";
+  static const String home = "Home";
+  static const String appointment = "Appointment";
+  static const String qrCode = "QR Code";
+  static const String message = "Message";
 
   ///
   static const String saturday_text = "Saturday";
@@ -268,7 +273,7 @@ class AppString {
   static const String contact_support_text =
       "Please Contact us via\nemail for any of your needs";
   static const String contact_support_button = "Contact to Email";
-  static const String setting = "Setting";
+  static const String setting = "Settings ";
   static const String contact_support = "Contact and Support";
   static const String favourite_list = "All Favourite List";
   static const String favourite_item = "No favourite providers found";

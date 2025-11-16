@@ -172,6 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Expanded(
           child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(30.r),
@@ -183,13 +184,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            child: CommonTextField(
-              controller: controller.searchController,
-              hintText: AppString.search,
-              borderRadius: 30,
-              height: 44,
-              hintTextColor: AppColors.black200,
-            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: controller.searchController,
+                    decoration: InputDecoration(
+                      hintText: AppString.search,
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        color: AppColors.black200,
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: 10),
+
+                controller.searchController.text==""
+                    ? IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    size: 18.sp,
+                    color: AppColors.black100,
+                  ),
+                  onPressed: () {
+                    controller.searchController.clear();
+                  },
+                )
+                    : SizedBox.shrink(),
+              ],
+            )
+
           ),
         ),
         SizedBox(width: 10.w),
@@ -331,6 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onRefresh: () async {
                   await controller.fetchServiceProviders();
                 },
+                color: AppColors.primaryColor,
                 child: GridView.builder(
                   shrinkWrap: true,
                   //physics: const NeverScrollableScrollPhysics(),

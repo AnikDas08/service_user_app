@@ -20,75 +20,80 @@ class ServiceDetailsScreen extends StatelessWidget {
     return GetBuilder<ServiceDetailsController>(
       init: ServiceDetailsController(),
       builder: (controller) {
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          body: Obx(() {
-            // Show loading indicator
-            if (controller.isLoading.value) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ),
-              );
-            }
-            return SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomAppBar(
-                        title: AppString.view_profile_text,
-                        rightIcon: Icons.share,
-                        showRightButton: true,
-                        onRightButtonTap: () {
-                          Share.share(
-                            'Check this out! https://example.com',
-                            subject: 'Sharing from my app',
-                          );
-                        },
+        return Container(
+          color: Colors.white,
+          child: SafeArea(
+            child: Scaffold(
+              backgroundColor: AppColors.background,
+              body: Obx(() {
+                // Show loading indicator
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  );
+                }
+                return SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomAppBar(
+                            title: AppString.view_profile_text,
+                            rightIcon: Icons.share,
+                            showRightButton: true,
+                            onRightButtonTap: () {
+                              Share.share(
+                                'Check this out! https://example.com',
+                                subject: 'Sharing from my app',
+                              );
+                            },
+                          ),
+
+                          SizedBox(height: 20.h),
+
+                          // Header with image
+                          _buildHeader(controller),
+                          SizedBox(height: 20.h),
+
+                          // Profile info section
+                          _buildProfileInfo(controller),
+                          SizedBox(height: 20.h),
+
+                          // Services section
+                          _buildServicesList(controller),
+                          SizedBox(height: 20.h),
+
+                          // About me section
+                          _buildAboutMe(controller),
+                          SizedBox(height: 20.h),
+
+                          // Work photos section
+                          _buildWorkPhotos(controller),
+                          SizedBox(height: 20.h),
+
+                          // Reviews section
+                          _buildReviews(controller),
+                          SizedBox(height: 30.h), // Space for bottom button
+                        ],
                       ),
-
-                      SizedBox(height: 20.h),
-
-                      // Header with image
-                      _buildHeader(controller),
-                      SizedBox(height: 20.h),
-
-                      // Profile info section
-                      _buildProfileInfo(controller),
-                      SizedBox(height: 20.h),
-
-                      // Services section
-                      _buildServicesList(controller),
-                      SizedBox(height: 20.h),
-
-                      // About me section
-                      _buildAboutMe(controller),
-                      SizedBox(height: 20.h),
-
-                      // Work photos section
-                      _buildWorkPhotos(controller),
-                      SizedBox(height: 20.h),
-
-                      // Reviews section
-                      _buildReviews(controller),
-                      SizedBox(height: 30.h), // Space for bottom button
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            );
-          }),
+                );
+              }),
 
-          // Bottom button
-          bottomNavigationBar: Obx(() {
-            if (controller.isLoading.value || controller.providerData == null) {
-              return SizedBox.shrink();
-            }
-            return _buildBottomButton(controller);
-          }),
+              // Bottom button
+              bottomNavigationBar: Obx(() {
+                if (controller.isLoading.value || controller.providerData == null) {
+                  return SizedBox.shrink();
+                }
+                return _buildBottomButton(controller);
+              }),
+            ),
+          ),
         );
       },
     );

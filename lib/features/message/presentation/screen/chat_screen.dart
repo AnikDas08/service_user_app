@@ -72,7 +72,7 @@ class ChatListScreen extends StatelessWidget {
                           child: TextField(
                             controller: controller.searchController,
                             onChanged: (value) {
-                              // controller.searchByName(value);
+                              controller.searchByName(value);
                             },
                             decoration: InputDecoration(
                               hintText: AppString.search_text,
@@ -89,15 +89,15 @@ class ChatListScreen extends StatelessWidget {
                         ),
                         controller.searchController.text.isNotEmpty
                             ? IconButton(
-                              icon: Icon(
-                                Icons.close,
-                                size: 18.sp,
-                                color: AppColors.black100,
-                              ),
-                              onPressed: () {
-                                controller.searchController.clear();
-                              },
-                            )
+                          icon: Icon(
+                            Icons.close,
+                            size: 18.sp,
+                            color: AppColors.black100,
+                          ),
+                          onPressed: () {
+                            controller.clearSearch();
+                          },
+                        )
                             : SizedBox.shrink(),
                       ],
                     ),
@@ -110,10 +110,12 @@ class ChatListScreen extends StatelessWidget {
             Expanded(
               child: GetBuilder<ChatControllers>(
                 builder: (_) {
-                  if (controller.chats.isEmpty) {
+                  if (controller.filteredChats.isEmpty) {
                     return Center(
                       child: Text(
-                        AppString.message_not,
+                        controller.searchController.text.isNotEmpty
+                            ? "No chats found"
+                            : AppString.message_not,
                         style: GoogleFonts.roboto(
                           fontSize: 14.sp,
                           color: AppColors.black100,
@@ -123,9 +125,9 @@ class ChatListScreen extends StatelessWidget {
                   }
                   return ListView.builder(
                     controller: controller.scrollController,
-                    itemCount: controller.chats.length,
+                    itemCount: controller.filteredChats.length,
                     itemBuilder: (context, index) {
-                      ChatModel message = controller.chats[index];
+                      ChatModel message = controller.filteredChats[index];
                       return _buildMessageItem(message);
                     },
                   );
@@ -143,9 +145,9 @@ class ChatListScreen extends StatelessWidget {
       onTap: () {
         Get.toNamed(AppRoutes.message,
             parameters: {"id": message.id}
-        ,arguments: {
-          "name":message.participant.name,
-          "image":message.participant.image,
+            ,arguments: {
+              "name":message.participant.name,
+              "image":message.participant.image,
             });
       },
       child: Container(
@@ -166,18 +168,23 @@ class ChatListScreen extends StatelessWidget {
           children: [
             ClipOval(
               child: Container(
-                width: 50.w,
-                height: 50.w,
-                decoration: BoxDecoration(
-                  color: AppColors.black100,
-                  shape: BoxShape.circle,
-                ),
-                child: Image.network(
-                  ApiEndPoint.socketUrl+message.participant.image,
                   width: 50.w,
                   height: 50.w,
-                  fit: BoxFit.cover,
-                )
+                  decoration: BoxDecoration(
+                    color: AppColors.black100,
+                    shape: BoxShape.circle,
+                  ),
+                  child: message.participant.image!=""?Image.network(
+                    ApiEndPoint.socketUrl+message.participant.image,
+                    width: 50.w,
+                    height: 50.w,
+                    fit: BoxFit.cover,
+                  ):Image.asset(
+                      "assets/images/noImage.png",
+                      height: 50.h,
+                      width: 50.w,
+                      fit:BoxFit.cover
+                  )
               ),
             ),
             SizedBox(width: 12.w),
@@ -225,26 +232,6 @@ class ChatListScreen extends StatelessWidget {
                           maxLines: 1,
                         ),
                       ),
-                      // if (message.unreadCount != null &&
-                      //     message.unreadCount! > 0) ...[
-                      //   SizedBox(width: 8.w),
-                      //   Container(
-                      //     padding: EdgeInsets.symmetric(
-                      //       horizontal: 6.w,
-                      //       vertical: 2.h,
-                      //     ),
-                      //     decoration: BoxDecoration(
-                      //       color: AppColors.black50,
-                      //       borderRadius: BorderRadius.circular(10.r),
-                      //     ),
-                      //     child: CommonText(
-                      //       text: message.unreadCount.toString(),
-                      //       fontSize: 8,
-                      //       fontWeight: FontWeight.w500,
-                      //       color: Colors.red,
-                      //     ),
-                      //   ),
-                      // ],
                     ],
                   ),
                 ],

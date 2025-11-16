@@ -20,17 +20,47 @@ class ChatControllers extends GetxController {
   /// page no here
   int page = 1;
 
-  /// Chat List here
-  List chats = [];
+  /// Chat List here (original data)
+  List<ChatModel> chats = [];
+
+  /// Filtered Chat List for search
+  List<ChatModel> filteredChats = [];
 
   /// Chat Scroll Controller
   ScrollController scrollController = ScrollController();
 
   /// Chat Controller Instance create here
   static ChatControllers get instance => Get.put(ChatControllers());
+
   ChatModel? chatModel;
   String name = "";
   String image = "";
+
+  /// Search functionality
+  void searchByName(String query) {
+    if (query.isEmpty) {
+      // Show all chats if search is empty
+      filteredChats = List.from(chats);
+    } else {
+      // Filter chats by participant name or last message
+      filteredChats = chats.where((chat) {
+        final participantName = chat.participant.name.toLowerCase();
+        final lastMessage = chat.latestMessage.text.toLowerCase();
+        final searchQuery = query.toLowerCase();
+
+        return participantName.contains(searchQuery) ||
+            lastMessage.contains(searchQuery);
+      }).toList();
+    }
+    update();
+  }
+
+  /// Clear search
+  void clearSearch() {
+    searchController.clear();
+    filteredChats = List.from(chats);
+    update();
+  }
 
   /// Chat More data Loading function
   Future<void> moreChats() async {
@@ -76,6 +106,14 @@ class ChatControllers extends GetxController {
       }
 
       page = page + 1;
+
+      // Update filtered chats
+      if (searchController.text.isEmpty) {
+        filteredChats = List.from(chats);
+      } else {
+        searchByName(searchController.text);
+      }
+
       status = Status.completed;
       update();
     } else {
@@ -85,7 +123,7 @@ class ChatControllers extends GetxController {
     }
   }
 
-  /// Chat data Update  Socket listener
+  /// Chat data Update Socket listener
   listenChat() async {
     SocketServices.on("update-chatlist::${LocalStorage.userId}", (data) {
       page = 1;
@@ -95,16 +133,30 @@ class ChatControllers extends GetxController {
         chats.add(ChatModel.fromJson(item));
       }
 
+      // Update filtered chats
+      if (searchController.text.isEmpty) {
+        filteredChats = List.from(chats);
+      } else {
+        searchByName(searchController.text);
+      }
+
       status = Status.completed;
       update();
     });
   }
 
-  /// Controller on Init¬
+  /// Controller on Init
   @override
   void onInit() {
     getChatRepo();
     listenChat();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    scrollController.dispose();
+    super.onClose();
   }
 }

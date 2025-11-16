@@ -228,7 +228,7 @@ Map<String, String> english = {
   AppString.language_text: "Language",
   AppString.contact_support_text: "Please Contact us via\nemail for any of your needs",
   AppString.contact_support_button: "Contact to Email",
-  AppString.setting: "Setting",
+  AppString.setting: "Settings ",
   AppString.contact_support: "Contact and Support",
   AppString.favourite_list: "All Favourite List",
   AppString.favourite_item: "No favourite providers found",

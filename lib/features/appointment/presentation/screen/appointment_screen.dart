@@ -33,7 +33,7 @@ class AppointmentScreen extends StatelessWidget {
                   showBackButton: false,
                 ),
 
-                // Calendar
+                // Calendar - Show for ALL tabs
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
@@ -133,8 +133,6 @@ class AppointmentScreen extends StatelessWidget {
 
                 SizedBox(height: 12.h),
 
-
-
                 SizedBox(height: 8.h),
 
                 // Booking List with Loading State and Pagination
@@ -169,18 +167,21 @@ class AppointmentScreen extends StatelessWidget {
                     onRefresh: () => controller.fetchAllBookings(),
                     color: AppColors.primaryColor,
                     child: ListView.builder(
-                      controller: controller.scrollController, // Important for pagination!
+                      controller: controller.scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      itemCount: controller.getFilteredBookings().length +
-                          (controller.isLoadingMore ? 1 : 0), // Add 1 for loading indicator
+                      itemCount:
+                      controller.getFilteredBookings().length +
+                          (controller.isLoadingMore ? 1 : 0),
                       itemBuilder: (context, index) {
                         // Show loading indicator at the end
-                        if (index == controller.getFilteredBookings().length) {
+                        if (index ==
+                            controller.getFilteredBookings().length) {
                           return _buildLoadingIndicator();
                         }
 
-                        final booking = controller.getFilteredBookings()[index];
+                        final booking =
+                        controller.getFilteredBookings()[index];
                         return _buildBookingCard(booking, controller);
                       },
                     ),
@@ -230,7 +231,6 @@ class AppointmentScreen extends StatelessWidget {
             arguments: {'bookingId': controller.getFullBookingId(booking)},
           );
         } else if (controller.selectedFilter == 1) {
-          // Pass booking ID as argument
           Get.toNamed(
             AppRoutes.view_detail_pending,
             arguments: {'bookingId': controller.getFullBookingId(booking)},
@@ -361,12 +361,6 @@ class AppointmentScreen extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                             ),
                             SizedBox(width: 12.w),
-                            // CommonText(
-                            //   text: 'RSD: ${controller.getAmount(booking)}',
-                            //   fontSize: 12.sp,
-                            //   color: AppColors.black400,
-                            //   fontWeight: FontWeight.w500,
-                            // ),
                           ],
                         ),
                       ),

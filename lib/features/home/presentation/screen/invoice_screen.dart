@@ -259,6 +259,8 @@ class InvoiceScreen extends StatelessWidget {
     );
   }
 
+  // Replace the _buildPriceSummary method in invoice_screen.dart
+
   Widget _buildPriceSummary(InvoiceController controller) {
     return Obx(() => controller.isLoadingFees.value
         ? Center(
@@ -403,14 +405,14 @@ class InvoiceScreen extends StatelessWidget {
           ],
         ),
 
-        // Credit
+        // Credit Available (not applied)
         SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CommonText(
               textAlign: TextAlign.start,
-              text: "Credit",
+              text: "Available Credit",
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
               color: AppColors.black400,
@@ -440,17 +442,30 @@ class InvoiceScreen extends StatelessWidget {
         ),
         SizedBox(height: 10.h),
 
-        // Total Price
+        // Total Price with Credit Applied info
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CommonText(
-              textAlign: TextAlign.start,
-              text: "Total Price",
-              fontWeight: FontWeight.w600,
-              fontSize: 16.sp,
-              color: AppColors.primaryColor,
+            Row(
+              children: [
+                CommonText(
+                  textAlign: TextAlign.start,
+                  text: "Total Price",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16.sp,
+                  color: AppColors.primaryColor,
+                ),
+                if (controller.creditApplied.value > 0)
+                  CommonText(
+                    textAlign: TextAlign.start,
+                    text: " (Credit Applied: ${controller.creditApplied.value})",
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14.sp,
+                    color: Colors.blue,
+                  ),
+              ],
             ),
+            // Show credit applied if any
             SizedBox(
               width: 100.w,
               child: CommonText(

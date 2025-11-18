@@ -136,6 +136,14 @@ class PendingViewDetailsController extends GetxController {
 
     // Rating and reviews (mock data - not in current API response)
   }
+  Future<void> getPenaltyData()async{
+    try{
+
+    }
+    catch(e){
+      final response = await ApiService.delete('system');
+    }
+  }
 
   // Cancel booking
   Future<void> cancelBooking() async {

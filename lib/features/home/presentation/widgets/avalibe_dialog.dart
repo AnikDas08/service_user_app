@@ -621,7 +621,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
         'No Service Selected',
         'Please select service type first',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.primaryColor,
         colorText: AppColors.white,
         duration: Duration(seconds: 2),
       );
@@ -632,7 +632,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
         'Slot Limit Reached',
         'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
+        backgroundColor: AppColors.primaryColor,
         colorText: AppColors.white,
         duration: Duration(seconds: 2),
       );
@@ -706,7 +706,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                 'No Availability',
                 'No time slots available for this date',
                 snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.orange,
+                backgroundColor: AppColors.primaryColor,
                 colorText: AppColors.white,
               );
             }

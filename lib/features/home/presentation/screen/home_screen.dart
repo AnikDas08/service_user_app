@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/component/button/common_button.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/text/common_text.dart';
-import '../../../../component/text_field/common_text_field.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../controller/home_controller.dart';
 import '../widgets/bottom_sheet.dart';
@@ -108,14 +108,15 @@ class _HomeScreenState extends State<HomeScreen> {
             shape: BoxShape.circle,
           ),
           child: Obx(
-                ()=> ClipOval(
-              child: controller.image.value!=""?Image.network(
-                ApiEndPoint.socketUrl+controller.image.value,
+                () => ClipOval(
+              child: controller.image.value != ""
+                  ? Image.network(
+                ApiEndPoint.socketUrl + controller.image.value,
                 width: 46.w,
                 height: 46.w,
                 fit: BoxFit.cover,
               )
-                  :Image.asset(
+                  : Image.asset(
                 "assets/images/profile_image.jpg",
                 width: 46.w,
                 height: 46.w,
@@ -133,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
-                    ()=>CommonText(
+                    () => CommonText(
                   text: controller.name.value,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -152,16 +153,55 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+
+        // Notification Icon with Badge
         GestureDetector(
           onTap: () {
             Get.toNamed(AppRoutes.notifications);
           },
-          child: Icon(
-            Icons.notifications_outlined,
-            color: AppColors.black300,
-            size: 24.sp,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Icon(
+                Icons.notifications_outlined,
+                color: AppColors.black300,
+                size: 24.sp,
+              ),
+              // Notification Badge (Static)
+              Positioned(
+                right: -4.w,
+                top: -4.h,
+                child: Container(
+                  padding: EdgeInsets.all(4.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.background,
+                      width: 1.5.w,
+                    ),
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 16.w,
+                    minHeight: 16.h,
+                  ),
+                  child: Center(
+                    child: Text(
+                      '5',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.w600,
+                        height: 1,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        )
+        ),
       ],
     );
   }

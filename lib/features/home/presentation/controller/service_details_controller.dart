@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/home/data/model/provider_response.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
 import 'package:haircutmen_user_app/services/api/api_service.dart';
+import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../config/api/api_end_point.dart';
 import '../../../../services/storage/storage_services.dart';
@@ -249,7 +250,7 @@ class ServiceDetailsController extends GetxController {
               ? "Added to favorites"
               : "Removed from favorites",
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.primaryColor,
           colorText: Colors.white,
           duration: Duration(seconds: 2),
         );
@@ -526,6 +527,8 @@ class ServiceDetailsController extends GetxController {
         'No Service Selected',
         'Please select at least one service',
         snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.white,
+        backgroundColor: AppColors.primaryColor,
       );
       return;
     }

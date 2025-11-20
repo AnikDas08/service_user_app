@@ -130,19 +130,8 @@ class AppointmentController extends GetxController {
   // Fetch bookings by status with pagination
   Future<void> fetchBookingsByStatus(String status, {num page = 1}) async {
     try {
-      String dateParam = '';
-
-      // Only apply date filter for Upcoming bookings
-      // Pending and Canceled will fetch ALL data without date filtering
-      if (status == 'Upcoming' && selectedDay != null) {
-        DateTime date = selectedDay!;
-        String formattedDate =
-        DateTime.utc(date.year, date.month, date.day).toIso8601String();
-        dateParam = '&date=$formattedDate';
-      }
-
-      final response =
-      await ApiService.get('booking?status=$status&page=$page$dateParam');
+      // Remove date filtering completely - fetch all bookings for all statuses
+      final response = await ApiService.get('booking?status=$status&page=$page');
 
       if (response.statusCode == 200) {
         final List<dynamic> bookingsData = response.data['data'] ?? [];
@@ -245,19 +234,10 @@ class AppointmentController extends GetxController {
     return 'Showing $showing of $total';
   }
 
-  // Calendar day selected
+  // Calendar day selected - disabled, no selection allowed
   void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
-    selectedDay = selectedDate;
-    focusedDay = focusedDate;
-    update();
-
-    print('Selected date: ${selectedDate.toIso8601String()}');
-
-    // Only refetch if on Upcoming tab (where date filter applies)
-    // For Pending and Canceled, just update the selected date visually
-    if (selectedFilter == 0) {
-      fetchAllBookings();
-    }
+    // Do nothing - dates are not selectable anymore
+    // Calendar is now display-only with gray dates
   }
 
   // Calendar page changed

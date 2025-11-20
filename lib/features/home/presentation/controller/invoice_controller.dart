@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:haircutmen_user_app/component/text/common_text.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/stripe_web_view_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/profile_controller.dart';
@@ -288,7 +287,7 @@ class InvoiceController extends GetxController {
           'Success',
           'Promo code applied! You saved RSD ${discount.value}',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.primaryColor,
           colorText: Colors.white,
         );
       } else {

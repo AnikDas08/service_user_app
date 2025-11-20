@@ -33,7 +33,7 @@ class AppointmentScreen extends StatelessWidget {
                   showBackButton: false,
                 ),
 
-                // Calendar - Show for ALL tabs
+                // Calendar - Show for ALL tabs (display only, dates are gray)
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
@@ -52,30 +52,51 @@ class AppointmentScreen extends StatelessWidget {
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: controller.focusedDay,
                     selectedDayPredicate: (day) {
-                      return isSameDay(controller.selectedDay, day);
+                      // No day is selected - all dates are gray
+                      return false;
                     },
                     calendarFormat: CalendarFormat.week,
                     startingDayOfWeek: StartingDayOfWeek.sunday,
-                    onDaySelected: controller.onDaySelected,
+                    // Disable day selection
+                    onDaySelected: (selectedDate, focusedDate) {
+                      // Do nothing - dates are not clickable
+                    },
                     onPageChanged: (focusedDay) {
                       controller.onPageChanged(focusedDay);
                     },
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
-                      selectedDecoration: BoxDecoration(
-                        color: AppColors.primaryColor,
+                      // All dates are gray (default style)
+                      defaultDecoration: BoxDecoration(
                         shape: BoxShape.circle,
                       ),
-                      todayDecoration: BoxDecoration(
-                        color: AppColors.primaryColor.withOpacity(0.5),
-                        shape: BoxShape.circle,
-                      ),
-                      defaultTextStyle: TextStyle(fontSize: 14.sp),
-                      weekendTextStyle: TextStyle(fontSize: 14.sp),
-                      selectedTextStyle: TextStyle(
-                        color: Colors.white,
+                      defaultTextStyle: TextStyle(
                         fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[400], // Gray color for dates
+                      ),
+                      // Weekend dates are also gray
+                      weekendDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      weekendTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400], // Gray color for weekend dates
+                      ),
+                      // Today's date is also gray
+                      todayDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      todayTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400], // Gray color for today
+                      ),
+                      // No selected decoration
+                      selectedDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      selectedTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400],
                       ),
                     ),
                     headerStyle: HeaderStyle(
@@ -89,6 +110,8 @@ class AppointmentScreen extends StatelessWidget {
                         color: AppColors.primaryColor,
                       ),
                     ),
+                    // Disable gestures for day selection
+                    availableGestures: AvailableGestures.horizontalSwipe,
                   ),
                 ),
                 SizedBox(height: 20),

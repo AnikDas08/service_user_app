@@ -36,6 +36,7 @@ class ChatControllers extends GetxController {
   String name = "";
   String image = "";
 
+
   /// Search functionality
   void searchByName(String query) {
     if (query.isEmpty) {
@@ -72,6 +73,19 @@ class ChatControllers extends GetxController {
       isMoreLoading = false;
       update();
     }
+  }
+
+  /// Refresh Chat List
+  Future<void> refreshChatList() async {
+    // Reset page to 1
+    page = 1;
+
+    // Clear existing chats
+    chats.clear();
+    filteredChats.clear();
+
+    // Fetch fresh data
+    await getChatRepo();
   }
 
   /// Chat data Loading function

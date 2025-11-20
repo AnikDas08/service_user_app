@@ -8,6 +8,7 @@ import 'package:haircutmen_user_app/features/home/presentation/screen/home_scree
 import 'package:haircutmen_user_app/features/message/presentation/screen/chat_screen.dart';
 import 'package:haircutmen_user_app/features/scan/presentation/screen/scan_screen.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
+import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../profile/presentation/screen/profile_screen.dart';
 
@@ -80,7 +81,45 @@ class HomeNavScreen extends StatelessWidget {
                   return BottomNavigationBarItem(
                     icon: Padding(
                       padding: const EdgeInsets.only(bottom: 10, top: 10),
-                      child: SvgPicture.asset(
+                      child:
+                      _navItems[index]["label"] == AppString.message
+                          ? Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          SvgPicture.asset(
+                            _navItems[index]["icon"]!,
+                            width: 22,
+                            height: 22,
+                            colorFilter: ColorFilter.mode(
+                              controller.selectedIndex == index
+                                  ? AppColors.primaryColor
+                                  : Colors.black,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+
+                          /// 🔴 PERFECT BADGE
+                          Positioned(
+                            right: -6.r,   // Proper right alignment
+                            top: -8.r,     // Proper top alignment
+                            child: Container(
+                              padding: EdgeInsets.all(4.r), // Ensures circle shape
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: CommonText(
+                                text: "3",      // dynamic value here
+                                color: Colors.white,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                          :
+                      SvgPicture.asset(
                         _navItems[index]["icon"]!,
                         width: 22,
                         height: 22,

@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/setting/data/model/tearm_condition_model.dart';
-import '../../data/model/html_model.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../config/api/api_end_point.dart';
 import '../../../../utils/app_utils.dart';

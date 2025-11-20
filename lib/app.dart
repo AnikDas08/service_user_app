@@ -12,28 +12,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      ensureScreenSize: true,
+      designSize: const Size(428, 926),
       minTextAdapt: true,
       splitScreenMode: true,
-      designSize: const Size(428, 926),
-      child: GetMaterialApp(
-        debugShowCheckedModeBanner: false,
-        navigatorKey: Get.key,
-        defaultTransition: Transition.fadeIn,
-        theme: themeData,
-        translations: Language(),
-        locale: const Locale("en"),
-        transitionDuration: const Duration(milliseconds: 300),
-        initialRoute: AppRoutes.splash,
-        getPages: AppRoutes.routes,
-        /// 👇 এখানে builder override করো
-        builder: (context, child) {
-          return MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: child!,
-          );
-        },
-      ),
+      builder: (context, child) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          defaultTransition: Transition.fadeIn,
+          theme: themeData,
+          translations: Language(),
+          locale: const Locale("en"),
+          transitionDuration: const Duration(milliseconds: 300),
+          initialRoute: AppRoutes.splash,
+          getPages: AppRoutes.routes,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!,
+            );
+          },
+        );
+      },
     );
+
   }
 }

@@ -11,6 +11,7 @@ import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../profile/presentation/screen/profile_screen.dart';
+import '../controller/home_controller.dart';
 
 class HomeNavScreen extends StatelessWidget {
   HomeNavScreen({super.key});
@@ -109,7 +110,7 @@ class HomeNavScreen extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: CommonText(
-                                text: "3",      // dynamic value here
+                                text: Get.find<HomeController>().message.value.toString(),      // dynamic value here
                                 color: Colors.white,
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,

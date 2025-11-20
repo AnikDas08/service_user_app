@@ -592,6 +592,7 @@ class InvoiceController extends GetxController {
         "subTotal": subTotal.value,
         "creditApplied": creditApplied.value,
       };
+      print("Boking : 😂😂😂😂 ${bookingBody}");
 
       if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
         bookingBody["promoCode"] = validPromoCode.value;

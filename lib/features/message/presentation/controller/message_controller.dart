@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../home/presentation/controller/home_controller.dart';
 import '../../data/model/message_model.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../services/socket/socket_service.dart';
@@ -233,6 +234,7 @@ class MessageController extends GetxController {
   listenMessage(String chatId) async {
     SocketServices.on('getMessage::$chatId', (data) {
       print("socket data : $data");
+      Get.find<HomeController>().countMessa();
 
       // Check if message already exists to avoid duplicates
       String messageId = data['_id'] ?? '';

@@ -3,6 +3,7 @@ import 'package:haircutmen_user_app/features/appointment/presentation/controller
 
 import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
+import '../../../../services/storage/storage_services.dart';
 
 class PendingViewDetailsController extends GetxController {
   // Loading state - make it observable
@@ -24,6 +25,9 @@ class PendingViewDetailsController extends GetxController {
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
 
+  // Penalty time from system settings
+  var penaltyTime = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -32,6 +36,7 @@ class PendingViewDetailsController extends GetxController {
       String fullBookingId = Get.arguments['bookingId'];
       fetchBookingDetails(fullBookingId);
     }
+    _fetchSystemFees();
   }
 
   // Fetch booking details from API
@@ -59,6 +64,29 @@ class PendingViewDetailsController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> _fetchSystemFees() async {
+    try {
+      final response = await ApiService.get(
+        "system",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      print("📡 System Fees Response: ${response.statusCode}");
+      print("📦 System Fees Data: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final data = response.data['data'];
+        // Store penalty time (in hours)
+        penaltyTime.value = data['penaltyTime'] ?? 0;
+        print("⏰ Penalty Time: ${penaltyTime.value} hours");
+      }
+    } catch (e) {
+      print("Error fetching system fees: $e");
     }
   }
 
@@ -110,8 +138,8 @@ class PendingViewDetailsController extends GetxController {
 
         for (var slot in bookingData['slots']) {
           DateTime startTime = DateTime.parse(slot['start']);
-           num hour = startTime.hour;
-           num minute = startTime.minute;
+          num hour = startTime.hour;
+          num minute = startTime.minute;
           String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
           timeSlots.add(formattedTime);
         }
@@ -133,15 +161,49 @@ class PendingViewDetailsController extends GetxController {
     if (bookingData['_id'] != null && bookingData['_id'].toString().length >= 4) {
       bookingId.value = bookingData['_id'].toString().substring(bookingData['_id'].toString().length - 4);
     }
-
-    // Rating and reviews (mock data - not in current API response)
   }
-  Future<void> getPenaltyData()async{
-    try{
 
+  // Check if cancellation is within penalty time
+  bool isWithinPenaltyTime() {
+    try {
+      if (bookingData['slots'] == null || bookingData['slots'].isEmpty) {
+        return false;
+      }
+
+      // Get the booking start time
+      DateTime bookingStartTime = DateTime.parse(bookingData['slots'][0]['start']);
+
+      // Get current time
+      DateTime currentTime = DateTime.now();
+
+      // Calculate the penalty deadline (booking time minus penalty hours)
+      DateTime penaltyDeadline = bookingStartTime.subtract(Duration(hours: penaltyTime.value));
+
+      print("🕐 Current Time: $currentTime");
+      print("📅 Booking Start Time: $bookingStartTime");
+      print("⚠️ Penalty Deadline: $penaltyDeadline");
+      print("⏰ Penalty Time: ${penaltyTime.value} hours");
+
+      // Check if current time is after penalty deadline and before booking time
+      // This means we're within the penalty period
+      bool withinPenalty = currentTime.isAfter(penaltyDeadline) && currentTime.isBefore(bookingStartTime);
+
+      print("💰 Within Penalty Period: $withinPenalty");
+
+      return withinPenalty;
+
+    } catch (e) {
+      print("Error checking penalty time: $e");
+      return false;
     }
-    catch(e){
-      final response = await ApiService.delete('system');
+  }
+
+  // Get the appropriate cancellation message
+  String getCancellationMessage() {
+    if (isWithinPenaltyTime()) {
+      return "Are you sure you want to cancel this appointment? Please note, a 30% cancellation fee will apply. If you like to proceed then click yes for cancel.";
+    } else {
+      return "Are you sure you want to cancel this appointment?";
     }
   }
 

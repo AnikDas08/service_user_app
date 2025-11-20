@@ -104,24 +104,23 @@ class _HomeScreenState extends State<HomeScreen> {
         Container(
           width: 48.w,
           height: 48.w,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
+          decoration: const BoxDecoration(shape: BoxShape.circle),
           child: Obx(
-                () => ClipOval(
-              child: controller.image.value != ""
-                  ? Image.network(
-                ApiEndPoint.socketUrl + controller.image.value,
-                width: 46.w,
-                height: 46.w,
-                fit: BoxFit.cover,
-              )
-                  : Image.asset(
-                "assets/images/profile_image.jpg",
-                width: 46.w,
-                height: 46.w,
-                fit: BoxFit.cover,
-              ),
+            () => ClipOval(
+              child:
+                  controller.image.value != ""
+                      ? Image.network(
+                        ApiEndPoint.socketUrl + controller.image.value,
+                        width: 46.w,
+                        height: 46.w,
+                        fit: BoxFit.cover,
+                      )
+                      : Image.asset(
+                        "assets/images/profile_image.jpg",
+                        width: 46.w,
+                        height: 46.w,
+                        fit: BoxFit.cover,
+                      ),
             ),
           ),
         ),
@@ -134,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
-                    () => CommonText(
+                () => CommonText(
                   text: controller.name.value,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -159,48 +158,52 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () {
             Get.toNamed(AppRoutes.notifications);
           },
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Icon(
-                Icons.notifications_outlined,
-                color: AppColors.black300,
-                size: 24.sp,
-              ),
-              // Notification Badge (Static)
-              Positioned(
-                right: -4.w,
-                top: -4.h,
-                child: Container(
-                  padding: EdgeInsets.all(4.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.background,
-                      width: 1.5.w,
-                    ),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 16.w,
-                    minHeight: 16.h,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '5',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w600,
-                        height: 1,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+          child: Obx(
+                () => Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(
+                  Icons.notifications_outlined,
+                  color: AppColors.black300,
+                  size: 24.sp,
                 ),
-              ),
-            ],
-          ),
+
+                /// Show badge only if count > 0
+                if (controller.notificationCount.value > 0)
+                  Positioned(
+                    right: -4.w,
+                    top: -4.h,
+                    child: Container(
+                      padding: EdgeInsets.all(4.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.background,
+                          width: 1.5.w,
+                        ),
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 16.w,
+                        minHeight: 16.h,
+                      ),
+                      child: Center(
+                        child: Text(
+                          controller.notificationCount.value.toString(),
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          )
+
         ),
       ],
     );
@@ -233,30 +236,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     decoration: InputDecoration(
                       hintText: AppString.search,
                       border: InputBorder.none,
-                      hintStyle: TextStyle(
-                        color: AppColors.black200,
-                      ),
+                      hintStyle: TextStyle(color: AppColors.black200),
                     ),
                   ),
                 ),
 
                 SizedBox(width: 10),
 
-                controller.searchController.text==""
+                controller.searchController.text == ""
                     ? IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    size: 18.sp,
-                    color: AppColors.black100,
-                  ),
-                  onPressed: () {
-                    controller.searchController.clear();
-                  },
-                )
+                      icon: Icon(
+                        Icons.close,
+                        size: 18.sp,
+                        color: AppColors.black100,
+                      ),
+                      onPressed: () {
+                        controller.searchController.clear();
+                      },
+                    )
                     : SizedBox.shrink(),
               ],
-            )
-
+            ),
           ),
         ),
         SizedBox(width: 10.w),
@@ -281,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 24.w,
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -294,9 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
-                child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ),
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
               ),
             );
           }
@@ -415,13 +413,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       id: provider.id,
                       name: provider.name,
                       service: provider.category,
-                      distance: "${provider.serviceDistance.toStringAsFixed(2)}km",
+                      distance:
+                          "${provider.serviceDistance.toStringAsFixed(2)}km",
                       rating: provider.reviews.averageRating.toString(),
                       reviews: provider.reviews.totalReviews.toString(),
                       price: "RSD ${provider.price.toStringAsFixed(0)}",
-                      imageUrl: provider.image != null
-                          ? ApiEndPoint.socketUrl + provider.image!
-                          : "assets/images/item_image.png",
+                      imageUrl:
+                          provider.image != null
+                              ? ApiEndPoint.socketUrl + provider.image!
+                              : "assets/images/item_image.png",
                       onTap: () => controller.onProviderTap(provider.id),
                       onFavorite: () => controller.favouriteItem(provider.id),
                     );
@@ -441,9 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 20.h),
-            child: CircularProgressIndicator(
-              color: AppColors.primaryColor,
-            ),
+            child: CircularProgressIndicator(color: AppColors.primaryColor),
           ),
         );
       }

@@ -105,7 +105,7 @@ class ViewDetailsPending extends StatelessWidget {
                                     ),
                                     SizedBox(width: 4.w),
                                     Obx(
-                                      () => CommonText(
+                                          () => CommonText(
                                         text: controller.rating.value.toString(),
                                         fontSize: 12.sp,
                                         color: AppColors.black300,
@@ -114,7 +114,7 @@ class ViewDetailsPending extends StatelessWidget {
                                     ),
                                     SizedBox(width: 12.w),
                                     Obx(
-                                      () => CommonText(
+                                          () => CommonText(
                                         text: "(${controller.reviewCount.value.toString()})",
                                         fontSize: 12.sp,
                                         color: AppColors.black200,
@@ -249,8 +249,8 @@ class ViewDetailsPending extends StatelessWidget {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           content: CommonText(
-                            maxLines: 4,
-                            text: AppString.cancel_booking_detail,
+                            maxLines: 5,
+                            text: controller.getCancellationMessage(),
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w400,
                           ),
@@ -274,7 +274,6 @@ class ViewDetailsPending extends StatelessWidget {
                                     onTap: () async {
                                       // Cancel the booking first
                                       await controller.cancelBooking();
-
                                     },
                                   ),
                                 ),

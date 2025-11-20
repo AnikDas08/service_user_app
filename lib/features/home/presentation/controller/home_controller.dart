@@ -7,10 +7,13 @@ import '../../../../utils/app_utils.dart';
 import '../../../profile/data/profiles_model.dart';
 import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
+import 'home_nav_controller.dart';
 
 class HomeController extends GetxController {
   TextEditingController searchController = TextEditingController();
   static final HomeController instance = HomeController();
+  RxInt notificationCount = 0.obs;
+  RxInt message = 0.obs;
 
   // Favorite list using provider IDs
   final RxList<String> favoriteIds = <String>[].obs;
@@ -52,7 +55,54 @@ class HomeController extends GetxController {
     fetchServiceProviders();
     getProfile();
     fetchFavorites();
+    countNotification();
     searchController.addListener(_onSearchChanged);
+  }
+
+  Future<void> countNotification()async{
+    try{
+      final response = await ApiService.get(
+          "notifications/amount",
+          header: {
+            "Content-Type": "application/json",
+          }
+      );
+      if(response.statusCode==200){
+        updateCount(response.data['data']);
+
+      }
+    }
+    catch(e){
+
+    }
+  }
+
+  void updateMessage(int count) {
+    message.value = count;
+    print("values :$message");
+  }
+
+  Future<void> countMessa()async{
+    try{
+      final response = await ApiService.get(
+          "messages/get-unread-messages-amount",
+          header: {
+            "Content-Type": "application/json",
+          }
+      );
+      if(response.statusCode==200){
+        updateMessage(response.data['data']);
+        Get.find<HomeNavController>().refresh();
+      }
+    }
+    catch(e){
+
+    }
+  }
+
+  void updateCount(int count) {
+    notificationCount.value = count;
+    print("data :$count");
   }
 
   void _onSearchChanged() {
@@ -87,6 +137,8 @@ class HomeController extends GetxController {
       print("Error fetching favorites: $e");
     }
   }
+
+
 
   // Add/Remove favorite with API call
   Future<void> favouriteItem(String providerId) async {

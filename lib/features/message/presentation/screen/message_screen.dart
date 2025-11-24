@@ -6,12 +6,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/other_widgets/common_loader.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
+import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
 import 'package:haircutmen_user_app/features/message/data/model/message_model.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../controller/chat_controller.dart';
 import '../controller/message_controller.dart';
 
 class MessageScreen extends StatelessWidget {
@@ -84,7 +86,11 @@ class MessageScreen extends StatelessWidget {
           size: 24.sp,
           color: AppColors.textColor,
         ),
-        onPressed: () => Get.back(),
+        onPressed: (){
+          Get.find<HomeController>().countMessa();
+          Get.find<ChatControllers>().refreshChatList();
+          Get.back();
+        },
       ),
       title: Row(
         children: [

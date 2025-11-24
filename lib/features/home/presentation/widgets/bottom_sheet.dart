@@ -35,115 +35,117 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
-          minHeight: 200,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
+      child: SafeArea(
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
+            minHeight: 200,
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar and close button
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(),
-                  Container(
-                    width: 40.w,
-                    height: 4.h,
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: AppColors.black100,
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => Get.back(),
-                    child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              topRight: Radius.circular(20.r),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar and close button
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    Container(
+                      width: 40.w,
+                      height: 4.h,
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: AppColors.red50,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        size: 24.sp,
-                        color: AppColors.primaryColor,
+                        color: AppColors.black100,
+                        borderRadius: BorderRadius.circular(2.r),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Content
-            Flexible(
-              child: SingleChildScrollView(
-                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Category Section
-                    _buildSectionTitle(AppString.category),
-                    SizedBox(height: 12.h),
-                    _buildCategoryDropdown(),
-
-                    SizedBox(height: 16.h),
-
-                    // Subcategory Section (only show if category is selected)
-                    if (selectedCategoryId != null) ...[
-                      _buildSectionTitle("Subcategory"),
-                      SizedBox(height: 12.h),
-                      _buildSubCategoryDropdown(),
-                      SizedBox(height: 16.h),
-                    ],
-
-                    // Date Section
-                    _buildDateField(),
-
-                    SizedBox(height: 16.h),
-
-                    // Time Section
-                    _buildTimeField(),
-
-                    SizedBox(height: 16.h),
-
-                    // Location Section
-                    _buildSectionTitle(AppString.location_text),
-                    SizedBox(height: 12.h),
-                    CommonTextField(
-                      controller: locationControllers,
-                      hintText: AppString.hint_type_here,
+                    GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: AppColors.red50,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: 24.sp,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
                     ),
-
-                    SizedBox(height: 16.h),
-
-                    // Price Section
-                    _buildSectionTitle(AppString.price),
-                    SizedBox(height: 5.h),
-                    _buildPriceSlider(),
-
-                    SizedBox(height: 30.h),
-
-                    // Apply Button
-                    _buildApplyButton(),
-                    SizedBox(height: 20.h),
                   ],
                 ),
               ),
-            ),
-          ],
+        
+              // Content
+              Flexible(
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Category Section
+                      _buildSectionTitle(AppString.category),
+                      SizedBox(height: 12.h),
+                      _buildCategoryDropdown(),
+        
+                      SizedBox(height: 16.h),
+        
+                      // Subcategory Section (only show if category is selected)
+                      if (selectedCategoryId != null) ...[
+                        _buildSectionTitle("Subcategory"),
+                        SizedBox(height: 12.h),
+                        _buildSubCategoryDropdown(),
+                        SizedBox(height: 16.h),
+                      ],
+        
+                      // Date Section
+                      _buildDateField(),
+        
+                      SizedBox(height: 16.h),
+        
+                      // Time Section
+                      _buildTimeField(),
+        
+                      SizedBox(height: 16.h),
+        
+                      // Location Section
+                      _buildSectionTitle(AppString.location_text),
+                      SizedBox(height: 12.h),
+                      CommonTextField(
+                        controller: locationControllers,
+                        hintText: AppString.hint_type_here,
+                      ),
+        
+                      SizedBox(height: 16.h),
+        
+                      // Price Section
+                      _buildSectionTitle(AppString.price),
+                      SizedBox(height: 5.h),
+                      _buildPriceSlider(),
+        
+                      SizedBox(height: 30.h),
+        
+                      // Apply Button
+                      _buildApplyButton(),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

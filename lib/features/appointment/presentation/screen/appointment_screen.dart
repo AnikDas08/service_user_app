@@ -258,7 +258,12 @@ class AppointmentScreen extends StatelessWidget {
             AppRoutes.view_detail_pending,
             arguments: {'bookingId': controller.getFullBookingId(booking)},
           );
-        } else {}
+        } else {
+          Get.toNamed(
+            AppRoutes.canceldetails_screen,
+            arguments: {'bookingId': controller.getFullBookingId(booking)},
+          );
+        }
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),

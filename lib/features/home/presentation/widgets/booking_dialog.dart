@@ -13,8 +13,8 @@ import '../controller/service_details_controller.dart';
 
 class ScheduleSlot {
   final String id;
-  final DateTime start;
-  final DateTime end;
+  final DateTime start;  // UTC time from API
+  final DateTime end;    // UTC time from API
   bool isSelected;
 
   ScheduleSlot({
@@ -24,16 +24,24 @@ class ScheduleSlot {
     this.isSelected = false,
   });
 
+  // ✅ FIX: Use LOCAL time for display
   String get displayTime {
+    // Convert UTC to local time
     DateTime localStart = start.toLocal();
     DateTime localEnd = end.toLocal();
 
-    String startHour = start.hour.toString().padLeft(2, '0');
-    String startMinute = start.minute.toString().padLeft(2, '0');
-    String endHour = end.hour.toString().padLeft(2, '0');
-    String endMinute = end.minute.toString().padLeft(2, '0');
+    // ✅ Use localStart and localEnd (NOT start and end)
+    String startHour = localStart.hour.toString().padLeft(2, '0');
+    String startMinute = localStart.minute.toString().padLeft(2, '0');
+    String endHour = localEnd.hour.toString().padLeft(2, '0');
+    String endMinute = localEnd.minute.toString().padLeft(2, '0');
+
     return '$startHour:$startMinute - $endHour:$endMinute';
   }
+
+  // Optional: Add getters for local times
+  DateTime get localStart => start.toLocal();
+  DateTime get localEnd => end.toLocal();
 }
 
 class BookingDialog extends StatefulWidget {

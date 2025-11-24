@@ -6,6 +6,7 @@ import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/home/widget/custom_button_home.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../../component/image_view/imageview_class.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
@@ -109,18 +110,27 @@ class ServiceDetailsScreen extends StatelessWidget {
       imageUrl = controller.providerData!.serviceImages.first;
     }
 
-    return SizedBox(
-      width: double.infinity,
-      child: ClipRRect(
-        borderRadius: BorderRadius.all(Radius.circular(10.r)),
-        child: controller.providerImage!=null
-            ? Image.network(
-          ApiEndPoint.socketUrl+controller.providerImage!,
-          width: double.infinity,
-          height: 147.h,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Center(
+    return GestureDetector(
+      onTap: () {
+        if (controller.providerImage != null) {
+          ImageViewerScreen.openSingle(
+            Get.context!,
+            ApiEndPoint.socketUrl + controller.providerImage!,
+          );
+        }
+      },
+      child: SizedBox(
+        width: double.infinity,
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(10.r)),
+          child: controller.providerImage != null
+              ? Image.network(
+            ApiEndPoint.socketUrl + controller.providerImage!,
+            width: double.infinity,
+            height: 147.h,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
                 child: Container(
                   height: 110.h,
                   width: double.infinity,
@@ -133,15 +143,16 @@ class ServiceDetailsScreen extends StatelessWidget {
                       color: AppColors.black300,
                     ),
                   ),
-                )
-            );
-          },
-        )
-            : Image.asset(
-          "assets/images/image_here.png",
-          width: double.infinity,
-          height: 147.h,
-          fit: BoxFit.cover,
+                ),
+              );
+            },
+          )
+              : Image.asset(
+            "assets/images/image_here.png",
+            width: double.infinity,
+            height: 147.h,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -616,77 +627,97 @@ class ServiceDetailsScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final imagePath = controller.providerData?.serviceImages[index];
 
-                // Construct full image URL - remove leading slash if present
+                // Construct full image URL
                 String fullImageUrl = '';
                 if (imagePath != null && imagePath.isNotEmpty) {
-                  // Remove leading slash from imagePath to avoid double slashes
                   final cleanPath = imagePath.startsWith('/')
                       ? imagePath.substring(1)
                       : imagePath;
                   fullImageUrl = '${ApiEndPoint.imageUrl}/$cleanPath';
                 }
 
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(8.r),
-                  child: fullImageUrl.isNotEmpty
-                      ? Image.network(
-                    fullImageUrl,
-                    width: double.infinity,
-                    height: 115.h,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      print('Error loading image: $fullImageUrl');
-                      return Container(
-                        width: double.infinity,
-                        height: 115.h,
-                        color: AppColors.black100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image_not_supported,
-                              size: 40.sp,
-                              color: AppColors.black200,
-                            ),
-                            SizedBox(height: 4.h),
-                            CommonText(
-                              text: "Image unavailable",
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.black200,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
+                // Build all image URLs for the gallery
+                List<String> allImageUrls = (controller.providerData?.serviceImages ?? [])
+                    .where((path) => path != null && path.isNotEmpty)
+                    .map((path) {
+                  final cleanPath = path!.startsWith('/') ? path.substring(1) : path;
+                  return '${ApiEndPoint.imageUrl}/$cleanPath';
+                })
+                    .toList();
+
+                return GestureDetector(
+                  onTap: () {
+                    if (fullImageUrl.isNotEmpty) {
+                      // Open fullscreen viewer at tapped image index
+                      ImageViewerScreen.openMultiple(
+                        context,
+                        allImageUrls,
+                        initialIndex: index,
                       );
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        width: double.infinity,
-                        height: 115.h,
-                        color: AppColors.black50,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                            strokeWidth: 2,
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                                : null,
+                    }
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: fullImageUrl.isNotEmpty
+                        ? Image.network(
+                      fullImageUrl,
+                      width: double.infinity,
+                      height: 115.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Error loading image: $fullImageUrl');
+                        return Container(
+                          width: double.infinity,
+                          height: 115.h,
+                          color: AppColors.black100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.image_not_supported,
+                                size: 40.sp,
+                                color: AppColors.black200,
+                              ),
+                              SizedBox(height: 4.h),
+                              CommonText(
+                                text: "Image unavailable",
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.black200,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
-                        ),
-                      );
-                    },
-                  )
-                      : Container(
-                    width: double.infinity,
-                    height: 115.h,
-                    color: AppColors.black100,
-                    child: Icon(
-                      Icons.image,
-                      size: 40.sp,
-                      color: AppColors.black200,
+                        );
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          width: double.infinity,
+                          height: 115.h,
+                          color: AppColors.black50,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                              strokeWidth: 2,
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                    )
+                        : Container(
+                      width: double.infinity,
+                      height: 115.h,
+                      color: AppColors.black100,
+                      child: Icon(
+                        Icons.image,
+                        size: 40.sp,
+                        color: AppColors.black200,
+                      ),
                     ),
                   ),
                 );

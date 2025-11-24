@@ -56,6 +56,7 @@ class HomeController extends GetxController {
     getProfile();
     fetchFavorites();
     countNotification();
+    countMessa();
     searchController.addListener(_onSearchChanged);
   }
 

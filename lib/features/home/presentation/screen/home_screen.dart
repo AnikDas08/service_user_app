@@ -6,6 +6,7 @@ import 'package:haircutmen_user_app/component/button/common_button.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
+import '../../../../component/image_view/imageview_class.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../controller/home_controller.dart';
@@ -101,26 +102,42 @@ class _HomeScreenState extends State<HomeScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Profile Image
-        Container(
-          width: 48.w,
-          height: 48.w,
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: Obx(
-            () => ClipOval(
-              child:
-                  controller.image.value != ""
-                      ? Image.network(
-                        ApiEndPoint.socketUrl + controller.image.value,
-                        width: 46.w,
-                        height: 46.w,
-                        fit: BoxFit.cover,
-                      )
-                      : Image.asset(
-                        "assets/images/profile_image.jpg",
-                        width: 46.w,
-                        height: 46.w,
-                        fit: BoxFit.cover,
-                      ),
+        GestureDetector(
+          onTap: (){
+            if (controller.image.value != null) {
+              ImageViewerScreen.openSingle(
+                Get.context!,
+                ApiEndPoint.socketUrl + controller.image.value!,
+              );
+            }
+            else{
+              ImageViewerScreen.openSingle(
+                Get.context!,
+                "assets/images/profile_image.jpg",
+              );
+            }
+          },
+          child: Container(
+            width: 48.w,
+            height: 48.w,
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            child: Obx(
+              () => ClipOval(
+                child:
+                    controller.image.value != ""
+                        ? Image.network(
+                          ApiEndPoint.socketUrl + controller.image.value,
+                          width: 46.w,
+                          height: 46.w,
+                          fit: BoxFit.cover,
+                        )
+                        : Image.asset(
+                          "assets/images/profile_image.jpg",
+                          width: 46.w,
+                          height: 46.w,
+                          fit: BoxFit.cover,
+                        ),
+              ),
             ),
           ),
         ),
@@ -399,7 +416,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppColors.primaryColor,
                 child: GridView.builder(
                   shrinkWrap: true,
-                  //physics: const NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 16.w,
@@ -429,6 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             }),
+
           ],
         );
       },

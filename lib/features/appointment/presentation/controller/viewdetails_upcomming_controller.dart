@@ -91,25 +91,38 @@ class ViewdetailsUpcommingController extends GetxController {
       serviceName.value = 'Service';
     }
 
-    // Parse date
+    // ✅ FIX: Parse date and convert UTC to Local
     if (bookingData['date'] != null) {
       try {
-        DateTime dateTime = DateTime.parse(bookingData['date']);
-        date.value = '${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year}';
+        // Parse UTC date from API
+        DateTime dateTimeUtc = DateTime.parse(bookingData['date']);
+
+        // Convert UTC to Local
+        DateTime dateTimeLocal = dateTimeUtc.toLocal();
+
+        // Use local date for display
+        date.value = '${dateTimeLocal.day.toString().padLeft(2, '0')}.${dateTimeLocal.month.toString().padLeft(2, '0')}.${dateTimeLocal.year}';
       } catch (e) {
         date.value = '00.00.0000';
       }
     }
 
-    // Parse time (start time) - 24 hour format
+    // ✅ FIX: Parse time (start time) and convert UTC to Local - 24 hour format
     if (bookingData['slots'] != null && bookingData['slots'].isNotEmpty) {
       try {
         List<String> timeSlots = [];
 
         for (var slot in bookingData['slots']) {
-          DateTime startTime = DateTime.parse(slot['start']);
-           num hour = startTime.hour;
-           num minute = startTime.minute;
+          // Parse UTC time from API
+          DateTime startTimeUtc = DateTime.parse(slot['start']);
+
+          // Convert UTC to Local time
+          DateTime startTimeLocal = startTimeUtc.toLocal();
+
+          // Use local time for display
+          int hour = startTimeLocal.hour;
+          int minute = startTimeLocal.minute;
+
           String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
           timeSlots.add(formattedTime);
         }
@@ -131,8 +144,6 @@ class ViewdetailsUpcommingController extends GetxController {
     if (bookingData['_id'] != null && bookingData['_id'].toString().length >= 4) {
       bookingId.value = bookingData['_id'].toString().substring(bookingData['_id'].toString().length - 4);
     }
-
-
   }
 
   // Cancel booking

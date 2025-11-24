@@ -11,9 +11,9 @@ import '../controller/service_details_controller.dart';
 
 class ScheduleSlot {
   final String id;
-  final DateTime start;
-  final DateTime end;
-  final DateTime? date; // Add date field
+  final DateTime start;  // UTC time from API
+  final DateTime end;    // UTC time from API
+  final DateTime? date;
   bool isSelected;
 
   ScheduleSlot({
@@ -24,19 +24,68 @@ class ScheduleSlot {
     this.isSelected = false,
   });
 
-  // Check if slot is valid (has a date)
   bool get isValid => date != null;
 
+  // ✅ FIX: Use LOCAL time for display
   String get displayTime {
     // Convert UTC to local time
     DateTime localStart = start.toLocal();
     DateTime localEnd = end.toLocal();
 
-    String startHour = start.hour.toString().padLeft(2, '0');
-    String startMinute = start.minute.toString().padLeft(2, '0');
-    String endHour = end.hour.toString().padLeft(2, '0');
-    String endMinute = end.minute.toString().padLeft(2, '0');
+    // ✅ Use localStart and localEnd instead of start and end
+    String startHour = localStart.hour.toString().padLeft(2, '0');
+    String startMinute = localStart.minute.toString().padLeft(2, '0');
+    String endHour = localEnd.hour.toString().padLeft(2, '0');
+    String endMinute = localEnd.minute.toString().padLeft(2, '0');
+
     return '$startHour:$startMinute - $endHour:$endMinute';
+  }
+
+  // Optional: Add getters for local times if needed elsewhere
+  DateTime get localStart => start.toLocal();
+  DateTime get localEnd => end.toLocal();
+}
+
+String _getLocalTimeRangeFromStrings(dynamic schedule) {
+  try {
+    // If startTime and endTime are ISO strings
+    DateTime startTimeUtc = DateTime.parse(schedule.startTimeString);
+    DateTime endTimeUtc = DateTime.parse(schedule.endTimeString);
+
+    // Convert to local
+    DateTime startTimeLocal = startTimeUtc.toLocal();
+    DateTime endTimeLocal = endTimeUtc.toLocal();
+
+    // Format as HH:mm
+    String startStr = '${startTimeLocal.hour.toString().padLeft(2, '0')}:${startTimeLocal.minute.toString().padLeft(2, '0')}';
+    String endStr = '${endTimeLocal.hour.toString().padLeft(2, '0')}:${endTimeLocal.minute.toString().padLeft(2, '0')}';
+
+    return '$startStr - $endStr';
+  } catch (e) {
+    print("Error converting time: $e");
+    return schedule.formattedTimeRange ?? "N/A";
+  }
+}
+
+String _getLocalTimeRange(dynamic schedule) {
+  try {
+    // Get startTime and endTime from schedule (these are UTC)
+    DateTime startTimeUtc = schedule.startTime;  // Assuming these are DateTime
+    DateTime endTimeUtc = schedule.endTime;
+
+    // Convert to local
+    DateTime startTimeLocal = startTimeUtc.toLocal();
+    DateTime endTimeLocal = endTimeUtc.toLocal();
+
+    // Format as HH:mm
+    String startStr = '${startTimeLocal.hour.toString().padLeft(2, '0')}:${startTimeLocal.minute.toString().padLeft(2, '0')}';
+    String endStr = '${endTimeLocal.hour.toString().padLeft(2, '0')}:${endTimeLocal.minute.toString().padLeft(2, '0')}';
+
+    return '$startStr - $endStr';
+  } catch (e) {
+    // Fallback to original if parsing fails
+    print("Error converting time: $e");
+    return schedule.formattedTimeRange ?? "N/A";
   }
 }
 
@@ -308,7 +357,8 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                       ),
                       SizedBox(width: 4.w),
                       CommonText(
-                        text: _format24HourTime(schedule.formattedTimeRange),
+                        // ✅ FIX: Use local time instead of UTC
+                        text: _getLocalTimeRange(schedule),
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black300,
@@ -693,11 +743,19 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
 
             setState(() {
               for (var slot in slots) {
+                // Parse UTC times from API
+                DateTime startUtc = DateTime.parse(slot['start']);
+                DateTime endUtc = DateTime.parse(slot['end']);
+
                 availableSlots.add(ScheduleSlot(
                   id: slot['_id'],
-                  start: DateTime.parse(slot['start']),
-                  end: DateTime.parse(slot['end']),
+                  start: startUtc,  // Store as UTC
+                  end: endUtc,      // Store as UTC
+                  date: date,       // Store the selected date
                 ));
+
+                // Debug: Print to verify conversion
+                print("🕐 Slot: UTC ${slot['start']} → Local ${startUtc.toLocal()}");
               }
             });
 
@@ -750,11 +808,12 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
       selectedDate!.day,
     );
 
+    // ✅ Send UTC times to API, but display local time
     List<Map<String, dynamic>> slotsData = selectedSlots.map((slot) {
       return {
-        "start": slot.start.toIso8601String(),
-        "end": slot.end.toIso8601String(),
-        "displayTime": slot.displayTime,
+        "start": slot.start.toUtc().toIso8601String(),  // Send UTC to API
+        "end": slot.end.toUtc().toIso8601String(),      // Send UTC to API
+        "displayTime": slot.displayTime,                 // Display shows local time
       };
     }).toList();
 
@@ -767,7 +826,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
       'providerImage': controller.providerImage,
       'date': formattedDate,
       'dateIso': bookingDateUtc.toIso8601String(),
-      'timeSlots': selectedSlots.map((slot) => slot.displayTime).toList(),
+      'timeSlots': selectedSlots.map((slot) => slot.displayTime).toList(),  // Local time for display
       'slotsData': slotsData,
       'selectedServices': controller.getSelectedServices(),
       'selectedServiceIds': controller.selectedServiceIds.toList(),
@@ -777,7 +836,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
       'image': null,
     };
 
-    Get.back(); // Close the dialog
+    Get.back();
     Get.toNamed(AppRoutes.invoice, arguments: invoiceData);
 
     Get.snackbar(

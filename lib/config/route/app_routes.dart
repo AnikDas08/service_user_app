@@ -86,7 +86,7 @@ class AppRoutes {
     GetPage(name: details_category_screen, page: () => DetailsCategoryScreen()),
     GetPage(name: upcomingdetail_screen, page: () => ViewDetailsUpcoming()),
     GetPage(name: view_detail_pending, page: () => ViewDetailsPending()),
-    GetPage(name: canceldetails_screen, page: () => CancelDetailsScreen()),
+    GetPage(name: canceldetails_screen, page: () => CanceldetailsScreen()),
     GetPage(name: personal_information_screen, page: () => PersonalInformationScreen()),
     GetPage(name: language_screen, page: () => LanguageSelectionScreen()),
     //GetPage(name: contract_support_screen, page: () => ContractsScreen()),

@@ -6,6 +6,7 @@ import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 
+import '../../../../component/image_view/imageview_class.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_string.dart';
 import '../../../../utils/custom_appbar/custom_appbar.dart';
@@ -58,11 +59,27 @@ class ViewDetailsUpcoming extends StatelessWidget {
                         children: [
                           Container(
                             decoration: BoxDecoration(shape: BoxShape.circle),
-                            child: CircleAvatar(
-                              backgroundImage: controller.providerImage.isNotEmpty
-                                  ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage)
-                                  : AssetImage("assets/images/item_image.png") as ImageProvider,
-                              radius: 45,
+                            child: GestureDetector(
+                              onTap: (){
+                                if(controller.providerImage!=""){
+                                  ImageViewerScreen.openSingle(
+                                    Get.context!,
+                                    ApiEndPoint.socketUrl+controller.providerImage,
+                                  );
+                                }
+                                else{
+                                  ImageViewerScreen.openSingle(
+                                    Get.context!,
+                                    "assets/images/noImage.png",
+                                  );
+                                }
+                              },
+                              child: CircleAvatar(
+                                backgroundImage: controller.providerImage.isNotEmpty
+                                    ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage)
+                                    : AssetImage("assets/images/item_image.png") as ImageProvider,
+                                radius: 45,
+                              ),
                             ),
                           ),
                           SizedBox(width: 12.w),

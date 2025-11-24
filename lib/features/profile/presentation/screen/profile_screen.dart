@@ -5,6 +5,7 @@ import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/widgets/contract_support_dialog_profile.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import '../../../../../config/route/app_routes.dart';
+import '../../../../component/image_view/imageview_class.dart';
 import '../../../../component/other_widgets/item.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/custom_appbar/custom_appbar.dart';
@@ -30,13 +31,29 @@ class ProfileScreen extends StatelessWidget {
                     /// User Profile Image here
                     Center(
                           child:Obx(
-                            ()=> CircleAvatar(
-                                radius: 60.sp,
-                                backgroundColor: Colors.transparent,
-                                backgroundImage: controller.imageUser.value == ""
-                                    ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
-                                    : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
-                              ),
+                            ()=> GestureDetector(
+                              onTap: (){
+                                if (controller.imageUser.value != "") {
+                                  ImageViewerScreen.openSingle(
+                                    Get.context!,
+                                    ApiEndPoint.socketUrl + controller.imageUser.value,
+                                  );
+                                }
+                                else{
+                                  ImageViewerScreen.openSingle(
+                                    Get.context!,
+                                    "assets/images/profile_image.jpg",
+                                  );
+                                }
+                              },
+                              child: CircleAvatar(
+                                  radius: 60.sp,
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: controller.imageUser.value == ""
+                                      ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
+                                      : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
+                                ),
+                            ),
                           ),
                           ),
 

@@ -91,6 +91,11 @@ class PendingViewDetailsController extends GetxController {
   }
 
   // Parse booking data from API response
+  // ============================================
+// FIX: Update _parseBookingData() method
+// Convert UTC date and time to Local time
+// ============================================
+
   void _parseBookingData() {
     // Provider details
     if (bookingData['provider'] != null && bookingData['provider'] is Map) {
@@ -121,25 +126,38 @@ class PendingViewDetailsController extends GetxController {
       serviceName.value = 'Service';
     }
 
-    // Parse date
+    // ✅ FIX: Parse date and convert UTC to Local
     if (bookingData['date'] != null) {
       try {
-        DateTime dateTime = DateTime.parse(bookingData['date']);
-        date.value = '${dateTime.day.toString().padLeft(2, '0')}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.year}';
+        // Parse UTC date from API
+        DateTime dateTimeUtc = DateTime.parse(bookingData['date']);
+
+        // Convert UTC to Local
+        DateTime dateTimeLocal = dateTimeUtc.toLocal();
+
+        // Use local date for display
+        date.value = '${dateTimeLocal.day.toString().padLeft(2, '0')}.${dateTimeLocal.month.toString().padLeft(2, '0')}.${dateTimeLocal.year}';
       } catch (e) {
         date.value = '00.00.0000';
       }
     }
 
-    // Parse time (start time) - 24 hour format
+    // ✅ FIX: Parse time (start time) and convert UTC to Local - 24 hour format
     if (bookingData['slots'] != null && bookingData['slots'].isNotEmpty) {
       try {
         List<String> timeSlots = [];
 
         for (var slot in bookingData['slots']) {
-          DateTime startTime = DateTime.parse(slot['start']);
-          num hour = startTime.hour;
-          num minute = startTime.minute;
+          // Parse UTC time from API
+          DateTime startTimeUtc = DateTime.parse(slot['start']);
+
+          // Convert UTC to Local time
+          DateTime startTimeLocal = startTimeUtc.toLocal();
+
+          // Use local time for display
+          int hour = startTimeLocal.hour;
+          int minute = startTimeLocal.minute;
+
           String formattedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
           timeSlots.add(formattedTime);
         }
@@ -170,23 +188,23 @@ class PendingViewDetailsController extends GetxController {
         return false;
       }
 
-      // Get the booking start time
-      DateTime bookingStartTime = DateTime.parse(bookingData['slots'][0]['start']);
+      // Parse UTC booking start time and convert to local
+      DateTime bookingStartTimeUtc = DateTime.parse(bookingData['slots'][0]['start']);
+      DateTime bookingStartTimeLocal = bookingStartTimeUtc.toLocal();
 
-      // Get current time
+      // Get current local time
       DateTime currentTime = DateTime.now();
 
       // Calculate the penalty deadline (booking time minus penalty hours)
-      DateTime penaltyDeadline = bookingStartTime.subtract(Duration(hours: penaltyTime.value));
+      DateTime penaltyDeadline = bookingStartTimeLocal.subtract(Duration(hours: penaltyTime.value));
 
-      print("🕐 Current Time: $currentTime");
-      print("📅 Booking Start Time: $bookingStartTime");
-      print("⚠️ Penalty Deadline: $penaltyDeadline");
+      print("🕐 Current Time (Local): $currentTime");
+      print("📅 Booking Start Time (Local): $bookingStartTimeLocal");
+      print("⚠️ Penalty Deadline (Local): $penaltyDeadline");
       print("⏰ Penalty Time: ${penaltyTime.value} hours");
 
       // Check if current time is after penalty deadline and before booking time
-      // This means we're within the penalty period
-      bool withinPenalty = currentTime.isAfter(penaltyDeadline) && currentTime.isBefore(bookingStartTime);
+      bool withinPenalty = currentTime.isAfter(penaltyDeadline) && currentTime.isBefore(bookingStartTimeLocal);
 
       print("💰 Within Penalty Period: $withinPenalty");
 

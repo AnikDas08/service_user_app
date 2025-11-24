@@ -173,23 +173,34 @@ class ChatListScreen extends StatelessWidget {
           children: [
             ClipOval(
               child: Container(
+                width: 50.w,
+                height: 50.w,
+                decoration: const BoxDecoration(
+                  color: AppColors.black100,
+                  shape: BoxShape.circle,
+                ),
+                child: (message.participant.image != null && message.participant.image.isNotEmpty)
+                    ? Image.network(
+                  ApiEndPoint.socketUrl + message.participant.image,
                   width: 50.w,
                   height: 50.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.black100,
-                    shape: BoxShape.circle,
-                  ),
-                  child: message.participant.image!=""?Image.network(
-                    ApiEndPoint.socketUrl+message.participant.image,
-                    width: 50.w,
-                    height: 50.w,
-                    fit: BoxFit.cover,
-                  ):Image.asset(
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
                       "assets/images/noImage.png",
                       height: 50.h,
                       width: 50.w,
-                      fit:BoxFit.cover
-                  )
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  // -----------------------------------------------------------------------------------
+                )
+                    : Image.asset(
+                  "assets/images/noImage.png",
+                  height: 50.h,
+                  width: 50.w,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             SizedBox(width: 12.w),

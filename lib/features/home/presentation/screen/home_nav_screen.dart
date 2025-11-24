@@ -26,6 +26,7 @@ class HomeNavScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeController=Get.find<HomeController>();
     return GetBuilder<HomeNavController>(
       init: HomeNavController(),
       builder: (controller) {
@@ -100,6 +101,7 @@ class HomeNavScreen extends StatelessWidget {
                           ),
 
                           /// 🔴 PERFECT BADGE
+                          if(homeController.message.value > 0)
                           Positioned(
                             right: -6.r,   // Proper right alignment
                             top: -8.r,     // Proper top alignment
@@ -110,7 +112,7 @@ class HomeNavScreen extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: CommonText(
-                                text: Get.find<HomeController>().message.value.toString(),      // dynamic value here
+                                text: Get.find<HomeController>().message.value.toString(),
                                 color: Colors.white,
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,

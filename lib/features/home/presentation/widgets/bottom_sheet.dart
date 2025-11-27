@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/text_field/common_text_field.dart';
+import 'package:haircutmen_user_app/features/home/presentation/widgets/show_custom_calender.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -85,7 +86,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   ],
                 ),
               ),
-        
+
               // Content
               Flexible(
                 child: SingleChildScrollView(
@@ -99,9 +100,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       _buildSectionTitle(AppString.category),
                       SizedBox(height: 12.h),
                       _buildCategoryDropdown(),
-        
+
                       SizedBox(height: 16.h),
-        
+
                       // Subcategory Section (only show if category is selected)
                       if (selectedCategoryId != null) ...[
                         _buildSectionTitle("Subcategory"),
@@ -109,17 +110,17 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         _buildSubCategoryDropdown(),
                         SizedBox(height: 16.h),
                       ],
-        
+
                       // Date Section
                       _buildDateField(),
-        
+
                       SizedBox(height: 16.h),
-        
+
                       // Time Section
                       _buildTimeField(),
-        
+
                       SizedBox(height: 16.h),
-        
+
                       // Location Section
                       _buildSectionTitle(AppString.location_text),
                       SizedBox(height: 12.h),
@@ -127,16 +128,16 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         controller: locationControllers,
                         hintText: AppString.hint_type_here,
                       ),
-        
+
                       SizedBox(height: 16.h),
-        
+
                       // Price Section
                       _buildSectionTitle(AppString.price),
                       SizedBox(height: 5.h),
                       _buildPriceSlider(),
-        
+
                       SizedBox(height: 30.h),
-        
+
                       // Apply Button
                       _buildApplyButton(),
                       SizedBox(height: 20.h),
@@ -200,7 +201,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           child: DropdownButton<String>(
             value: selectedCategory,
             hint: CommonText(
-              text: 'Select Category',
+              text: AppString.select_category_text,
               fontSize: 12,
               color: AppColors.black200,
               textAlign: TextAlign.left,
@@ -483,31 +484,25 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
+    // ⭐️ Replacing the use of showDatePicker with your custom dialog
+    showCustomCalendarView(
+      // The initial date should be the currently selected date or today
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.primaryColor,
-              onPrimary: AppColors.white,
-              surface: AppColors.white,
-              onSurface: AppColors.black400,
-            ),
-          ),
-          child: child!,
-        );
+
+      // The callback function handles the date selection from the custom dialog
+      onDateSelected: (DateTime pickedDate) {
+        // This setState is called when the user selects a date and the dialog closes
+        setState(() {
+          selectedDate = pickedDate;
+        });
       },
+      // You can ignore `isSecond` for a single date picker
+      isSecond: false,
     );
 
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
+    // Note: Since showCustomCalendarView is a void function that uses a callback
+    // to handle the result, this method no longer needs to be `async`
+    // and wait for a result, but we keep `Future<void>` for consistency.
   }
 
   Future<void> _selectTime() async {
@@ -587,7 +582,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
       'userLng': "90.3890144",
       'userLat': "23.7643863",
-      'minPrice': minPrice.toString(),
+      'minPrice': 0,
       'maxPrice': priceRange.toString(),
     };
     print("Filter data : $filterData");

@@ -83,6 +83,29 @@ Map<String, String> serbian = {
   AppString.login_text: "Prijavi se",
   AppString.email_text: "Email",
   AppString.password_text: "Lozinka",
+
+  // ✅ Календар - Називи месеци (Ћирилица)
+  AppString.january: "Јануар",
+  AppString.february: "Фебруар",
+  AppString.march: "Март",
+  AppString.april: "Април",
+  AppString.may: "Мај",
+  AppString.june: "Јун",
+  AppString.july: "Јул",
+  AppString.august: "Август",
+  AppString.september: "Септембар",
+  AppString.october: "Октобар",
+  AppString.november: "Новембар",
+  AppString.december: "Децембар",
+
+  // ✅ Календар - Дани у недељи (скраћено - Ћирилица)
+  AppString.su: "Нед",  // Недеља
+  AppString.mo: "Пон",  // Понедељак
+  AppString.tu: "Уто",  // Уторак
+  AppString.we: "Сре",  // Среда
+  AppString.th: "Чет",  // Четвртак
+  AppString.fr: "Пет",  // Петак
+  AppString.sa: "Суб",  // Субота
   AppString.hint_email_text: "Unesite vaš email...",
   AppString.hint_password_text: "Unesite lozinku",
   AppString.have_account: "Nemate nalog?",

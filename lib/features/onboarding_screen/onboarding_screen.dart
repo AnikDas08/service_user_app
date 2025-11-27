@@ -26,12 +26,12 @@ class OnboardingScreen extends StatelessWidget {
               60.height,
 
               // Title Section
-              _buildTitleSection(),
+              //_buildTitleSection(),
               SizedBox(height: 30.h),
 
               // Illustration Sectio_buildIllustrationSection(),
               Image.asset(
-                "assets/images/flash_image_service.png",
+                "assets/images/ol_boarding_image.png",
                 width: 260,
                 height: 190,
               ),

@@ -4,6 +4,7 @@ import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../utils/app_utils.dart';
+import '../../../../utils/constants/app_colors.dart';
 import '../../../profile/data/profiles_model.dart';
 import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
@@ -30,6 +31,7 @@ class HomeController extends GetxController {
   final RxInt totalProviders = 0.obs;
   final  num limit = 20;
   final RxBool hasMoreData = true.obs;
+  final RxBool isFilterActive = false.obs;
 
   // Categories from API
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
@@ -75,6 +77,43 @@ class HomeController extends GetxController {
     }
     catch(e){
 
+    }
+  }
+
+  Future<void> clearFilters() async {
+    try {
+      // Reset filter URL
+      currentFilterUrl = null;
+
+      // Reset pagination
+      currentPage.value = 1;
+      hasMoreData.value = true;
+
+      // Clear search
+      searchController.clear();
+
+      // Mark filter as inactive
+      isFilterActive.value = false;
+
+      // Fetch all providers without filters
+      await fetchServiceProviders();
+
+      Get.snackbar(
+        "Filters Cleared",
+        "Showing all service providers",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.primaryColor,
+        colorText: Colors.white,
+        duration: Duration(seconds: 2),
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "Failed to clear filters: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
@@ -293,6 +332,8 @@ class HomeController extends GetxController {
       }
     }
   }
+
+
 
   // Load next page
   Future<void> loadMoreProviders() async {

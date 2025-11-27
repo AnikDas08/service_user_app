@@ -3,6 +3,8 @@ class ApiEndPoint {
   static const imageUrl = "https://delwar5000.binarybards.online/";
   static const socketUrl = "https://delwar5000.binarybards.online";
 
+
+
   static const signUp = "user/user";
   static const verifyEmail = "users/verify-email";
   static const verifyUser = "auth/verify-account";

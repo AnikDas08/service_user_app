@@ -277,7 +277,7 @@ class InvoiceScreen extends StatelessWidget {
           children: [
             CommonText(
               textAlign: TextAlign.start,
-              text: "Sub Total",
+              text: AppString.sub_total,
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
               color: AppColors.black400,
@@ -303,7 +303,7 @@ class InvoiceScreen extends StatelessWidget {
             children: [
               CommonText(
                 textAlign: TextAlign.start,
-                text: "Weather Fee",
+                text: AppString.weather_fee,
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
@@ -330,7 +330,7 @@ class InvoiceScreen extends StatelessWidget {
             children: [
               CommonText(
                 textAlign: TextAlign.start,
-                text: "Convenience Fee",
+                text: AppString.convineance_fee,
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
@@ -357,7 +357,7 @@ class InvoiceScreen extends StatelessWidget {
             children: [
               CommonText(
                 textAlign: TextAlign.start,
-                text: "Arrival Fee",
+                text: AppString.arrival_fee,
                 fontWeight: FontWeight.w400,
                 fontSize: 14.sp,
                 color: AppColors.black400,
@@ -383,7 +383,7 @@ class InvoiceScreen extends StatelessWidget {
           children: [
             CommonText(
               textAlign: TextAlign.start,
-              text: "Discount (${controller.discountPercent}%)",
+              text: "${AppString.discount} (${controller.discountPercent}%)",
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
               color: AppColors.black400,
@@ -412,7 +412,7 @@ class InvoiceScreen extends StatelessWidget {
           children: [
             CommonText(
               textAlign: TextAlign.start,
-              text: "Available Credit",
+              text: AppString.avilable_credit,
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
               color: AppColors.black400,
@@ -450,7 +450,7 @@ class InvoiceScreen extends StatelessWidget {
               children: [
                 CommonText(
                   textAlign: TextAlign.start,
-                  text: "Total Price",
+                  text: AppString.total_price,
                   fontWeight: FontWeight.w600,
                   fontSize: 16.sp,
                   color: AppColors.primaryColor,
@@ -458,7 +458,7 @@ class InvoiceScreen extends StatelessWidget {
                 if (controller.creditApplied.value > 0)
                   CommonText(
                     textAlign: TextAlign.start,
-                    text: " (Credit Applied: ${controller.creditApplied.value})",
+                    text: " (${AppString.credit_applied}: ${controller.creditApplied.value})",
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
                     color: Colors.blue,

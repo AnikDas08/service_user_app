@@ -251,22 +251,83 @@ class ViewDetailsUpcoming extends StatelessWidget {
               SizedBox(height: 20.h),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomButton(
-                  text: AppString.message_text,
-                  fontSize: 18,
-                  isSelected: true,
-                  onTap: () {
-                    Get.toNamed(
-                        AppRoutes.message,
-                        parameters: {
-                                        "id":controller.chantId
-                                      },
-                    arguments: {
-                      "name":controller.providerName,
-                      "image":controller.providerImage,
-                                      });
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: CustomButton(
+                        text: AppString.cancel,
+                        fontSize: 18,
+                        isSelected: false,
+                        textColor: AppColors.black,
+                        onTap: () {showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: AppColors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              content: CommonText(
+                                maxLines: 5,
+                                text: controller.getCancellationMessage(),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              actions: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomButton(
+                                        text: AppString.no_button,
+                                        isSelected: false,
+                                        onTap: () {
+                                          Get.back();
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 25),
+                                    Expanded(
+                                      child: CustomButton(
+                                        text: AppString.yes_button,
+                                        isSelected: true,
+                                        onTap: () async {
+                                          // Cancel the booking first
+                                          await controller.cancelBooking();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: CustomButton(
+                        text: AppString.message_text,
+                        fontSize: 18,
+                        isSelected: true,
+                        onTap: () {
+                          Get.toNamed(
+                              AppRoutes.message,
+                              parameters: {
+                                "id":controller.chantId
+                              },
+                              arguments: {
+                                "name":controller.providerName,
+                                "image":controller.providerImage,
+                              });
 
-                  },
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

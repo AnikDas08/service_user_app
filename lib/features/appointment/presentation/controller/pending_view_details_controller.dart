@@ -188,30 +188,42 @@ class PendingViewDetailsController extends GetxController {
         return false;
       }
 
-      // Parse UTC booking start time and convert to local
+      // Parse UTC booking start time from API
+      // Example: "2025-11-27T20:00:00.000Z" is in UTC
       DateTime bookingStartTimeUtc = DateTime.parse(bookingData['slots'][0]['start']);
+
+      // Convert to local time (Bangladesh time is UTC+6)
       DateTime bookingStartTimeLocal = bookingStartTimeUtc.toLocal();
 
       // Get current local time
       DateTime currentTime = DateTime.now();
 
-      // Calculate the penalty deadline (booking time minus penalty hours)
-      DateTime penaltyDeadline = bookingStartTimeLocal.subtract(Duration(hours: penaltyTime.value));
+      // Calculate the penalty deadline
+      // If penaltyTime = 2 hours, and booking is at 14:00, penalty starts at 12:00
+      DateTime penaltyDeadline = bookingStartTimeLocal.subtract(
+          Duration(hours: penaltyTime.value)
+      );
 
       print("🕐 Current Time (Local): $currentTime");
       print("📅 Booking Start Time (Local): $bookingStartTimeLocal");
       print("⚠️ Penalty Deadline (Local): $penaltyDeadline");
       print("⏰ Penalty Time: ${penaltyTime.value} hours");
 
-      // Check if current time is after penalty deadline and before booking time
-      bool withinPenalty = currentTime.isAfter(penaltyDeadline) && currentTime.isBefore(bookingStartTimeLocal);
+      // Within penalty = Current time is AFTER penalty deadline AND BEFORE booking time
+      // Example: If booking is at 14:00, penalty is 2 hours
+      // - Penalty starts at: 12:00 (14:00 - 2 hours)
+      // - If current time is 13:00 → within penalty (fee applies)
+      // - If current time is 11:00 → NOT within penalty (no fee)
+      // - If current time is 15:00 → booking already passed
+      bool withinPenalty = currentTime.isAfter(penaltyDeadline) &&
+          currentTime.isBefore(bookingStartTimeLocal);
 
       print("💰 Within Penalty Period: $withinPenalty");
 
       return withinPenalty;
 
     } catch (e) {
-      print("Error checking penalty time: $e");
+      print("❌ Error checking penalty time: $e");
       return false;
     }
   }
@@ -219,8 +231,10 @@ class PendingViewDetailsController extends GetxController {
   // Get the appropriate cancellation message
   String getCancellationMessage() {
     if (isWithinPenaltyTime()) {
+      // Show penalty message if canceling within penalty time window
       return "Are you sure you want to cancel this appointment? Please note, a 30% cancellation fee will apply. If you like to proceed then click yes for cancel.";
     } else {
+      // Show normal message if canceling outside penalty time window
       return "Are you sure you want to cancel this appointment?";
     }
   }
@@ -243,10 +257,15 @@ class PendingViewDetailsController extends GetxController {
       final response = await ApiService.delete('booking/$fullBookingId');
 
       if (response.statusCode == 200) {
-        print('Booking cancelled: $fullBookingId');
+        print('✅ Booking cancelled successfully: $fullBookingId');
 
+        // Refresh appointments list
         Get.find<AppointmentController>().fetchAllBookings();
+
+        // Navigate back to home
         Get.offAllNamed(AppRoutes.homeNav);
+
+        // Show success message
         Get.snackbar(
           'Success',
           'Booking cancelled successfully',
@@ -262,7 +281,7 @@ class PendingViewDetailsController extends GetxController {
       }
 
     } catch (e) {
-      print('Error cancelling booking: $e');
+      print('❌ Error cancelling booking: $e');
       Get.snackbar(
         'Error',
         'Failed to cancel booking',

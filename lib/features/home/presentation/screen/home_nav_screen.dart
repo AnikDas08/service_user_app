@@ -17,7 +17,7 @@ class HomeNavScreen extends StatelessWidget {
   HomeNavScreen({super.key});
 
   final List<Map<String, String>> _navItems = [
-    {"icon": "assets/icons/home.svg", "label": AppString.home},
+    {"icon": "assets/icons/home.svg", "label": AppString.home_texts},
     {"icon": "assets/icons/appointment_icon.svg", "label": AppString.appointment},
     {"icon": "assets/icons/scan_icon.svg", "label": AppString.qrCode},
     {"icon": "assets/icons/message_icon.svg", "label": AppString.message},
@@ -134,7 +134,7 @@ class HomeNavScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    label: _navItems[index]["label"],
+                    label: _navItems[index]["label"]!.tr,
                   );
                 }),
               ),

@@ -121,6 +121,29 @@ Map<String, String> russian = {
   AppString.about_me_text: "О себе",
   AppString.hint_type_here: "Введите здесь...",
   AppString.type_first: "Введите...",
+
+  AppString.january: "Январь",
+  AppString.february: "Февраль",
+  AppString.march: "Март",
+  AppString.april: "Апрель",
+  AppString.may: "Май",
+  AppString.june: "Июнь",
+  AppString.july: "Июль",
+  AppString.august: "Август",
+  AppString.september: "Сентябрь",
+  AppString.october: "Октябрь",
+  AppString.november: "Ноябрь",
+  AppString.december: "Декабрь",
+
+  // ✅ Календарь - Дни недели (сокращенно)
+  AppString.su: "Вс",  // Воскресенье
+  AppString.mo: "Пн",  // Понедельник
+  AppString.tu: "Вт",  // Вторник
+  AppString.we: "Ср",  // Среда
+  AppString.th: "Чт",  // Четверг
+  AppString.fr: "Пт",  // Пятница
+  AppString.sa: "Сб",  // Суббота
+
   AppString.service_text: "Тип услуги",
   AppString.service: "Услуга",
   AppString.service_hint: "Тип услуги",

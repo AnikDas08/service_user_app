@@ -4,6 +4,8 @@ import 'package:haircutmen_user_app/features/appointment/presentation/screen/vie
 import 'package:haircutmen_user_app/features/appointment/presentation/screen/viewdetailse_upcomming.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/details_category.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/invoice_screen.dart';
+import 'package:haircutmen_user_app/features/profile/presentation/screen/complete_booking.dart';
+import 'package:haircutmen_user_app/features/profile/presentation/screen/complete_details_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/favourite_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/language_screen.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/screen/personal_information_screen.dart';
@@ -60,6 +62,9 @@ class AppRoutes {
   static const String language_screen = "/language_screen";
   static const String favourite_screen = "/favourite_screen";
   static const String invoice = "/invoice";
+  static const String complete_screen_appointment = "/complete_screen_appointment";
+  static const String complete_details_screen = "/complete_details_screen";
+  static const String complete_scredefdn_appointment = "/complete_screen_appointment";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -92,5 +97,7 @@ class AppRoutes {
     //GetPage(name: contract_support_screen, page: () => ContractsScreen()),
     GetPage(name: favourite_screen, page: () => FavouriteScreen()),
     GetPage(name: invoice, page: () => InvoiceScreen()),
+    GetPage(name: complete_screen_appointment, page:()=>CompleteBooking()),
+    GetPage(name: complete_details_screen, page:()=>CompleteDetailsScreen())
   ];
 }

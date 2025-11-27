@@ -7,6 +7,7 @@ import 'package:haircutmen_user_app/utils/app_utils.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../services/storage/storage_services.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_string.dart';
 
 class InvoiceController extends GetxController {
   final RxInt creditApplied = 0.obs;
@@ -342,27 +343,27 @@ class InvoiceController extends GetxController {
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(
-          'Confirm Payment',
+          AppString.confirm_pay,
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildConfirmRow('Provider:', providerName),
+            _buildConfirmRow(AppString.provider, providerName),
             SizedBox(height: 8),
-            _buildConfirmRow('Date:', bookingDate),
+            _buildConfirmRow('${AppString.date}:', bookingDate),
             SizedBox(height: 8),
-            _buildConfirmRow('Time:', bookingTime),
+            _buildConfirmRow('${AppString.time}:', bookingTime),
             SizedBox(height: 8),
             if (creditApplied.value > 0) ...[
-              _buildConfirmRow('Credit Applied:', 'RSD ${creditApplied.value}'),
+              _buildConfirmRow('${AppString.credit_applied}:', 'RSD ${creditApplied.value}'),
               SizedBox(height: 8),
             ],
-            _buildConfirmRow('Amount to Pay:', 'RSD ${totalPrice.value}'),
+            _buildConfirmRow('${AppString.payment_pay}:', 'RSD ${totalPrice.value}'),
             SizedBox(height: 16),
             Text(
-              'Do you want to proceed with the payment?',
+              AppString.process,
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ],
@@ -370,7 +371,7 @@ class InvoiceController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(AppString.cancel, style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -384,7 +385,7 @@ class InvoiceController extends GetxController {
             ),
             child: isProcessing.value
                 ? CircularProgressIndicator()
-                : Text('Confirm & Pay', style: TextStyle(color: Colors.white)),
+                : Text(AppString.payConfirm, style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -435,17 +436,17 @@ class InvoiceController extends GetxController {
                 ),
                 child: Column(
                   children: [
-                    _buildSuccessRow('Provider', providerName),
+                    _buildSuccessRow(AppString.provider, providerName),
                     Divider(height: 16),
-                    _buildSuccessRow('Date', bookingDate),
+                    _buildSuccessRow(AppString.date, bookingDate),
                     Divider(height: 16),
-                    _buildSuccessRow('Time', bookingTime),
+                    _buildSuccessRow(AppString.time, bookingTime),
                     Divider(height: 16),
                     if (creditApplied.value > 0) ...[
                       _buildSuccessRow('Credit Used', 'RSD ${creditApplied.value}'),
                       Divider(height: 16),
                     ],
-                    _buildSuccessRow('Amount Paid', 'RSD ${totalPrice.value}'),
+                    _buildSuccessRow(AppString.payment_pay, 'RSD ${totalPrice.value}'),
                   ],
                 ),
               ),

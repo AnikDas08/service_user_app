@@ -17,7 +17,6 @@ class ChangePasswordController extends GetxController {
   TextEditingController confirmPasswordController = TextEditingController();
 
   ///  change password function
-
   Future<void> changePasswordRepo() async {
     if (!formKey.currentState!.validate()) return;
     

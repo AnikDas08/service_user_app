@@ -29,7 +29,7 @@ class ChatListScreen extends StatelessWidget {
             style: GoogleFonts.roboto(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
-              color: AppColors.black400,
+              color: AppColors.primaryColor,
             ),
           ),
           backgroundColor: Colors.white,

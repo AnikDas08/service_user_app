@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      // Load more when user is 200px from bottom
       Get.find<HomeController>().loadMoreProviders();
     }
   }
@@ -55,10 +54,20 @@ class _HomeScreenState extends State<HomeScreen> {
           resizeToAvoidBottomInset: true,
           body: SafeArea(
             child: RefreshIndicator(
-              onRefresh: controller.refreshData,
+              onRefresh: () async {
+                // Refresh based on whether filters are active
+                if (controller.isFilterActive.value && controller.currentFilterUrl != null) {
+                  // Refresh with current filters
+                  await controller.fetchServiceProviders(filterUrl: controller.currentFilterUrl);
+                } else {
+                  // Refresh all data without filters
+                  await controller.refreshData();
+                }
+              },
               color: AppColors.primaryColor,
               child: SingleChildScrollView(
                 controller: _scrollController,
+                physics: AlwaysScrollableScrollPhysics(),
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,21 +131,21 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 48.w,
             decoration: const BoxDecoration(shape: BoxShape.circle),
             child: Obx(
-              () => ClipOval(
+                  () => ClipOval(
                 child:
-                    controller.image.value != ""
-                        ? Image.network(
-                          ApiEndPoint.socketUrl + controller.image.value,
-                          width: 46.w,
-                          height: 46.w,
-                          fit: BoxFit.cover,
-                        )
-                        : Image.asset(
-                          "assets/images/profile_image.jpg",
-                          width: 46.w,
-                          height: 46.w,
-                          fit: BoxFit.cover,
-                        ),
+                controller.image.value != ""
+                    ? Image.network(
+                  ApiEndPoint.socketUrl + controller.image.value,
+                  width: 46.w,
+                  height: 46.w,
+                  fit: BoxFit.cover,
+                )
+                    : Image.asset(
+                  "assets/images/profile_image.jpg",
+                  width: 46.w,
+                  height: 46.w,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
@@ -150,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Obx(
-                () => CommonText(
+                    () => CommonText(
                   text: controller.name.value,
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -172,54 +181,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
         // Notification Icon with Badge
         GestureDetector(
-          onTap: () {
-            Get.toNamed(AppRoutes.notifications);
-          },
-          child: Obx(
-                () => Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(
-                  Icons.notifications_outlined,
-                  color: AppColors.black300,
-                  size: 24.sp,
-                ),
+            onTap: () {
+              Get.toNamed(AppRoutes.notifications);
+              Get.find<HomeController>().countNotification();
+            },
+            child: Obx(
+                  () => Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    Icons.notifications_outlined,
+                    color: AppColors.black300,
+                    size: 24.sp,
+                  ),
 
-                /// Show badge only if count > 0
-                if (controller.notificationCount.value > 0)
-                  Positioned(
-                    right: -4.w,
-                    top: -4.h,
-                    child: Container(
-                      padding: EdgeInsets.all(4.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.background,
-                          width: 1.5.w,
+                  /// Show badge only if count > 0
+                  if (controller.notificationCount.value > 0)
+                    Positioned(
+                      right: -4.w,
+                      top: -4.h,
+                      child: Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.background,
+                            width: 1.5.w,
+                          ),
                         ),
-                      ),
-                      constraints: BoxConstraints(
-                        minWidth: 16.w,
-                        minHeight: 16.h,
-                      ),
-                      child: Center(
-                        child: Text(
-                          controller.notificationCount.value.toString(),
-                          style: TextStyle(
-                            color: AppColors.white,
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.w600,
-                            height: 1,
+                        constraints: BoxConstraints(
+                          minWidth: 16.w,
+                          minHeight: 16.h,
+                        ),
+                        child: Center(
+                          child: Text(
+                            controller.notificationCount.value.toString(),
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w600,
+                              height: 1,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          )
+                ],
+              ),
+            )
 
         ),
       ],
@@ -262,15 +272,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 controller.searchController.text == ""
                     ? IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        size: 18.sp,
-                        color: AppColors.black100,
-                      ),
-                      onPressed: () {
-                        controller.searchController.clear();
-                      },
-                    )
+                  icon: Icon(
+                    Icons.close,
+                    size: 18.sp,
+                    color: AppColors.black100,
+                  ),
+                  onPressed: () {
+                    controller.searchController.clear();
+                  },
+                )
                     : SizedBox.shrink(),
               ],
             ),
@@ -377,6 +387,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: AppColors.primaryColor,
                   textAlign: TextAlign.left,
                 ),
+                // Show clear filter button when filters are active
+                Obx(() {
+                  if (controller.isFilterActive.value) {
+                    return GestureDetector(
+                      onTap: () {
+                        controller.clearFilters();
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: AppColors.primaryColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.clear,
+                              color: AppColors.primaryColor,
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            CommonText(
+                              text: "Clear Filter",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
               ],
             ),
             SizedBox(height: 14.h),
@@ -399,11 +451,62 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: CommonText(
-                      text: AppString.service_provider_either,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.black600,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64.sp,
+                          color: AppColors.black200,
+                        ),
+                        SizedBox(height: 16.h),
+                        CommonText(
+                          text: "No service providers found",
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.black600,
+                        ),
+                        SizedBox(height: 8.h),
+                        CommonText(
+                          text: "Try adjusting your filters",
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.black300,
+                        ),
+                        SizedBox(height: 24.h),
+                        GestureDetector(
+                          onTap: () {
+                            controller.clearFilters();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24.w,
+                              vertical: 12.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.refresh,
+                                  color: AppColors.white,
+                                  size: 20.sp,
+                                ),
+                                SizedBox(width: 8.w),
+                                CommonText(
+                                  text: "Show All Services",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -411,7 +514,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  await controller.fetchServiceProviders();
+                  // Refresh based on whether filters are active
+                  if (controller.isFilterActive.value && controller.currentFilterUrl != null) {
+                    // Refresh with current filters
+                    await controller.fetchServiceProviders(filterUrl: controller.currentFilterUrl);
+                  } else {
+                    // Refresh all data without filters
+                    await controller.fetchServiceProviders();
+                  }
                 },
                 color: AppColors.primaryColor,
                 child: GridView.builder(
@@ -431,14 +541,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       name: provider.name,
                       service: provider.category,
                       distance:
-                          "${provider.serviceDistance.toStringAsFixed(2)}km",
+                      "${provider.serviceDistance.toStringAsFixed(2)}km",
                       rating: provider.reviews.averageRating.toString(),
                       reviews: provider.reviews.totalReviews.toString(),
                       price: "RSD ${provider.price.toStringAsFixed(0)}",
                       imageUrl:
-                          provider.image != null
-                              ? ApiEndPoint.socketUrl + provider.image!
-                              : "assets/images/item_image.png",
+                      provider.image != null
+                          ? ApiEndPoint.socketUrl + provider.image!
+                          : "assets/images/item_image.png",
                       onTap: () => controller.onProviderTap(provider.id),
                       onFavorite: () => controller.favouriteItem(provider.id),
                     );

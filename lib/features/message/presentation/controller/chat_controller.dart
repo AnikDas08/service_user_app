@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
 import '../../data/model/chat_list_model.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../services/socket/socket_service.dart';
@@ -153,7 +154,6 @@ class ChatControllers extends GetxController {
       } else {
         searchByName(searchController.text);
       }
-
       status = Status.completed;
       update();
     });
@@ -162,9 +162,10 @@ class ChatControllers extends GetxController {
   /// Controller on Init
   @override
   void onInit() {
+    super.onInit();
     getChatRepo();
     listenChat();
-    super.onInit();
+    Get.find<HomeController>().message.value==0;
   }
 
   @override

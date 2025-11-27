@@ -89,6 +89,13 @@ class ProfileScreen extends StatelessWidget {
                       onTap: ()=>Get.toNamed(AppRoutes.setting),
                     ),
 
+                    /// Completed Booking item here
+                    Item(
+                      image: "assets/icons/term_icon.svg",
+                      title: AppString.complete_service.tr,
+                      onTap: () => Get.toNamed(AppRoutes.complete_screen_appointment),
+                    ),
+
                     Item(
                       image: "assets/icons/contract_icon.svg",
                       title: AppString.contact_support.tr,
@@ -112,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          CommonText(
-                             text: "${AppString.present_credit}: ${controller.credit.value}",
+                             text: "${AppString.present_credit}: ${controller.credit.value.toStringAsFixed(2)}",
                            fontSize: 16,
                            fontWeight: FontWeight.w500,
                            color: AppColors.black400

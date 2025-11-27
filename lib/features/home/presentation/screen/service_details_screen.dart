@@ -778,7 +778,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CommonText(
-                text: "Reviews (${controller.totalReviews.value})",
+                text: "${AppString.review} (${controller.totalReviews.value})",
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.black400,

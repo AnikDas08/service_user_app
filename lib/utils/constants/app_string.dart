@@ -75,6 +75,29 @@ class AppString {
   static const String unknownError = "Unknown Error";
   static const String userName = "User Name: ";
 
+  // ✅ Calendar - Month names
+  static const String january = "January";
+  static const String february = "February";
+  static const String march = "March";
+  static const String april = "April";
+  static const String may = "May";
+  static const String june = "June";
+  static const String july = "July";
+  static const String august = "August";
+  static const String september = "September";
+  static const String october = "October";
+  static const String november = "November";
+  static const String december = "December";
+
+  // ✅ Calendar - Weekday abbreviations
+  static const String su = "Su";
+  static const String mo = "Mo";
+  static const String tu = "Tu";
+  static const String we = "We";
+  static const String th = "Th";
+  static const String fr = "Fr";
+  static const String sa = "Sa";
+
   // Terms of Service
   static const String termsOfService = "Terms of Service";
 
@@ -148,6 +171,7 @@ class AppString {
   static const String complete_profile_text = "Complete Profile";
   static const String about_me_text = "About Me";
   static const String hint_type_here = "Type Here...";
+  static const String select_category_text = "Select Category";
   static const String type_first = "Type...";
   static const String service_text = "Service Type";
   static const String service = "Service";
@@ -274,6 +298,7 @@ class AppString {
       "Please Contact us via\nemail for any of your needs";
   static const String contact_support_button = "Contact to Email";
   static const String setting = "Settings ";
+  static const String complete_service = "Complete Services ";
   static const String contact_support = "Contact and Support";
   static const String favourite_list = "All Favourite List";
   static const String favourite_item = "No favourite providers found";
@@ -309,6 +334,21 @@ class AppString {
   static const String yes_button = "Yes";
   static const String no_button = "No";
   static const String scan_now = "Scan";
+  static const String review = "Reviews";
+  static const String minutes = "minutes";
+  static const String sub_total = "Sub Total";
+  static const String weather_fee = "Weather Fee";
+  static const String convineance_fee = "Convenience Fee";
+  static const String arrival_fee = "Arrival Fee";
+  static const String discount = "Discount";
+  static const String avilable_credit = "Available Credit";
+  static const String total_price = "Total Price";
+  static const String credit_applied = "Credit Applied";
+  static const String confirm_pay = "Confirm Payment";
+  static const String provider = "Provider:";
+  static const String payment_pay = "Amount to Pay";
+  static const String process = "Do you want to proceed with the payment?";
+  static const String payConfirm = "Confirm & Pay";
 
   /// Booking screen
   static const String booking_date_time_text = "Booking Date & Time";

@@ -1,6 +1,10 @@
-import 'package:get/get.dart';
+// Complete ViewdetailsUpcommingController with penalty time support
 
+import 'package:get/get.dart';
+import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
+import '../../../../services/storage/storage_services.dart';
+import 'appointment_controller.dart';
 
 class ViewdetailsUpcommingController extends GetxController {
   // Loading state - make it observable
@@ -21,15 +25,45 @@ class ViewdetailsUpcommingController extends GetxController {
   var amount = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
-  String chantId="";
+  String chantId = "";
+
+  // Penalty time from system settings
+  var penaltyTime = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
+    // Fetch penalty time from system API
+    _fetchSystemFees();
+
     // Get booking ID from arguments
     if (Get.arguments != null && Get.arguments['bookingId'] != null) {
       String fullBookingId = Get.arguments['bookingId'];
       fetchBookingDetails(fullBookingId);
+    }
+  }
+
+  // Fetch system fees including penalty time
+  Future<void> _fetchSystemFees() async {
+    try {
+      final response = await ApiService.get(
+        "system",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      print("📡 System Fees Response: ${response.statusCode}");
+      print("📦 System Fees Data: ${response.data}");
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final data = response.data['data'];
+        // Store penalty time (in hours)
+        penaltyTime.value = data['penaltyTime'] ?? 0;
+        print("⏰ Penalty Time: ${penaltyTime.value} hours");
+      }
+    } catch (e) {
+      print("❌ Error fetching system fees: $e");
     }
   }
 
@@ -42,14 +76,14 @@ class ViewdetailsUpcommingController extends GetxController {
 
       if (response.statusCode == 200) {
         // API returns data as a List, get the first item
-          bookingData.value = response.data['data'][0];
-          rating.value = response.data['data'][0]['ratings']["averageRating"].toString()??"";
-          reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
-          chantId=response.data['data'][0]['chatId']??"";
-          _parseBookingData();
+        bookingData.value = response.data['data'][0];
+        rating.value = response.data['data'][0]['ratings']["averageRating"].toString() ?? "";
+        reviewCount.value = response.data['data'][0]['ratings']['totalReviews'] ?? 0;
+        chantId = response.data['data'][0]['chatId'] ?? "";
+        _parseBookingData();
       }
     } catch (e) {
-      print('Error fetching booking details: $e');
+      print('❌ Error fetching booking details: $e');
       Get.snackbar(
         'Error',
         'Failed to fetch booking details',
@@ -146,17 +180,107 @@ class ViewdetailsUpcommingController extends GetxController {
     }
   }
 
+  // Check if cancellation is within penalty time
+  bool isWithinPenaltyTime() {
+    try {
+      if (bookingData['slots'] == null || bookingData['slots'].isEmpty) {
+        return false;
+      }
+
+      // Parse UTC booking start time from API
+      // Example: "2025-11-27T20:00:00.000Z" is in UTC
+      DateTime bookingStartTimeUtc = DateTime.parse(bookingData['slots'][0]['start']);
+
+      // Convert to local time (Bangladesh time is UTC+6)
+      DateTime bookingStartTimeLocal = bookingStartTimeUtc.toLocal();
+
+      // Get current local time
+      DateTime currentTime = DateTime.now();
+
+      // Calculate the penalty deadline
+      // If penaltyTime = 2 hours, and booking is at 14:00, penalty starts at 12:00
+      DateTime penaltyDeadline = bookingStartTimeLocal.subtract(
+          Duration(hours: penaltyTime.value)
+      );
+
+      print("🕐 Current Time (Local): $currentTime");
+      print("📅 Booking Start Time (Local): $bookingStartTimeLocal");
+      print("⚠️ Penalty Deadline (Local): $penaltyDeadline");
+      print("⏰ Penalty Time: ${penaltyTime.value} hours");
+
+      // Within penalty = Current time is AFTER penalty deadline AND BEFORE booking time
+      // Example: If booking is at 14:00, penalty is 2 hours
+      // - Penalty starts at: 12:00 (14:00 - 2 hours)
+      // - If current time is 13:00 → within penalty (fee applies)
+      // - If current time is 11:00 → NOT within penalty (no fee)
+      // - If current time is 15:00 → booking already passed
+      bool withinPenalty = currentTime.isAfter(penaltyDeadline) &&
+          currentTime.isBefore(bookingStartTimeLocal);
+
+      print("💰 Within Penalty Period: $withinPenalty");
+
+      return withinPenalty;
+
+    } catch (e) {
+      print("❌ Error checking penalty time: $e");
+      return false;
+    }
+  }
+
+  // Get the appropriate cancellation message
+  String getCancellationMessage() {
+    if (isWithinPenaltyTime()) {
+      // Show penalty message if canceling within penalty time window
+      return "Are you sure you want to cancel this appointment? Please note, a 30% cancellation fee will apply. If you like to proceed then click yes for cancel.";
+    } else {
+      // Show normal message if canceling outside penalty time window
+      return "Are you sure you want to cancel this appointment?";
+    }
+  }
+
   // Cancel booking
   Future<void> cancelBooking() async {
     try {
-      // Add your cancel booking API call here
       String fullBookingId = bookingData['_id'] ?? '';
-      // final response = await ApiService.put('booking/$fullBookingId/cancel', {});
 
-      print('Booking cancelled: $fullBookingId');
+      if (fullBookingId.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Invalid booking ID',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      // Make DELETE API call to cancel booking
+      final response = await ApiService.delete('booking/$fullBookingId');
+
+      if (response.statusCode == 200) {
+        print('✅ Booking cancelled successfully: $fullBookingId');
+
+        // Refresh appointments list
+        Get.find<AppointmentController>().fetchAllBookings();
+
+        // Navigate back to home
+        Get.offAllNamed(AppRoutes.homeNav);
+
+        // Show success message
+        Get.snackbar(
+          'Success',
+          'Booking cancelled successfully',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message ?? 'Failed to cancel booking',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
 
     } catch (e) {
-      print('Error cancelling booking: $e');
+      print('❌ Error cancelling booking: $e');
       Get.snackbar(
         'Error',
         'Failed to cancel booking',

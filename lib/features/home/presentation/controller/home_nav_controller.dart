@@ -7,4 +7,7 @@ class HomeNavController extends GetxController {
     selectedIndex = index;
     update();
   }
+  void refreshIndex(){
+    update();
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/home/presentation/widgets/show_custom_calender.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../config/route/app_routes.dart';
@@ -357,6 +358,13 @@ class _BookingDialogState extends State<BookingDialog> {
   }
 
   void _showCustomDatePicker() {
+    // If dates are already loaded and available, directly show the custom calendar.
+    if (!isLoadingDates.value && datesWithSlots.isNotEmpty) {
+      // ⭐️ DIRECTLY CALL THE CUSTOM CALENDAR HERE
+      _openCustomCalendar();
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -431,7 +439,12 @@ class _BookingDialogState extends State<BookingDialog> {
                     );
                   }
 
-                  return _buildCalendar();
+                  // ⭐️ If data is ready, close this dialog and open the custom calendar
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    Navigator.pop(context);
+                    _openCustomCalendar();
+                  });
+                  return Container(); // Placeholder until pop happens
                 }),
               ],
             ),
@@ -441,75 +454,41 @@ class _BookingDialogState extends State<BookingDialog> {
     );
   }
 
-  Widget _buildCalendar() {
-    DateTime now = DateTime.now();
-    DateTime firstDay = DateTime(now.year, now.month, 1);
-    DateTime lastDay = DateTime(now.year, now.month + 3, 0); // 3 months ahead
-
-    // Find first available date for initialDate
-    DateTime initialDateToUse = now;
-    if (datesWithSlots.isNotEmpty) {
-      // Convert string dates to DateTime and find first valid one
-      List<DateTime> availableDates = datesWithSlots.map((dateStr) {
-        List<String> parts = dateStr.split('-');
-        return DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
-      }).toList()..sort();
-
-      // Find first date that is today or in the future
-      for (DateTime date in availableDates) {
-        if (date.isAfter(now.subtract(Duration(days: 1)))) {
-          initialDateToUse = date;
-          break;
+// ⭐️ NEW METHOD TO WRAP THE CUSTOM CALENDAR CALL
+  void _openCustomCalendar() {
+    showCustomCalendarView(
+      initialDate: selectedDate ?? DateTime.now(),
+      isSecond: false,
+      // ✅ Pass the available dates to the custom calendar
+      availableDates: datesWithSlots.map((dateStr) {
+        // Convert "yyyy-MM-dd" string back to DateTime
+        final parts = dateStr.split('-');
+        return DateTime(
+          int.parse(parts[0]), // year
+          int.parse(parts[1]), // month
+          int.parse(parts[2]), // day
+        );
+      }).toList(),
+      onDateSelected: (DateTime date) {
+        if (_hasSlots(date)) {
+          setState(() {
+            selectedDate = date;
+            dateController.text = '${date.day}/${date.month}/${date.year}';
+            timeController.clear();
+            selectedSlots.clear();
+          });
+          _fetchScheduleForDate(date);
+        } else {
+          Get.snackbar(
+            'No Availability',
+            'No time slots available for this date',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.grey,
+            colorText: AppColors.white,
+            duration: Duration(seconds: 2),
+          );
         }
-      }
-    }
-
-    return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: ColorScheme.light(
-          primary: AppColors.primaryColor, // Selected date background
-          onPrimary: AppColors.white, // Selected date text
-          surface: AppColors.white, // Calendar background
-          onSurface: AppColors.black, // Normal date text
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.primaryColor, // Action buttons color
-          ),
-        ),
-      ),
-      child: SizedBox(
-        height: 350.h,
-        child: CalendarDatePicker(
-          initialDate: initialDateToUse,
-          firstDate: now,
-          lastDate: lastDay,
-          onDateChanged: (DateTime date) {
-            if (_hasSlots(date)) {
-              setState(() {
-                selectedDate = date;
-                dateController.text = '${date.day}/${date.month}/${date.year}';
-                timeController.clear();
-                selectedSlots.clear();
-              });
-              Navigator.pop(context);
-              _fetchScheduleForDate(date);
-            } else {
-              Get.snackbar(
-                'No Availability',
-                'No time slots available for this date',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.grey,
-                colorText: AppColors.white,
-                duration: Duration(seconds: 2),
-              );
-            }
-          },
-          selectableDayPredicate: (DateTime date) {
-            return _hasSlots(date);
-          },
-        ),
-      ),
+      },
     );
   }
 

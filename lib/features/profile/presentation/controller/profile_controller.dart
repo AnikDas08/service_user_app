@@ -57,6 +57,7 @@ class ProfileController extends GetxController {
   /// select language  function here
   selectLanguage( int index) {
     selectedLanguage = languages[index];
+    //skld
     update();
     Get.back();
   }

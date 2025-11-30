@@ -40,6 +40,7 @@ dependencies:
   country_picker: ^2.0.24
   url_launcher: ^6.3.0
   flutter_launcher_icons: ^0.14.4
+  translator: ^1.0.4+1
 
 
 

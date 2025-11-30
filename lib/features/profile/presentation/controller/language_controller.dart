@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/component/app_storage/app_auth_storage.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/home_nav_controller.dart';
+import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 
 import '../../../../component/app_storage/storage_key.dart';
 import '../../data/language_model.dart' show Language;
@@ -58,18 +59,21 @@ class LanguageController extends GetxController {
       case 'ru':
         Get.updateLocale(const Locale("ru"));
         AppAuthStorage().setLanguageValue("ru");
+        LocalStorage.setLanguage(StorageKey.language, "ru");
         print("Selected Russian: ${AppAuthStorage().getValue(StorageKey.language)}");
         Get.find<HomeNavController>().refreshIndex();
         break;
       case 'sr':
         Get.updateLocale(const Locale("sr"));
         AppAuthStorage().setLanguageValue("sr");
+        LocalStorage.setLanguage(StorageKey.language, "sr");
         print("Selected Serbian: ${AppAuthStorage().getValue(StorageKey.language)}");
         Get.find<HomeNavController>().refreshIndex();
         break;
       default:
         Get.updateLocale(const Locale("en"));
         AppAuthStorage().setLanguageValue("en");
+        LocalStorage.setLanguage(StorageKey.language, "en");
         print("Selected English: ${AppAuthStorage().getValue(StorageKey.language)}");
         Get.find<HomeNavController>().refreshIndex();
     }

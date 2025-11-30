@@ -13,6 +13,7 @@ class LocalStorage {
   static String myImage = "";
   static String myName = "";
   static String myEmail = "";
+  static String language = "";
 
   // Create Local Storage Instance
   static SharedPreferences? preferences;
@@ -34,6 +35,7 @@ class LocalStorage {
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
     myName = localStorage.getString(LocalStorageKeys.myName) ?? "";
     myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? "";
+    language = localStorage.getString(LocalStorageKeys.language) ?? "";
 
     appLog(userId, source: "Local Storage");
   }
@@ -57,10 +59,15 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.myName, "");
     localStorage.setString(LocalStorageKeys.myEmail, "");
     localStorage.setBool(LocalStorageKeys.isLogIn, false);
+    localStorage.setString(LocalStorageKeys.language, "");
   }
 
   // Save Data To SharedPreferences
   static Future<void> setString(String key, String value) async {
+    final localStorage = await _getStorage();
+    await localStorage.setString(key, value);
+  }
+  static Future<void> setLanguage(String key, String value) async {
     final localStorage = await _getStorage();
     await localStorage.setString(key, value);
   }

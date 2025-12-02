@@ -137,7 +137,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                   color: AppColors.white,
                   child: Center(
                     child: CommonText(
-                      text: "Image not available",
+                      text: AppString.image_available,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
                       color: AppColors.black300,
@@ -268,7 +268,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             ),
             SizedBox(width: 4.w),
             CommonText(
-              text: "Distance :${controller.providerDistance}",
+              text: "${AppString.distance} :${controller.providerDistance}",
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: AppColors.black300,
@@ -304,7 +304,7 @@ class ServiceDetailsScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommonText(
-          text: "All Services",
+          text: AppString.all_services,
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: AppColors.black400,
@@ -460,7 +460,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: "Selected Services (${controller.selectedServiceIds.length})",
+                        text: "${AppString.selected_service} (${controller.selectedServiceIds.length})",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                         color: AppColors.primaryColor,
@@ -477,7 +477,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4.r),
                           ),
                           child: CommonText(
-                            text: "Clear All",
+                            text: AppString.clear_all,
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.red,
@@ -532,14 +532,14 @@ class ServiceDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: "Total Duration: 60 min",
+                        text: AppString.total_duration_text,
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black400,
                         textAlign: TextAlign.left,
                       ),
                       CommonText(
-                        text: "Total: RSD ${controller.getTotalPrice()}",
+                        text: "${AppString.total_text}: RSD ${controller.getTotalPrice()}",
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
                         color: AppColors.primaryColor,
@@ -604,7 +604,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 20.h),
                   child: CommonText(
-                    text: "No work photos available",
+                    text: AppString.work_photo,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: AppColors.black200,
@@ -680,7 +680,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 4.h),
                               CommonText(
-                                text: "Image unavailable",
+                                text: AppString.image_available,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w400,
                                 color: AppColors.black200,
@@ -757,7 +757,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 CommonText(
-                  text: "No reviews yet",
+                  text: AppString.messagenot,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black200,

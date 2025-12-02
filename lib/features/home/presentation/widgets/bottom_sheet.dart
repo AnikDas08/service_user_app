@@ -105,7 +105,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
                       // Subcategory Section (only show if category is selected)
                       if (selectedCategoryId != null) ...[
-                        _buildSectionTitle("Subcategory"),
+                        _buildSectionTitle(AppString.subService),
                         SizedBox(height: 12.h),
                         _buildSubCategoryDropdown(),
                         SizedBox(height: 16.h),
@@ -287,7 +287,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
           child: Center(
             child: CommonText(
-              text: 'No subcategories available',
+              text: AppString.noSubcategory,
               fontSize: 12,
               color: AppColors.black200,
               textAlign: TextAlign.left,
@@ -308,7 +308,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           child: DropdownButton<String>(
             value: selectedSubCategory,
             hint: CommonText(
-              text: 'Select Subcategory',
+              text: AppString.select_subtype,
               fontSize: 12,
               color: AppColors.black200,
               textAlign: TextAlign.left,

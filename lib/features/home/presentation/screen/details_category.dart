@@ -31,6 +31,7 @@ class DetailsCategoryScreen extends StatelessWidget {
                         child: CircularProgressIndicator(),
                       );
                     }
+                    //hjsdhfjsdfdsf
 
                     // Show error message with retry button
                     if (controller.errorMessage.value.isNotEmpty) {

@@ -343,7 +343,7 @@ class MessageScreen extends StatelessWidget {
               child: TextField(
                 controller: controller.messageController,
                 decoration: InputDecoration(
-                  hintText: "Type......",
+                  hintText: AppString.message_view,
                   hintStyle: TextStyle(
                     fontSize: 16.sp,
                     color: AppColors.black400,
@@ -459,13 +459,13 @@ class MessageScreen extends StatelessWidget {
                 onTap: () {
                   Get.back();
                   // Implement save image functionality
-                  Get.snackbar(
+                  /*Get.snackbar(
                     'Success',
                     'Image saved to gallery',
                     snackPosition: SnackPosition.BOTTOM,
                     backgroundColor: AppColors.primaryColor,
                     colorText: Colors.white,
-                  );
+                  );*/
                 },
               ),
             ],

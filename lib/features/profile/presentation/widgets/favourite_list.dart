@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/favourite_controller.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/image/common_image.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -142,7 +143,7 @@ class FavouriteList extends StatelessWidget {
                           ),
                           SizedBox(width: 4.w),
                           CommonText(
-                            text: "Distance : $distance",
+                            text: "${AppString.distance} : $distance",
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w400,
                             color: AppColors.black300,

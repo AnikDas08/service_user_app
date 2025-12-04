@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/scan/presentation/widgets/review_scan_bottomsheet.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../services/api/api_service.dart';
 import '../../data/model/notification_model.dart';
 import '../../repository/notification_repository.dart';
@@ -104,7 +105,7 @@ class NotificationsController extends GetxController {
         // Show review dialog
       } else {
         Get.snackbar(
-          'Error',
+          AppString.error,
           'Provider information not found',
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -134,8 +135,8 @@ class NotificationsController extends GetxController {
     // Validate rating
     if (selectedRating.value == 0) {
       Get.snackbar(
-        'Error',
-        'Please select a rating',
+        AppString.error,
+        AppString.select_rating,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -145,8 +146,8 @@ class NotificationsController extends GetxController {
     // Validate comment
     if (feedbackController.text.trim().isEmpty) {
       Get.snackbar(
-        'Error',
-        'Please write a review',
+        AppString.error,
+        AppString.select_reviews,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -178,8 +179,8 @@ class NotificationsController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back(); // Close bottom sheet
         Get.snackbar(
-          'Success',
-          'Review submitted successfully',
+          AppString.successful,
+          AppString.successful_review,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
@@ -190,7 +191,7 @@ class NotificationsController extends GetxController {
         currentProviderId = null;
       } else {
         Get.snackbar(
-          'Error',
+          AppString.error,
           response.message ?? 'Failed to submit review',
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -199,7 +200,7 @@ class NotificationsController extends GetxController {
     } catch (e) {
       isSubmittingReview.value = false;
       Get.snackbar(
-        'Error',
+        AppString.error,
         'An error occurred: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,

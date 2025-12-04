@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import '../../../../component/other_widgets/common_loader.dart';
 import '../../../../component/other_widgets/no_data.dart';
@@ -25,7 +26,7 @@ class NotificationScreen extends StatelessWidget {
         child: SafeArea(
           child: Scaffold(
             appBar: CustomAppBar(
-              title: "Notification",
+              title: AppString.notifications,
               onBackTap: () {
                 Get.find<HomeController>().countNotification();
                 Get.back();

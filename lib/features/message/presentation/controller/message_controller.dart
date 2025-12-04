@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/services/notification/notification_service.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../home/presentation/controller/home_controller.dart';
 import '../../data/model/message_model.dart';
@@ -125,17 +126,17 @@ class MessageController extends GetxController {
             SizedBox(height: 20),
             ListTile(
               leading: Icon(Icons.camera_alt, color: Colors.blue),
-              title: Text('Camera'),
+              title: Text(AppString.camera),
               onTap: () => pickImageFromCamera(),
             ),
             ListTile(
               leading: Icon(Icons.photo_library, color: Colors.green),
-              title: Text('Gallery'),
+              title: Text(AppString.gallary),
               onTap: () => pickImageFromGallery(),
             ),
             ListTile(
               leading: Icon(Icons.cancel, color: Colors.red),
-              title: Text('Cancel'),
+              title: Text(AppString.cancel_show),
               onTap: () => Get.back(),
             ),
           ],
@@ -188,12 +189,12 @@ class MessageController extends GetxController {
         // The socket will also push it, so you might want to handle duplicates
       } else {
         Utils.errorSnackBar(
-            "Error",
+            AppString.error,
             response.message ?? "Failed to send image"
         );
       }
     } catch (e) {
-      Utils.errorSnackBar("Error", "Failed to send image: ${e.toString()}");
+      Utils.errorSnackBar(AppString.error, "Failed to send image: ${e.toString()}");
       print("Send image error: $e");
     } finally {
       isSendingImage = false;
@@ -223,11 +224,11 @@ class MessageController extends GetxController {
       if (response.statusCode != 200 && response.statusCode != 201) {
         // If failed, restore the message
         messageController.text = messageText;
-        Utils.errorSnackBar("Error", "Failed to send message");
+        Utils.errorSnackBar(AppString.error, "Failed to send message");
       }
     } catch (e) {
       messageController.text = messageText;
-      Utils.errorSnackBar("Error", "Failed to send message");
+      Utils.errorSnackBar(AppString.error, "Failed to send message");
       print("Send message error: $e");
     }
   }

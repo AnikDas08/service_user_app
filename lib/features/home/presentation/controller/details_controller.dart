@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../services/api/api_service.dart';
 import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
@@ -124,7 +125,7 @@ class DetailsController extends GetxController {
         update();
 
         Get.snackbar(
-          "Error",
+          AppString.error,
           response.message ?? "Failed to update favorite",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,

@@ -234,7 +234,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 CommonText(
                   text: controller.services.isNotEmpty
                       ? controller.services.first['name']
-                      : "Haircut",
+                      : "",
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black400,
@@ -282,7 +282,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             CommonText(
-              text: "Spoken : ",
+              text: "${AppString.spoken} : ",
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.black400,
@@ -407,7 +407,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                             Row(
                               children: [
                                 CommonText(
-                                  text: "60 min",
+                                  text: "60 ${AppString.minutes}",
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: AppColors.black200,
@@ -924,7 +924,7 @@ class ServiceDetailsScreen extends StatelessWidget {
 
                   // Review comment
                   CommonText(
-                    text: review['comment'] ?? 'No comment',
+                    text: review['comment'] ?? AppString.no_comment,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.black300,

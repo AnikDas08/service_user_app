@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/appointment/presentation/controller/appointment_controller.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 
 import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
@@ -20,7 +22,7 @@ class PendingViewDetailsController extends GetxController {
   var serviceName = ''.obs;
   var date = ''.obs;
   var time = ''.obs;
-  var duration = '60 Minutes Duration'.obs;
+  var duration = '${AppString.minutes_duration_text}'.obs;
   var amount = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
@@ -58,8 +60,8 @@ class PendingViewDetailsController extends GetxController {
     } catch (e) {
       print('Error fetching booking details: $e');
       Get.snackbar(
-        'Error',
-        'Failed to fetch booking details',
+        AppString.error,
+        AppString.failed_fetch_booking,
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -170,7 +172,7 @@ class PendingViewDetailsController extends GetxController {
     }
 
     // Duration is always 1 hour (60 minutes)
-    duration.value = '60 Minutes Duration';
+    duration.value = '60 ${AppString.minutes_duration_text}';
 
     // Amount
     amount.value = bookingData['amount']?.toString() ?? '0';
@@ -232,10 +234,10 @@ class PendingViewDetailsController extends GetxController {
   String getCancellationMessage() {
     if (isWithinPenaltyTime()) {
       // Show penalty message if canceling within penalty time window
-      return "Are you sure you want to cancel this appointment? Please note, a 30% cancellation fee will apply. If you like to proceed then click yes for cancel.";
+      return AppString.cancel_booking_detail;
     } else {
       // Show normal message if canceling outside penalty time window
-      return "Are you sure you want to cancel this appointment?";
+      return AppString.appointment_booking;
     }
   }
 
@@ -246,8 +248,8 @@ class PendingViewDetailsController extends GetxController {
 
       if (fullBookingId.isEmpty) {
         Get.snackbar(
-          'Error',
-          'Invalid booking ID',
+          AppString.error,
+          AppString.valid_booking_id,
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
@@ -267,15 +269,19 @@ class PendingViewDetailsController extends GetxController {
 
         // Show success message
         Get.snackbar(
-          'Success',
-          'Booking cancelled successfully',
+          AppString.successful,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          AppString.booking_cancel_successful,
           snackPosition: SnackPosition.BOTTOM,
         );
 
       } else {
         Get.snackbar(
-          'Error',
+          AppString.error,
           response.message ?? 'Failed to cancel booking',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
       }
@@ -283,8 +289,10 @@ class PendingViewDetailsController extends GetxController {
     } catch (e) {
       print('❌ Error cancelling booking: $e');
       Get.snackbar(
-        'Error',
-        'Failed to cancel booking',
+        AppString.error,
+        AppString.failed_booking,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
       );
     }

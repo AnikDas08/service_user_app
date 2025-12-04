@@ -189,7 +189,7 @@ class CompleteDetailsScreen extends StatelessWidget {
                           Row(
                             children: [
                               CommonText(
-                                text: "Booking ID : ${controller.bookingId.value}",
+                                text: "${AppString.booking_id} : ${controller.bookingId.value}",
                                 fontSize: 14.sp,
                                 color: AppColors.black400,
                                 fontWeight: FontWeight.w500,

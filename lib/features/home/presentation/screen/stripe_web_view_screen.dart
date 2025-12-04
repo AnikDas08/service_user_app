@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/features/home/presentation/screen/invoice_screen.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class StripeWebViewScreen extends StatelessWidget {
@@ -23,8 +24,8 @@ class StripeWebViewScreen extends StatelessWidget {
                       if (request.url.contains("success")) {
                        Get.offAllNamed(AppRoutes.homeNav);
                         Get.snackbar(
-                          "Success",
-                          "Payment successful",
+                          AppString.successful,
+                          AppString.payment_successful,
                           backgroundColor: AppColors.success,
                           colorText: AppColors.white,
                         );
@@ -37,8 +38,8 @@ class StripeWebViewScreen extends StatelessWidget {
                           ),
                         );
                         Get.snackbar(
-                          "Cancel",
-                          "Payment cancelled",
+                          AppString.cancel,
+                          AppString.payment_cancel,
                           backgroundColor: AppColors.cancel,
                           colorText: AppColors.white,
                         );

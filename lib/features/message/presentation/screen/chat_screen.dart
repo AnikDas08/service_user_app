@@ -122,7 +122,7 @@ class ChatListScreen extends StatelessWidget {
                       child: Center(
                         child: Text(
                           controller.searchController.text.isNotEmpty
-                              ? "No chats found"
+                              ? AppString.chat_found_show
                               : AppString.message_not,
                           style: GoogleFonts.roboto(
                             fontSize: 14.sp,

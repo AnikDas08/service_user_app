@@ -71,30 +71,7 @@ class ServiceDetailsController extends GetxController {
 
   void _loadStaticData() {
     // Load work photos (static for now)
-    workPhotos.value = [
-      {"image": "assets/images/work1.png"},
-      {"image": "assets/images/work2.png"},
-      {"image": "assets/images/work3.png"},
-      {"image": "assets/images/work4.png"},
-    ];
 
-    // Load reviews (static for now)
-    reviews.value = [
-      {
-        "name": "Rahad Ullah",
-        "rating": 5.0,
-        "comment": "He Does A Great Job. I Had His Hair Cut A Few Days Ago. Always Tells All My Expectations | Always Provide Top Service.",
-        "avatar": "assets/images/reviewer1.png",
-        "timeAgo": "2 days ago"
-      },
-      {
-        "name": "Rahad Ullah",
-        "rating": 5.0,
-        "comment": "He Does A Great Job. I Had His Hair Cut A Few Days Ago. Always Tells All My Expectations | Always Provide Top Service.",
-        "avatar": "assets/images/reviewer2.png",
-        "timeAgo": "5 days ago"
-      },
-    ];
 
     // Load availability data (static for now) - Updated to 24-hour format
     availability.value = [
@@ -215,7 +192,7 @@ class ServiceDetailsController extends GetxController {
   Future<void> toggleFavorite() async {
     if (providerData?.id == null) {
       Get.snackbar(
-        "Error",
+        AppString.error,
         "Provider information not available",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -244,23 +221,13 @@ class ServiceDetailsController extends GetxController {
       if (response.statusCode == 200) {
         Get.find<HomeController>().fetchFavorites();
         // Success - show appropriate message
-        Get.snackbar(
-          "Success",
-          isFavorite.value
-              ? "Added to favorites"
-              : "Removed from favorites",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.primaryColor,
-          colorText: Colors.white,
-          duration: Duration(seconds: 2),
-        );
       } else {
         // Revert on failure
         isFavorite.value = wasFavorite;
         update();
 
         Get.snackbar(
-          "Error",
+          AppString.error,
           response.message ?? "Failed to update favorite",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
@@ -273,7 +240,7 @@ class ServiceDetailsController extends GetxController {
       update();
 
       Get.snackbar(
-        "Error",
+        AppString.error,
         "An error occurred: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -286,7 +253,9 @@ class ServiceDetailsController extends GetxController {
   Future<void> loadProviderSchedule() async {
     if (providerData?.user.id == null) {
       Get.snackbar(
-        'Error',
+        AppString.error,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
         'Provider information not available',
         snackPosition: SnackPosition.BOTTOM,
       );
@@ -516,7 +485,7 @@ class ServiceDetailsController extends GetxController {
 
   String getSelectedTimeSlotsText() {
     if (selectedTimeSlots.isEmpty) {
-      return 'Select Time Slots';
+      return AppString.select_time;
     }
     return selectedTimeSlots.map((slot) => slot.fullDisplayTime).join(', ');
   }
@@ -524,8 +493,8 @@ class ServiceDetailsController extends GetxController {
   void bookNow() {
     if (selectedServiceIds.isEmpty) {
       Get.snackbar(
-        'No Service Selected',
-        'Please select at least one service',
+        AppString.service_selected,
+        AppString.select_service,
         snackPosition: SnackPosition.BOTTOM,
         colorText: Colors.white,
         backgroundColor: AppColors.primaryColor,

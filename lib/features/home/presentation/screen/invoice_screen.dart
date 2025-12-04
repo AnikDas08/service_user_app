@@ -209,7 +209,7 @@ class InvoiceScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(12.w),
                 child: CommonText(
-                  text: "Price",
+                  text: AppString.price,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: AppColors.black400,
@@ -224,7 +224,7 @@ class InvoiceScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(12.w),
                   child: CommonText(
-                    text: service['name'] ?? 'Service',
+                    text: service['name'] ?? AppString.service,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.black300,

@@ -6,6 +6,7 @@ import 'package:haircutmen_user_app/features/home/presentation/controller/detail
 import '../../../../component/image/common_image.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../utils/constants/app_colors.dart';
+import '../../../../utils/constants/app_string.dart';
 
 class ServiceProviderCategory extends StatelessWidget {
   final String id; // Add id parameter for favorite tracking
@@ -143,7 +144,7 @@ class ServiceProviderCategory extends StatelessWidget {
                           ),
                           SizedBox(width: 4.w),
                           CommonText(
-                            text: "Distance : $distance",
+                            text: "${AppString.distance} : $distance",
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w400,
                             color: AppColors.black300,

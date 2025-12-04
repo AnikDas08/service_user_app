@@ -208,7 +208,7 @@ class CompleteBooking extends StatelessWidget {
           builder: (controller) => Column(
             children: [
               const CustomAppBar(
-                title: "Completed Bookings", // Updated title
+                title: AppString.complete_booking, // Updated title
               ),
               SizedBox(height: 20.h),
               Expanded(
@@ -230,7 +230,7 @@ class CompleteBooking extends StatelessWidget {
                       ),
                       SizedBox(height: 16.h),
                       CommonText(
-                        text: "No completed bookings yet.", // Updated No Data Text
+                        text: AppString.complete_booking_photo, // Updated No Data Text
                         fontSize: 16.sp,
                         color: Colors.grey[600]!,
                         fontWeight: FontWeight.w500,

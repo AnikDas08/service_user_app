@@ -57,7 +57,7 @@ class DetailsCategoryScreen extends StatelessWidget {
                             ElevatedButton.icon(
                               onPressed: controller.retryLoading,
                               icon: const Icon(Icons.refresh),
-                              label: const Text('Retry'),
+                              label: const Text(AppString.retry_text),
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 24.w,

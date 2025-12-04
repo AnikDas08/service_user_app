@@ -165,7 +165,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                         ),
                       ),
                     CommonText(
-                      text: showingSlots ? AppString.select_time_slot : "Available Schedule",
+                      text: showingSlots ? AppString.select_time_slot : "",
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: AppColors.black400,
@@ -376,7 +376,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                       ),
                       SizedBox(width: 4.w),
                       CommonText(
-                        text: "${schedule.duration} minutes",
+                        text: "${schedule.duration} ${AppString.minute}",
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black300,
@@ -399,7 +399,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: CommonText(
-                    text: schedule.count == 0 ? "Available" : "${schedule.count} booked",
+                    text: schedule.count == 0 ? AppString.available : "${schedule.count} ${AppString.booked}",
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
                     color: schedule.count == 0 ? Colors.green : Colors.orange,
@@ -488,7 +488,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
               SizedBox(width: 8.w),
               Expanded(
                 child: CommonText(
-                  text: "Select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
+                  text: "${AppString.select} $requiredSlots ${AppString.time_slot}${requiredSlots > 1 ? 's' : ''} ${AppString.you} $requiredSlots ${AppString.service}${requiredSlots > 1 ? 's' : ''}",
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.primaryColor,
@@ -575,7 +575,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonText(
-                    text: "Selected: ${selectedSlots.length}/$requiredSlots slots",
+                    text: "${AppString.select}: ${selectedSlots.length}/$requiredSlots slots",
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                     color: canBook ? Colors.green : AppColors.primaryColor,
@@ -668,8 +668,8 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
   void _onSlotTap(ScheduleSlot slot, num requiredSlots) {
     if (controller.selectedServiceIds.isEmpty) {
       Get.snackbar(
-        'No Service Selected',
-        'Please select service type first',
+        AppString.service_selected,
+        AppString.select_service,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.primaryColor,
         colorText: AppColors.white,
@@ -679,7 +679,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
     }
     if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
       Get.snackbar(
-        'Slot Limit Reached',
+        AppString.limit_here_show,
         'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.primaryColor,
@@ -704,7 +704,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
   Future<void> _fetchScheduleForDate(DateTime date) async {
     if (controller.providerData?.id == null) {
       Get.snackbar(
-        'Error',
+        AppString.error,
         'Provider information not available',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -761,8 +761,8 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
 
             if (availableSlots.isEmpty) {
               Get.snackbar(
-                'No Availability',
-                'No time slots available for this date',
+                AppString.availibility_here,
+                AppString.time_slot_available,
                 snackPosition: SnackPosition.BOTTOM,
                 backgroundColor: AppColors.primaryColor,
                 colorText: AppColors.white,
@@ -774,7 +774,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
     } catch (e) {
       print("Error fetching schedule: $e");
       Get.snackbar(
-        'Error',
+        AppString.error,
         'Failed to load available time slots',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -792,7 +792,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
 
     if (selectedSlots.length != requiredSlots) {
       Get.snackbar(
-        "Invalid Time Slots",
+        AppString.valid_time_slot,
         "You must select exactly $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -840,8 +840,8 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
     Get.toNamed(AppRoutes.invoice, arguments: invoiceData);
 
     Get.snackbar(
-      "Success",
-      "Booking details prepared. Please review and confirm payment.",
+      AppString.successful,
+      AppString.booking_confirmed,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.primaryColor,
       colorText: AppColors.white,

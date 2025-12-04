@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../component/text/common_text.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -431,7 +432,7 @@ class AppointmentController extends GetxController {
         shape:
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         title: CommonText(
-          text: 'Booking Details',
+          text: AppString.booking_details,
           fontSize: 18.sp,
           fontWeight: FontWeight.w600,
         ),
@@ -439,20 +440,20 @@ class AppointmentController extends GetxController {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDetailRow('Customer', getUserName(booking)),
-            _buildDetailRow('Service', getServiceNames(booking)),
-            _buildDetailRow('Date', getFormattedDate(booking)),
-            _buildDetailRow('Time', getFormattedTime(booking)),
-            _buildDetailRow('Booking ID', getBookingId(booking)),
-            _buildDetailRow('Price', 'BDT ${getAmount(booking)}'),
-            _buildDetailRow('Status', booking['status']?.toString() ?? 'N/A'),
+            _buildDetailRow(AppString.customer_text, getUserName(booking)),
+            _buildDetailRow(AppString.service, getServiceNames(booking)),
+            _buildDetailRow(AppString.date, getFormattedDate(booking)),
+            _buildDetailRow(AppString.time, getFormattedTime(booking)),
+            _buildDetailRow(AppString.booking_id, getBookingId(booking)),
+            _buildDetailRow(AppString.price, 'BDT ${getAmount(booking)}'),
+            _buildDetailRow(AppString.status, booking['status']?.toString() ?? 'N/A'),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: CommonText(
-              text: 'Close',
+              text: AppString.close_button,
               fontSize: 14.sp,
               color: AppColors.primaryColor,
             ),

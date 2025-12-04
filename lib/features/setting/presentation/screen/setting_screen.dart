@@ -43,7 +43,7 @@ class SettingScreen extends StatelessWidget {
                   InkWell(
                     onTap: () => Get.toNamed(AppRoutes.privacyPolicy),
                     child: const SettingItem(
-                      title: "Privacy Policy",
+                      title: AppString.privacyPolicy,
                       image: "assets/icons/privacy_icon.svg",
                     ),
                   ),
@@ -52,7 +52,7 @@ class SettingScreen extends StatelessWidget {
                   InkWell(
                     onTap: () => Get.toNamed(AppRoutes.termsOfServices),
                     child: const SettingItem(
-                      title: "Terms & Conditions",
+                      title: AppString.term_condition_text,
                       image: "assets/icons/term_icon.svg",
                     ),
                   ),

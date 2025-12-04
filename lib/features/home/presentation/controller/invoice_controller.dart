@@ -226,8 +226,8 @@ class InvoiceController extends GetxController {
 
     if (code.isEmpty) {
       Get.snackbar(
-        'Error',
-        'Please enter a promo code',
+        AppString.error,
+        AppString.promo_code_hints,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -250,7 +250,7 @@ class InvoiceController extends GetxController {
                 CircularProgressIndicator(color: AppColors.primaryColor),
                 SizedBox(height: 16),
                 Text(
-                  'Validating promo code...',
+                  AppString.validat_promo_code,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
               ],
@@ -285,18 +285,18 @@ class InvoiceController extends GetxController {
         validPromoCode.value = promoCodeValue;
 
         Get.snackbar(
-          'Success',
-          'Promo code applied! You saved RSD ${discount.value}',
+          AppString.successful,
+          '${AppString.code_here_now} RSD ${discount.value}',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: AppColors.primaryColor,
           colorText: Colors.white,
         );
       } else {
         Get.snackbar(
-          'Invalid Code',
+          AppString.invalied_code,
           response.data['message'] ?? 'The promo code you entered is not valid',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.primaryColor,
           colorText: Colors.white,
         );
       }
@@ -305,7 +305,7 @@ class InvoiceController extends GetxController {
       print("❌ Error validating promo code: $e");
 
       Get.snackbar(
-        'Error',
+        AppString.error,
         'Failed to validate promo code. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -413,7 +413,7 @@ class InvoiceController extends GetxController {
               ),
               SizedBox(height: 20),
               Text(
-                'Booking Successful!',
+                AppString.booking_successful,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -423,7 +423,7 @@ class InvoiceController extends GetxController {
               ),
               SizedBox(height: 12),
               Text(
-                'Your booking has been confirmed',
+                AppString.booking_confirmed_text,
                 style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
@@ -443,7 +443,7 @@ class InvoiceController extends GetxController {
                     _buildSuccessRow(AppString.time, bookingTime),
                     Divider(height: 16),
                     if (creditApplied.value > 0) ...[
-                      _buildSuccessRow('Credit Used', 'RSD ${creditApplied.value}'),
+                      _buildSuccessRow(AppString.credit_use, 'RSD ${creditApplied.value}'),
                       Divider(height: 16),
                     ],
                     _buildSuccessRow(AppString.payment_pay, 'RSD ${totalPrice.value}'),
@@ -468,7 +468,7 @@ class InvoiceController extends GetxController {
                   ),
                 ),
                 child: Text(
-                  'Done',
+                  AppString.done_button,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,

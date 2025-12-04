@@ -137,7 +137,7 @@ class _BookingDialogState extends State<BookingDialog> {
   Future<void> _fetchScheduleForDate(DateTime date) async {
     if (serviceController.providerData?.user.id == null) {
       Get.snackbar(
-        'Error',
+        AppString.error,
         'Provider information not available',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -191,7 +191,7 @@ class _BookingDialogState extends State<BookingDialog> {
     } catch (e) {
       print("❌ Error fetching schedule: $e");
       Get.snackbar(
-        'Error',
+        AppString.error,
         'Failed to load available time slots: $e',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -341,7 +341,7 @@ class _BookingDialogState extends State<BookingDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CommonText(
-              text: dateController.text.isEmpty ? "Date" : dateController.text,
+              text: dateController.text.isEmpty ? AppString.date : dateController.text,
               fontSize: 14,
               color: dateController.text.isEmpty ? AppColors.black200 : AppColors.black300,
               textAlign: TextAlign.left,
@@ -381,7 +381,7 @@ class _BookingDialogState extends State<BookingDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CommonText(
-                      text: "Select Date",
+                      text: AppString.select_date,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w600,
                       color: AppColors.black,
@@ -420,7 +420,7 @@ class _BookingDialogState extends State<BookingDialog> {
                             ),
                             SizedBox(height: 16.h),
                             CommonText(
-                              text: "No Available Dates",
+                              text: AppString.available_date,
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
                               color: AppColors.black400,
@@ -428,7 +428,7 @@ class _BookingDialogState extends State<BookingDialog> {
                             ),
                             SizedBox(height: 8.h),
                             CommonText(
-                              text: "Provider has no available dates\nat the moment",
+                              text: AppString.provider_available,
                               fontSize: 14.sp,
                               color: AppColors.black200,
                               textAlign: TextAlign.center,
@@ -480,8 +480,8 @@ class _BookingDialogState extends State<BookingDialog> {
           _fetchScheduleForDate(date);
         } else {
           Get.snackbar(
-            'No Availability',
-            'No time slots available for this date',
+            AppString.availibility_here,
+            AppString.time_slot_available,
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.grey,
             colorText: AppColors.white,
@@ -500,8 +500,8 @@ class _BookingDialogState extends State<BookingDialog> {
           onTap: () {
             if (selectedDate == null) {
               Get.snackbar(
-                'Select Date First',
-                'Please select a date before choosing time slots',
+                AppString.select_date,
+                AppString.select_date_work,
                 snackPosition: SnackPosition.BOTTOM,
                 backgroundColor: AppColors.primaryColor,
                 colorText: AppColors.white,
@@ -524,7 +524,7 @@ class _BookingDialogState extends State<BookingDialog> {
                 Expanded(
                   child: CommonText(
                     text: timeController.text.isEmpty
-                        ? "Select Time Slots"
+                        ? "${AppString.select_time_slot}"
                         : timeController.text,
                     fontSize: 14,
                     color: timeController.text.isEmpty
@@ -632,7 +632,7 @@ class _BookingDialogState extends State<BookingDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CommonText(
-                  text: "Select Time Slots",
+                  text: AppString.select_time_slot,
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
                   color: AppColors.black,
@@ -670,7 +670,7 @@ class _BookingDialogState extends State<BookingDialog> {
                 ),
                 SizedBox(height: 8.h),
                 CommonText(
-                  text: "Choose your preferred time slots",
+                  text: AppString.time_slot_choose,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black400,
@@ -702,7 +702,7 @@ class _BookingDialogState extends State<BookingDialog> {
                           ),
                         ),
                         child: CommonText(
-                          text: "Clear All",
+                          text: AppString.clear_all,
                           fontSize: 14.sp,
                           color: AppColors.black400,
                         ),
@@ -735,7 +735,7 @@ class _BookingDialogState extends State<BookingDialog> {
                           ),
                         ),
                         child: CommonText(
-                          text: "Done",
+                          text: AppString.done_button,
                           fontSize: 14.sp,
                           color: AppColors.white,
                         ),
@@ -778,14 +778,14 @@ class _BookingDialogState extends State<BookingDialog> {
                 ),
                 SizedBox(height: 12.h),
                 CommonText(
-                  text: "No time slots available",
+                  text: AppString.time_slot_avaibales,
                   fontSize: 14.sp,
                   color: AppColors.black400,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 4.h),
                 CommonText(
-                  text: "Please select a different date",
+                  text: AppString.select_different,
                   fontSize: 12.sp,
                   color: AppColors.black200,
                   textAlign: TextAlign.center,
@@ -814,7 +814,7 @@ class _BookingDialogState extends State<BookingDialog> {
 
                 if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
                   Get.snackbar(
-                    'Slot Limit Reached',
+                    AppString.limit_here_show,
                     'You can only select $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for $requiredSlots service${requiredSlots > 1 ? 's' : ''}',
                     snackPosition: SnackPosition.BOTTOM,
                     backgroundColor: AppColors.primaryColor,
@@ -883,8 +883,8 @@ class _BookingDialogState extends State<BookingDialog> {
       }
     } catch (e) {
       Get.snackbar(
-        "Error",
-        "Failed to select image: $e",
+        AppString.error,
+        "${AppString.failed_image}: $e",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: AppColors.white,
@@ -901,8 +901,8 @@ class _BookingDialogState extends State<BookingDialog> {
   void _confirmBooking() {
     if (selectedDate == null || dateController.text.isEmpty) {
       Get.snackbar(
-        "Error",
-        "Please select a date",
+        AppString.error,
+        AppString.select_date_easy,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: AppColors.white,
@@ -912,8 +912,8 @@ class _BookingDialogState extends State<BookingDialog> {
 
     if (serviceController.selectedServiceIds.isEmpty) {
       Get.snackbar(
-        "Error",
-        "Please select at least one service",
+        AppString.error,
+        AppString.select_service,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: AppColors.white,
@@ -924,10 +924,10 @@ class _BookingDialogState extends State<BookingDialog> {
     num requiredSlots = serviceController.selectedServiceIds.length;
     if (selectedSlots.length != requiredSlots) {
       Get.snackbar(
-        "Invalid Time Slots",
+        AppString.invalid_time_slot,
         "You must select exactly $requiredSlots time slot${requiredSlots > 1 ? 's' : ''} for your $requiredSlots service${requiredSlots > 1 ? 's' : ''}",
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primaryColor,
         colorText: AppColors.white,
         duration: Duration(seconds: 3),
       );
@@ -936,8 +936,8 @@ class _BookingDialogState extends State<BookingDialog> {
 
     if (selectedSlots.isEmpty) {
       Get.snackbar(
-        "Error",
-        "Please select at least one time slot",
+        AppString.error,
+        AppString.select_time_slot,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: AppColors.white,
@@ -982,8 +982,8 @@ class _BookingDialogState extends State<BookingDialog> {
     Get.toNamed(AppRoutes.invoice, arguments: invoiceData);
 
     Get.snackbar(
-      "Success",
-      "Booking details prepared. Please review and confirm payment.",
+      AppString.successful,
+      AppString.booking_confirmed,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.primaryColor,
       colorText: AppColors.white,

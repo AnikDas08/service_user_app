@@ -417,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             SizedBox(width: 4.w),
                             CommonText(
-                              text: "Clear Filter",
+                              text: AppString.clear_filter_text,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryColor,
@@ -461,14 +461,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         SizedBox(height: 16.h),
                         CommonText(
-                          text: "No service providers found",
+                          text: AppString.service_provider_found,
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: AppColors.black600,
                         ),
                         SizedBox(height: 8.h),
                         CommonText(
-                          text: "Try adjusting your filters",
+                          text: AppString.adjusting_filter,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColors.black300,
@@ -497,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 SizedBox(width: 8.w),
                                 CommonText(
-                                  text: "Show All Services",
+                                  text: AppString.show_service_all,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.white,

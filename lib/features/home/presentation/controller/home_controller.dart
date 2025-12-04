@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -99,8 +100,8 @@ class HomeController extends GetxController {
       await fetchServiceProviders();
 
       Get.snackbar(
-        "Filters Cleared",
-        "Showing all service providers",
+        AppString.filter_clear_text,
+        AppString.show_service_all,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.primaryColor,
         colorText: Colors.white,
@@ -108,7 +109,7 @@ class HomeController extends GetxController {
       );
     } catch (e) {
       Get.snackbar(
-        "Error",
+        AppString.error,
         "Failed to clear filters: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -211,7 +212,7 @@ class HomeController extends GetxController {
         update();
 
         Get.snackbar(
-          "Error",
+          AppString.error,
           response.message ?? "Failed to update favorite",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
@@ -228,7 +229,7 @@ class HomeController extends GetxController {
       update();
 
       Get.snackbar(
-        "Error",
+        AppString.error,
         "An error occurred: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -300,7 +301,7 @@ class HomeController extends GetxController {
           update();
         } else {
           Get.snackbar(
-            "Error",
+            AppString.error,
             providersResponse.message,
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.red,
@@ -309,7 +310,7 @@ class HomeController extends GetxController {
         }
       } else {
         Get.snackbar(
-          "Error",
+          AppString.error,
           response.message ?? "Failed to load providers",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
@@ -318,7 +319,7 @@ class HomeController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        "Error",
+        AppString.error,
         "An error occurred: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -389,7 +390,7 @@ class HomeController extends GetxController {
         update();
       } else {
         Get.snackbar(
-          "Error",
+          AppString.error,
           response.message ?? "Failed to load categories",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
@@ -398,7 +399,7 @@ class HomeController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        "Error",
+        AppString.error,
         "An error occurred: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -524,7 +525,7 @@ class HomeController extends GetxController {
 
     } catch (e) {
       Get.snackbar(
-        "Error",
+        AppString.error,
         "Failed to apply filters: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,

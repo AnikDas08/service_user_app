@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
 
@@ -126,7 +127,7 @@ class SignUpController extends GetxController {
     if (response.statusCode == 200) {
       var data = response.data;
       Get.toNamed(AppRoutes.verifyUser);
-      Get.snackbar("Successful", "Otp Send Successfully");
+      Get.snackbar(AppString.successful, AppString.otp_send_successful_text);
     } else {
       Utils.errorSnackBar(response.statusCode.toString(), response.message);
     }

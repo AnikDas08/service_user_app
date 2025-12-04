@@ -47,7 +47,6 @@ class ChangePasswordController extends GetxController {
     );
 
     if (response.statusCode == 200) {
-      Utils.successSnackBar(response.statusCode.toString(), response.message);
 
       currentPasswordController.clear();
       newPasswordController.clear();

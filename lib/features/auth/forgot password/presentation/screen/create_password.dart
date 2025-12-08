@@ -67,6 +67,7 @@ class CreatePassword extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                             color: AppColors.primaryColor,
                           ).center,
+                          //rtertfgefd
         
                           /// subtitle here
                           CommonText(

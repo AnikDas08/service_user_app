@@ -323,7 +323,7 @@ class InvoiceController extends GetxController {
           SizedBox(
             width: 80,
             child: Text(
-              label,
+              label.tr,
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ),
@@ -343,27 +343,27 @@ class InvoiceController extends GetxController {
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         title: Text(
-          AppString.confirm_pay,
+          AppString.confirm_pay.tr,
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildConfirmRow(AppString.provider, providerName),
+            _buildConfirmRow(AppString.provider.tr, providerName),
             SizedBox(height: 8),
-            _buildConfirmRow('${AppString.date}:', bookingDate),
+            _buildConfirmRow('${AppString.date.tr}:', bookingDate),
             SizedBox(height: 8),
-            _buildConfirmRow('${AppString.time}:', bookingTime),
+            _buildConfirmRow('${AppString.time.tr}:', bookingTime),
             SizedBox(height: 8),
             if (creditApplied.value > 0) ...[
-              _buildConfirmRow('${AppString.credit_applied}:', 'RSD ${creditApplied.value}'),
+              _buildConfirmRow('${AppString.credit_applied.tr}:', 'RSD ${creditApplied.value}'),
               SizedBox(height: 8),
             ],
-            _buildConfirmRow('${AppString.payment_pay}:', 'RSD ${totalPrice.value}'),
+            _buildConfirmRow('${AppString.payment_pay.tr}:', 'RSD ${totalPrice.value}'),
             SizedBox(height: 16),
             Text(
-              AppString.process,
+              AppString.process.tr,
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
             ),
           ],
@@ -371,7 +371,7 @@ class InvoiceController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(AppString.cancel, style: TextStyle(color: Colors.grey[600])),
+            child: Text(AppString.cancel.tr, style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () async {

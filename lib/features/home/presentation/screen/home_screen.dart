@@ -132,13 +132,30 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: const BoxDecoration(shape: BoxShape.circle),
             child: Obx(
                   () => ClipOval(
-                child:
-                controller.image.value != ""
+                child: controller.image.value.isNotEmpty
                     ? Image.network(
                   ApiEndPoint.socketUrl + controller.image.value,
                   width: 46.w,
                   height: 46.w,
                   fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/profile_image.jpg",
+                      width: 46.w,
+                      height: 46.w,
+                      fit: BoxFit.cover,
+                    );
+                  },
                 )
                     : Image.asset(
                   "assets/images/profile_image.jpg",
@@ -149,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+
         ),
 
         SizedBox(width: 12.w),
@@ -261,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextField(
                     controller: controller.searchController,
                     decoration: InputDecoration(
-                      hintText: AppString.search,
+                      hintText: AppString.search.tr,
                       border: InputBorder.none,
                       hintStyle: TextStyle(color: AppColors.black200),
                     ),

@@ -360,6 +360,8 @@ class AppString {
   static const String start_time = "Select Start Time";
   static const String end_time = "Select End Time";
   static const String submit_button = "Submit";
+  static const String copy = "Copied!";
+  static const String qr_code_copy = "QR Code ID copied to clipboard";
 
   /// Message Screen
   static const String search_text = "Search here";
@@ -376,7 +378,7 @@ class AppString {
   static const String contact_support = "Contact and Support";
   static const String favourite_list = "All Favourite List";
   static const String favourite_item = "No favourite providers found";
-  static const String present_credit = "Present Credit";
+  static const String present_credit = "Present Credit ";
   static const String one_credit = "One Credit equal 1 RSD";
   static const String full_name = "Full Name";
   static const String hints_full_name = "Enter Your Full  Name";
@@ -448,5 +450,17 @@ class AppString {
   static const String qr_id = "User ID : ";
   static const String feed_back = "Give Your Feedback";
   static const String type_review = "Type Review";
-  static const String privacy_policy_texts = "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim.";
+  //static const String privacy_policy_texts = "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim.";
+
+  static const String password_show="Give your password to confirm your account.";
+  static const String enter_password="Enter Your Password";
+
+
+  static const String sat="Sat";
+  static const String sun="Sun";
+  static const String mon="Mon";
+  static const String tue="Tue";
+  static const String wed="Wed";
+  static const String thu="Thu";
+  static const String fri="Fri";
 }

@@ -166,10 +166,10 @@ class MessageScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
-                          "assets/images/profile_image.png");
+                          "assets/images/profile_image.jpg");
                     },
                   )
-                      : Image.asset("assets/images/profile_image.png"),
+                      : Image.asset("assets/images/profile_image.jpg"),
                 ),
               ),
               SizedBox(width: 8.w),

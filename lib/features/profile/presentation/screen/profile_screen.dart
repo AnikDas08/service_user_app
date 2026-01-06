@@ -47,12 +47,34 @@ class ProfileScreen extends StatelessWidget {
                                 }
                               },
                               child: CircleAvatar(
-                                  radius: 60.sp,
-                                  backgroundColor: Colors.transparent,
-                                  backgroundImage: controller.imageUser.value == ""
-                                      ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
-                                      : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
+                                radius: 60.sp,
+                                backgroundColor: Colors.transparent,
+                                child: ClipOval(
+                                  child: Image.network(
+                                    ApiEndPoint.socketUrl + controller.imageUser.value,
+                                    width: 120.sp,
+                                    height: 120.sp,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Image.asset(
+                                        "assets/images/profile_image.jpg",
+                                        width: 120.sp,
+                                        height: 120.sp,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                      );
+                                    },
+                                  ),
                                 ),
+                              ),
+
                             ),
                           ),
                           ),
@@ -119,7 +141,7 @@ class ProfileScreen extends StatelessWidget {
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          CommonText(
-                             text: "${AppString.present_credit}: ${controller.credit.value.toStringAsFixed(2)}",
+                             text: "${AppString.present_credit.tr}: ${controller.credit.value.toStringAsFixed(2)}",
                            fontSize: 16,
                            fontWeight: FontWeight.w500,
                            color: AppColors.black400

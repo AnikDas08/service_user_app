@@ -458,7 +458,7 @@ class InvoiceScreen extends StatelessWidget {
                 if (controller.creditApplied.value > 0)
                   CommonText(
                     textAlign: TextAlign.start,
-                    text: " (${AppString.credit_applied}: ${controller.creditApplied.value})",
+                    text: " (${AppString.credit_applied.tr}: ${controller.creditApplied.value})",
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
                     color: Colors.blue,

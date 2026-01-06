@@ -12,7 +12,6 @@ import '../controller/sign_up_controller.dart';
 
 class SignUpAllField extends StatefulWidget {
   const SignUpAllField({super.key, required this.controller});
-
   final SignUpController controller;
 
   @override
@@ -38,7 +37,7 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// User Name here
+        /// Name
         const CommonText(
           text: AppString.name_text,
           fontSize: 14,
@@ -53,7 +52,7 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
           validator: OtherHelper.validator,
         ),
 
-        /// User Email here
+        /// Email
         const CommonText(
           text: AppString.email,
           fontSize: 14,
@@ -69,7 +68,7 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
           validator: OtherHelper.emailValidator,
         ),
 
-        /// User phone number with country picker
+        /// Phone Number
         const CommonText(
           text: AppString.phone_number_text,
           fontSize: 14,
@@ -80,7 +79,7 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
         ),
         _buildPhoneNumberField(),
 
-        /// User Location here
+        /// Location
         const CommonText(
           text: AppString.location_text,
           fontSize: 14,
@@ -89,48 +88,50 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
           bottom: 6,
           top: 12,
         ),
-        CommonTextField(
-          hintText: AppString.location_hint,
-          hintTextColor: AppColors.black100,
-          controller: widget.controller.locationController,
-          validator: OtherHelper.validator,
-        ),
-
-        /// User Password here
-        const CommonText(
-          text: AppString.password_text,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.black400,
-          bottom: 6,
-          top: 12,
-        ),
-        CommonTextField(
-          hintText: AppString.password_hint,
-          hintTextColor: AppColors.black100,
-          controller: widget.controller.passwordController,
-          isPassword: true,
-          validator: OtherHelper.passwordValidator,
-        ),
-
-        /// User Confirm Password here
-        const CommonText(
-          text: AppString.confirm_password_text,
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.black400,
-          bottom: 6,
-          top: 12,
-        ),
-        CommonTextField(
-          hintText: AppString.hint_confirm_password,
-          hintTextColor: AppColors.black100,
-          controller: widget.controller.confirmPasswordController,
-          isPassword: true,
-          validator: (value) => OtherHelper.confirmPasswordValidator(
-            value,
-            widget.controller.passwordController,
-          ),
+        Column(
+          children: [
+            CommonTextField(
+              hintText: AppString.location_hint,
+              hintTextColor: AppColors.black100,
+              controller: widget.controller.locationController,
+              validator: OtherHelper.validator,
+              onChanged: widget.controller.onLocationChanged,
+            ),
+            if (widget.controller.locationSuggestions.isNotEmpty)
+              Container(
+                constraints: const BoxConstraints(maxHeight: 200),
+                margin: const EdgeInsets.only(top: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(10.r),
+                  border: Border.all(color: AppColors.black50),
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.controller.locationSuggestions.length,
+                  itemBuilder: (context, index) {
+                    final location = widget.controller.locationSuggestions[index];
+                    return ListTile(
+                      dense: true,
+                      title: Text(
+                        location.shortName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.roboto(
+                          fontSize: 13.sp,
+                          color: AppColors.black,
+                        ),
+                      ),
+                      onTap: () {
+                        widget.controller.selectLocation(location);
+                        FocusScope.of(context).unfocus();
+                        setState(() {});
+                      },
+                    );
+                  },
+                ),
+              ),
+          ],
         ),
       ],
     );
@@ -142,25 +143,11 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
       controller: widget.controller.phoneNumberController,
       keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,
-      inputFormatters: [
-        FilteringTextInputFormatter.digitsOnly,
-      ],
-      style: GoogleFonts.roboto(
-        fontSize: 14.sp,
-        color: AppColors.black,
-        fontWeight: FontWeight.w400,
-      ),
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      style: GoogleFonts.roboto(fontSize: 14.sp, color: AppColors.black),
       validator: OtherHelper.validator,
       decoration: InputDecoration(
-        errorMaxLines: 2,
-        filled: true,
-        fillColor: AppColors.transparent,
         hintText: AppString.hint_phone_number,
-        hintStyle: TextStyle(
-          fontSize: 12.sp,
-          color: AppColors.black100,
-          fontWeight: FontWeight.w400,
-        ),
         prefixIcon: GestureDetector(
           onTap: () {
             showCountryPicker(
@@ -172,92 +159,22 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
                 });
                 widget.controller.countryCode = '+${country.phoneCode}';
               },
-              countryListTheme: CountryListThemeData(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.r),
-                  topRight: Radius.circular(20.r),
-                ),
-                inputDecoration: InputDecoration(
-                  hintText: 'Search Country',
-                  hintStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.black100,
-                  ),
-                  prefixIcon: Icon(Icons.search, size: 20.sp),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: AppColors.black50),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: AppColors.black50),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.r),
-                    borderSide: BorderSide(color: AppColors.black50),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
-                  ),
-                ),
-                searchTextStyle: GoogleFonts.roboto(
-                  fontSize: 14.sp,
-                  color: AppColors.black,
-                ),
-                textStyle: GoogleFonts.roboto(
-                  fontSize: 14.sp,
-                  color: AppColors.black,
-                ),
-                bottomSheetHeight: 500.h,
-                backgroundColor: Colors.white,
-              ),
             );
           },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  selectedCountry.flagEmoji,
-                  style: TextStyle(fontSize: 20.sp),
-                ),
-                SizedBox(width: 6.w),
-                Text(
-                  '+${selectedCountry.phoneCode}',
-                  style: GoogleFonts.roboto(
-                    fontSize: 14.sp,
-                    color: AppColors.black,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(width: 4.w),
-                Icon(
-                  Icons.arrow_drop_down,
-                  color: AppColors.black200,
-                  size: 20.sp,
-                ),
+                Text(selectedCountry.flagEmoji),
+                Text('+${selectedCountry.phoneCode}'),
+                Icon(Icons.arrow_drop_down),
               ],
             ),
           ),
         ),
-        border: _buildBorder(AppColors.black50),
-        enabledBorder: _buildBorder(AppColors.black50),
-        focusedBorder: _buildBorder(AppColors.black50),
-        errorBorder: _buildBorder(AppColors.black50),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 16.w,
-          vertical: 20.h,
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10.r)),
       ),
-    );
-  }
-
-  OutlineInputBorder _buildBorder(Color color) {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10.r),
-      borderSide: BorderSide(color: color, width: 1.w),
     );
   }
 }

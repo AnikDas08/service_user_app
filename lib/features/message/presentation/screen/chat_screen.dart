@@ -25,7 +25,7 @@ class ChatListScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(
-            AppString.message_text,
+            AppString.message_text.tr,
             style: GoogleFonts.roboto(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -85,7 +85,7 @@ class ChatListScreen extends StatelessWidget {
                                   controller.searchByName(value);
                                 },
                                 decoration: InputDecoration(
-                                  hintText: AppString.search_text,
+                                  hintText: AppString.search_text.tr,
                                   hintStyle: GoogleFonts.roboto(
                                     fontSize: 14.sp,
                                     color: AppColors.black100,

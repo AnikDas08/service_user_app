@@ -46,12 +46,14 @@ class ServiceDetailsScreen extends StatelessWidget {
                             title: AppString.view_profile_text,
                             rightIcon: Icons.share,
                             showRightButton: true,
-                            onRightButtonTap: () {
-                              Share.share(
-                                'Check this out! https://example.com',
-                                subject: 'Sharing from my app',
-                              );
-                            },
+                              onRightButtonTap: () {
+                                final String shareUrl = '${ApiEndPoint.imageUrl}/${controller.providerData?.id}';
+                                // Or use a universal link format
+                                Share.share(
+                                  'Check out ${controller.providerName} on our app! $shareUrl',
+                                  subject: 'Service Provider Recommendation',
+                                );
+                              }
                           ),
 
                           SizedBox(height: 20.h),

@@ -137,41 +137,41 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    if (showingSlots)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            showingSlots = false;
-                            selectedDate = null;
-                            selectedSchedule = null;
-                            availableSlots.clear();
-                            selectedSlots.clear();
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(5.w),
-                          margin: EdgeInsets.only(right: 8.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(100.r),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 20.sp,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
+                /*if (showingSlots)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        showingSlots = false;
+                        selectedDate = null;
+                        selectedSchedule = null;
+                        availableSlots.clear();
+                        selectedSlots.clear();
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(5.w),
+                      margin: EdgeInsets.only(right: 8.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(100.r),
                       ),
-                    CommonText(
-                      text: showingSlots ? AppString.select_time_slot : "",
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.black400,
-                      textAlign: TextAlign.left,
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 20.sp,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
-                  ],
+                  ),*/
+                Flexible(
+                  child: CommonText(
+                    text: AppString.select_time_slot,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    color: AppColors.black400,
+                    textAlign: TextAlign.left,
+                  ),
                 ),
                 GestureDetector(
                   onTap: () => Get.back(),

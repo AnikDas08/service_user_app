@@ -46,8 +46,8 @@ class CommonText extends StatelessWidget {
         bottom: bottom.h,
       ),
       child: Text(
-        textAlign: textAlign,
         text.tr,
+        textAlign: textAlign,
         maxLines: maxLines,
         overflow: overflow,
         style:

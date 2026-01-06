@@ -51,54 +51,23 @@ class AppointmentScreen extends StatelessWidget {
                     firstDay: DateTime.utc(2020, 1, 1),
                     lastDay: DateTime.utc(2030, 12, 31),
                     focusedDay: controller.focusedDay,
-                    selectedDayPredicate: (day) {
-                      // No day is selected - all dates are gray
-                      return false;
-                    },
+
+                    // Disable selection logic
+                    selectedDayPredicate: (day) => false,
+
                     calendarFormat: CalendarFormat.week,
                     startingDayOfWeek: StartingDayOfWeek.sunday,
-                    // Disable day selection
-                    onDaySelected: (selectedDate, focusedDate) {
-                      // Do nothing - dates are not clickable
-                    },
+
+                    // Disable clicks
+                    onDaySelected: (selectedDate, focusedDate) {},
+
                     onPageChanged: (focusedDay) {
-                      controller.onPageChanged(focusedDay);
+                      controller.focusedDay = focusedDay;
                     },
-                    calendarStyle: CalendarStyle(
-                      outsideDaysVisible: false,
-                      // All dates are gray (default style)
-                      defaultDecoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      defaultTextStyle: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[400], // Gray color for dates
-                      ),
-                      // Weekend dates are also gray
-                      weekendDecoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      weekendTextStyle: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[400], // Gray color for weekend dates
-                      ),
-                      // Today's date is also gray
-                      todayDecoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      todayTextStyle: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[400], // Gray color for today
-                      ),
-                      // No selected decoration
-                      selectedDecoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      selectedTextStyle: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.grey[400],
-                      ),
-                    ),
+
+                    // Only allow swiping (no tapping days)
+                    availableGestures: AvailableGestures.horizontalSwipe,
+
                     headerStyle: HeaderStyle(
                       formatButtonVisible: false,
                       titleCentered: true,
@@ -110,9 +79,89 @@ class AppointmentScreen extends StatelessWidget {
                         color: AppColors.primaryColor,
                       ),
                     ),
-                    // Disable gestures for day selection
-                    availableGestures: AvailableGestures.horizontalSwipe,
-                  ),
+
+                    calendarBuilders: CalendarBuilders(
+                      // 1. Translated Months for Header
+                      headerTitleBuilder: (context, day) {
+                        final year = day.year.toString();
+                        final List<String> monthKeys = [
+                          AppString.january_text.tr, AppString.february_text.tr, AppString.march_text.tr,
+                          AppString.april_text.tr, AppString.may_text.tr, AppString.june_text.tr,
+                          AppString.july_text.tr, AppString.august_text.tr, AppString.september_text.tr,
+                          AppString.october_text.tr, AppString.november_text.tr, AppString.december_text.tr,
+                        ];
+                        final String monthName = monthKeys[day.month - 1];
+
+                        return Center(
+                          child: Text(
+                            "$monthName $year",
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                        );
+                      },
+
+                      // 2. Translated Days of Week
+                      dowBuilder: (context, day) {
+                        final List<String> weekdayNames = [
+                          AppString.mon.tr, AppString.tue.tr, AppString.wed.tr,
+                          AppString.thu.tr, AppString.fri.tr, AppString.sat.tr, AppString.sun.tr,
+                        ];
+                        final text = weekdayNames[day.weekday - 1];
+
+                        return Center(
+                          child: Text(
+                            text,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.grey[400], // Grayed out DOW
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+
+                    calendarStyle: CalendarStyle(
+                      outsideDaysVisible: false,
+
+                      // Default dates style
+                      defaultTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400],
+                      ),
+                      defaultDecoration: BoxDecoration(shape: BoxShape.circle),
+
+                      // Weekend style (also gray)
+                      weekendTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400],
+                      ),
+                      weekendDecoration: BoxDecoration(shape: BoxShape.circle),
+
+                      // Today's style (removed highlight/color)
+                      todayTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400],
+                      ),
+                      todayDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.transparent, // No highlight for "Today"
+                      ),
+
+                      // Ensure selected style doesn't pop up
+                      selectedTextStyle: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.grey[400],
+                      ),
+                      selectedDecoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                  )
                 ),
                 SizedBox(height: 20),
 

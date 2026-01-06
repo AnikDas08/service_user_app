@@ -41,6 +41,7 @@ dependencies:
   url_launcher: ^6.3.0
   flutter_launcher_icons: ^0.14.4
   translator: ^1.0.4+1
+  http: ^1.6.0
 
 
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../utils/constants/app_colors.dart';
 import '../text/common_text.dart';
@@ -125,7 +126,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
         errorMaxLines: 2,
         filled: true,
         fillColor: widget.fillColor,
-        hintText: widget.hintText,
+        hintText: widget.hintText?.tr,
         hintStyle: TextStyle(
           fontSize: 12.sp,
           color: widget.hintTextColor,
@@ -157,7 +158,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
             : widget.suffixIcon,
         prefix: widget.prefixText != null
             ? CommonText(
-          text: widget.prefixText!,
+          text: widget.prefixText!.tr,
           fontWeight: FontWeight.w400,
           fontSize: 14.sp,
           color: widget.textColor!,

@@ -16,8 +16,8 @@ class ScanScreen extends StatelessWidget {
   void _copyToClipboard(String text) {
     Clipboard.setData(ClipboardData(text: text));
     Get.snackbar(
-      'Copied!',
-      'QR Code ID copied to clipboard',
+      AppString.copy,
+      AppString.qr_code_copy,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: AppColors.primaryColor,
       colorText: AppColors.white,
@@ -75,12 +75,13 @@ class ScanScreen extends StatelessWidget {
                           width: Get.size.width,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CommonText(
-                                text: "${AppString.userName} ${LocalStorage.myName}",
+                                text: "${AppString.userName.tr} ${LocalStorage.myName}",
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                maxLines: 2,
+                                maxLines: 1,
                               ),
                               SizedBox(height: 10.h),
 
@@ -88,11 +89,13 @@ class ScanScreen extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  CommonText(
-                                    text: "${AppString.qr_id} ${LocalStorage.userId}",
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    maxLines: 2,
+                                  Flexible(
+                                    child: CommonText(
+                                      text: "${AppString.qr_id.tr} ${LocalStorage.userId}",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      maxLines: 1,
+                                    ),
                                   ),
                                   SizedBox(width: 8.w),
                                   GestureDetector(

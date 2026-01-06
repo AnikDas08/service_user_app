@@ -184,7 +184,7 @@ deletePopUp({
                   ),
                 ),
                 CommonText(
-                  text: "Give your password to confirm your account.",
+                  text: AppString.password_show,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black,
@@ -193,7 +193,7 @@ deletePopUp({
                 ),
                 CommonTextField(
                   controller: controller,
-                  hintText: "Enter Your Password",
+                  hintText: AppString.enter_password.tr,
                   isPassword: true,
                   validator: OtherHelper.validator,
                   borderColor: AppColors.primaryColor,

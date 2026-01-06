@@ -48,12 +48,38 @@ class PersonalInformationScreen extends StatelessWidget {
                                 );
                               }
                             },
-                            child: CircleAvatar(
-                              radius: 60.sp,
-                              backgroundColor: Colors.transparent,
-                              backgroundImage: controller.imageUser.value == ""
-                                  ? const AssetImage("assets/images/profile_image.jpg") as ImageProvider
-                                  : NetworkImage(ApiEndPoint.socketUrl + controller.imageUser.value),
+                            child: ClipOval(
+                              child: controller.imageUser.value.isNotEmpty
+                                  ? Image.network(
+                                ApiEndPoint.socketUrl + controller.imageUser.value,
+                                width: 120.w,
+                                height: 120.h,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    "assets/images/profile_image.jpg",
+                                    width: 120.w,
+                                    height: 120.w,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                                  : Image.asset(
+                                "assets/images/profile_image.jpg",
+                                width: 120.w,
+                                height: 120.w,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
 

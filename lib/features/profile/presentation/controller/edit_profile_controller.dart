@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:haircutmen_user_app/features/profile/data/profiles_model.dart';
 import 'package:haircutmen_user_app/features/profile/presentation/controller/profile_controller.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:country_picker/country_picker.dart';
 
@@ -50,6 +53,13 @@ class EditProfileController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   var selectedLocation = ''.obs;
+
+  // Location autocomplete properties
+  RxList<LocationModel> locationSuggestions = <LocationModel>[].obs;
+  bool isLocationLoading = false;
+  Timer? _debounce;
+  String? latitude;
+  String? longitude;
 
   List<String> locations = [
     'New York',
@@ -124,6 +134,78 @@ class EditProfileController extends GetxController {
     getProfile();
   }
 
+  @override
+  void onClose() {
+    _debounce?.cancel();
+    super.onClose();
+  }
+
+  /// Location autocomplete methods
+  void onLocationChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    if (query.isEmpty) {
+      clearLocationSuggestions();
+      return;
+    }
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      fetchLocationSuggestions(query);
+    });
+  }
+
+  Future<void> fetchLocationSuggestions(String query) async {
+    if (query.isEmpty) return;
+
+    isLocationLoading = true;
+    update();
+
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/search'
+            '?q=${Uri.encodeComponent(query)}&format=json&addressdetails=1&limit=5',
+      );
+
+      final response = await http.get(
+        url,
+        headers: {
+          "User-Agent": "HaircutMenApp",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        locationSuggestions.value = data
+            .map((item) => LocationModel.fromJson(item))
+            .toList();
+      } else {
+        locationSuggestions.clear();
+      }
+    } catch (e) {
+      print("Location search error: $e");
+      locationSuggestions.clear();
+    }
+
+    isLocationLoading = false;
+    update();
+  }
+
+  void selectLocation(LocationModel location) {
+    latitude = location.lat.toString();
+    longitude = location.lon.toString();
+
+    // Use formatted address instead of display name
+    locationController.text = location.formattedAddress;
+
+    clearLocationSuggestions();
+    update();
+  }
+
+  void clearLocationSuggestions() {
+    locationSuggestions.clear();
+    update();
+  }
+
   /// select image function here
   getProfileImage() async {
     image = await OtherHelper.openGalleryForProfile();
@@ -131,7 +213,7 @@ class EditProfileController extends GetxController {
   }
 
   /// select language function here
-  selectLanguage( int index) {
+  selectLanguage(int index) {
     selectedLanguage = languages[index];
     update();
     Get.back();
@@ -141,10 +223,8 @@ class EditProfileController extends GetxController {
     isProfileLoading = true;
     update();
     try {
-      final response = await ApiService.get(
-          ApiEndPoint.user,
-          header: {"Authorization": "Bearer ${LocalStorage.token}"}
-      );
+      final response = await ApiService.get(ApiEndPoint.user,
+          header: {"Authorization": "Bearer ${LocalStorage.token}"});
 
       if (response.statusCode == 200) {
         final profileModel = ProfileModel.fromJson(response.data);
@@ -154,7 +234,6 @@ class EditProfileController extends GetxController {
         nameController.text = profileData?.name ?? "";
         numberController.text = profileData?.contact ?? "";
         locationController.text = profileData?.location ?? "";
-        primaryLocationController.text = profileData?.location ?? "";
 
         // Set country code from API
         if (response.data["data"]["countryCode"] != null) {
@@ -164,7 +243,8 @@ class EditProfileController extends GetxController {
 
           // Get country from code to set flag
           try {
-            Country country = CountryParser.parsePhoneCode(apiCountryCode.replaceAll("+", ""));
+            Country country =
+            CountryParser.parsePhoneCode(apiCountryCode.replaceAll("+", ""));
             countryFlag.value = country.flagEmoji;
             countryIsoCode.value = country.countryCode;
           } catch (e) {
@@ -335,6 +415,12 @@ class EditProfileController extends GetxController {
         "location": locationController.text.trim(),
       };
 
+      // Add latitude and longitude if available
+      if (latitude != null && longitude != null) {
+        body["latitude"] = latitude!;
+        body["longitude"] = longitude!;
+      }
+
       String? imagePath = profileImage.value?.path;
 
       final response = await ApiService.multipart(
@@ -359,10 +445,12 @@ class EditProfileController extends GetxController {
           final profileModel = ProfileModel.fromJson(response.data);
           update();
 
-          Utils.successSnackBar("Profile Updated Successfully", response.message);
+          Utils.successSnackBar(
+              "Profile Updated Successfully", response.message);
           await Get.find<ProfileController>().getProfile();
         } else {
-          Utils.errorSnackBar(response.statusCode, "No data returned from server");
+          Utils.errorSnackBar(
+              response.statusCode, "No data returned from server");
         }
       } else {
         Utils.errorSnackBar(response.statusCode, response.message);
@@ -374,4 +462,122 @@ class EditProfileController extends GetxController {
     isLoading = false;
     update();
   }
+}
+
+// Enhanced Location Model with proper address formatting
+class LocationModel {
+  final String displayName;
+  final String shortName;
+  final double lat;
+  final double lon;
+  final String? building;
+  final String? road;
+  final String? suburb;
+  final String? city;
+  final String? state;
+  final String? country;
+
+  LocationModel({
+    required this.displayName,
+    required this.shortName,
+    required this.lat,
+    required this.lon,
+    this.building,
+    this.road,
+    this.suburb,
+    this.city,
+    this.state,
+    this.country,
+  });
+
+  /// Get formatted address like "Aqua Tower, Mohakhali, Dhaka"
+  String get formattedAddress {
+    List<String> parts = [];
+
+    // Add building/place name
+    if (building != null && building!.isNotEmpty) {
+      parts.add(building!);
+    }
+
+    // Add road if different from building
+    if (road != null && road!.isNotEmpty && road != building) {
+      parts.add(road!);
+    }
+
+    // Add suburb/neighbourhood
+    if (suburb != null && suburb!.isNotEmpty) {
+      parts.add(suburb!);
+    }
+
+    // Add city
+    if (city != null && city!.isNotEmpty) {
+      parts.add(city!);
+    }
+
+    // If no parts found, use short name
+    if (parts.isEmpty) {
+      return shortName.isNotEmpty ? shortName : displayName;
+    }
+
+    return parts.join(', ');
+  }
+
+  /// Get a shorter version for display in suggestions
+  String get shortFormattedAddress {
+    List<String> parts = [];
+
+    if (building != null && building!.isNotEmpty) {
+      parts.add(building!);
+    } else if (road != null && road!.isNotEmpty) {
+      parts.add(road!);
+    }
+
+    if (suburb != null && suburb!.isNotEmpty) {
+      parts.add(suburb!);
+    }
+
+    if (city != null && city!.isNotEmpty) {
+      parts.add(city!);
+    }
+
+    if (parts.isEmpty) {
+      return shortName;
+    }
+
+    return parts.take(3).join(', ');
+  }
+
+  factory LocationModel.fromJson(Map<String, dynamic> json) {
+    final address = json['address'] ?? {};
+
+    return LocationModel(
+      displayName: json['display_name'] ?? '',
+      shortName: json['name'] ?? json['display_name'] ?? '',
+      lat: double.tryParse(json['lat']?.toString() ?? '0') ?? 0.0,
+      lon: double.tryParse(json['lon']?.toString() ?? '0') ?? 0.0,
+      building: address['building'] ??
+          address['house'] ??
+          address['shop'] ??
+          address['office'] ??
+          address['amenity'],
+      road: address['road'] ??
+          address['street'] ??
+          address['pedestrian'],
+      suburb: address['suburb'] ??
+          address['neighbourhood'] ??
+          address['quarter'] ??
+          address['residential'],
+      city: address['city'] ??
+          address['town'] ??
+          address['municipality'] ??
+          address['village'],
+      state: address['state'] ??
+          address['state_district'] ??
+          address['province'],
+      country: address['country'],
+    );
+  }
+
+  @override
+  String toString() => formattedAddress;
 }

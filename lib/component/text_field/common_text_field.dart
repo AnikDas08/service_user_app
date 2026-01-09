@@ -9,6 +9,7 @@ import '../text/common_text.dart';
 class CommonTextField extends StatefulWidget {
   const CommonTextField({
     super.key,
+    this.focusNode,
     this.hintText,
     this.labelText,
     this.prefixIcon,
@@ -44,6 +45,9 @@ class CommonTextField extends StatefulWidget {
     this.height,
     this.isMultiline = false,
   });
+
+  /// ✅ FocusNode (Optional)
+  final FocusNode? focusNode;
 
   final String? hintText;
   final String? labelText;
@@ -100,6 +104,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
         widget.minLines != null;
 
     Widget textField = TextFormField(
+      focusNode: widget.focusNode, // ✅ FocusNode added here
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: widget.controller,
       obscureText: _obscureText,
@@ -134,8 +139,11 @@ class _CommonTextFieldState extends State<CommonTextField> {
         ),
         prefixIcon: widget.prefixIcon ??
             (widget.prefixIconData != null
-                ? Icon(widget.prefixIconData,
-                color: widget.hintTextColor, size: 20.sp)
+                ? Icon(
+              widget.prefixIconData,
+              color: widget.hintTextColor,
+              size: 20.sp,
+            )
                 : null),
         suffixIcon: widget.isPassword
             ? GestureDetector(
@@ -166,13 +174,14 @@ class _CommonTextFieldState extends State<CommonTextField> {
             : null,
         border: _buildBorder(widget.borderColor),
         enabledBorder: _buildBorder(widget.borderColor),
-        focusedBorder: _buildBorder(widget.focusedBorderColor ?? widget.borderColor),
-        errorBorder: _buildBorder(widget.errorBorderColor ?? widget.borderColor),
+        focusedBorder:
+        _buildBorder(widget.focusedBorderColor ?? widget.borderColor),
+        errorBorder:
+        _buildBorder(widget.errorBorderColor ?? widget.borderColor),
         contentPadding: EdgeInsets.symmetric(
-            horizontal: widget.paddingHorizontal.w,
-            vertical: shouldBeMultiline
-                ? widget.paddingVertical.h
-                : widget.paddingVertical.h),
+          horizontal: widget.paddingHorizontal.w,
+          vertical: widget.paddingVertical.h,
+        ),
       ),
     );
 

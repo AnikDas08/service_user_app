@@ -1,8 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
+import 'package:http/http.dart' as http;
 import '../../../../services/api/api_service.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../utils/constants/app_colors.dart';
@@ -11,6 +14,48 @@ import '../../data/model/providers_model.dart';
 import '../screen/service_details_screen.dart';
 import 'home_nav_controller.dart';
 
+/// -------------------------------
+/// Location Model
+/// -------------------------------
+class LocationModel {
+  final String displayName;
+  final String lat;
+  final String lon;
+  final String shortName;
+
+  LocationModel({
+    required this.displayName,
+    required this.lat,
+    required this.lon,
+    required this.shortName,
+  });
+
+  factory LocationModel.fromJson(Map<String, dynamic> json) {
+    final address = json['address'] ?? {};
+    String city = address['city'] ?? address['town'] ?? address['village'] ?? '';
+    String state = address['state'] ?? '';
+    String country = address['country'] ?? '';
+
+    String shortName = '';
+    if (city.isNotEmpty && state.isNotEmpty && country.isNotEmpty) {
+      shortName = "$city, $state, $country";
+    } else {
+      List<String> parts = (json['display_name'] as String).split(',');
+      shortName = parts.take(3).map((e) => e.trim()).join(', ');
+    }
+
+    return LocationModel(
+      displayName: json['display_name'],
+      lat: json['lat'],
+      lon: json['lon'],
+      shortName: shortName,
+    );
+  }
+}
+
+/// -------------------------------
+/// Home Controller
+/// -------------------------------
 class HomeController extends GetxController {
   TextEditingController searchController = TextEditingController();
   static final HomeController instance = HomeController();
@@ -28,9 +73,9 @@ class HomeController extends GetxController {
 
   // Pagination variables
   final RxInt currentPage = 1.obs;
-  final RxInt totalPages = 1.obs;  // Changed from Rx num to RxDouble
+  final RxInt totalPages = 1.obs;
   final RxInt totalProviders = 0.obs;
-  final  num limit = 20;
+  final num limit = 20;
   final RxBool hasMoreData = true.obs;
   final RxBool isFilterActive = false.obs;
 
@@ -51,6 +96,13 @@ class HomeController extends GetxController {
   // Store current filter URL for pagination
   String? currentFilterUrl;
 
+  // Location properties
+  List<LocationModel> locationSuggestions = [];
+  bool isLocationLoading = false;
+  String? latitude;
+  String? longitude;
+  Timer? _debounce;
+
   @override
   void onInit() {
     super.onInit();
@@ -63,21 +115,25 @@ class HomeController extends GetxController {
     searchController.addListener(_onSearchChanged);
   }
 
-  Future<void> countNotification()async{
-    try{
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> countNotification() async {
+    try {
       final response = await ApiService.get(
-          "notifications/amount",
-          header: {
-            "Content-Type": "application/json",
-          }
+        "notifications/amount",
+        header: {
+          "Content-Type": "application/json",
+        },
       );
-      if(response.statusCode==200){
+      if (response.statusCode == 200) {
         updateCount(response.data['data']);
-
       }
-    }
-    catch(e){
-
+    } catch (e) {
+      // Handle error silently
     }
   }
 
@@ -92,6 +148,11 @@ class HomeController extends GetxController {
 
       // Clear search
       searchController.clear();
+
+      // Clear location data
+      latitude = null;
+      longitude = null;
+      locationSuggestions.clear();
 
       // Mark filter as inactive
       isFilterActive.value = false;
@@ -123,21 +184,20 @@ class HomeController extends GetxController {
     print("values :$message");
   }
 
-  Future<void> countMessa()async{
-    try{
+  Future<void> countMessa() async {
+    try {
       final response = await ApiService.get(
-          "messages/get-unread-messages-amount",
-          header: {
-            "Content-Type": "application/json",
-          }
+        "messages/get-unread-messages-amount",
+        header: {
+          "Content-Type": "application/json",
+        },
       );
-      if(response.statusCode==200){
+      if (response.statusCode == 200) {
         updateMessage(response.data['data']);
         Get.find<HomeNavController>().refresh();
       }
-    }
-    catch(e){
-
+    } catch (e) {
+      // Handle error silently
     }
   }
 
@@ -152,14 +212,80 @@ class HomeController extends GetxController {
       filteredProviders.value = serviceProviders;
     } else {
       filteredProviders.value = serviceProviders.where((provider) {
-        // Search only by category and subcategory (removed name search)
         return provider.category.toLowerCase().contains(query) ||
             provider.subCategory.toLowerCase().contains(query);
       }).toList();
     }
   }
 
-  // Fetch user's favorite list from API
+  /// -------------------------------
+  /// LOCATION AUTOCOMPLETE
+  /// -------------------------------
+  void onLocationChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      searchLocation(value);
+    });
+  }
+
+  Future<void> searchLocation(String query) async {
+    if (query.isEmpty) {
+      locationSuggestions.clear();
+      update();
+      return;
+    }
+
+    isLocationLoading = true;
+    update();
+
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/search'
+            '?q=${Uri.encodeComponent(query)}&format=json&addressdetails=1&limit=5',
+      );
+
+      final response = await http.get(
+        url,
+        headers: {
+          "User-Agent": "HaircutMenApp",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("RAW LOCATION RESPONSE 👉 ${response.body}");
+
+        final List data = jsonDecode(response.body);
+
+        debugPrint("PARSED LIST LENGTH 👉 ${data.length}");
+
+        locationSuggestions = data.map((e) => LocationModel.fromJson(e)).toList();
+      } else {
+        locationSuggestions.clear();
+      }
+    } catch (e) {
+      debugPrint("Location search error: $e");
+      locationSuggestions.clear();
+    }
+
+    isLocationLoading = false;
+    update();
+  }
+
+  void selectLocation(LocationModel location) {
+    latitude = location.lat;
+    longitude = location.lon;
+    locationSuggestions.clear();
+    update();
+  }
+
+  void clearLocationSuggestions() {
+    locationSuggestions.clear();
+    update();
+  }
+
+  /// -------------------------------
+  /// FAVORITES
+  /// -------------------------------
   Future<void> fetchFavorites() async {
     try {
       final response = await ApiService.get(
@@ -179,9 +305,6 @@ class HomeController extends GetxController {
     }
   }
 
-
-
-  // Add/Remove favorite with API call
   Future<void> favouriteItem(String providerId) async {
     try {
       final wasFavorite = favoriteIds.contains(providerId);
@@ -203,6 +326,7 @@ class HomeController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        // Success
       } else {
         if (wasFavorite) {
           favoriteIds.add(providerId);
@@ -237,13 +361,23 @@ class HomeController extends GetxController {
       );
     }
   }
+
+  bool isFavorite(String providerId) {
+    return favoriteIds.contains(providerId);
+  }
+
+  List<ProviderModel> get favoriteProviders {
+    return serviceProviders.where((provider) => isFavorite(provider.id)).toList();
+  }
+
+  /// -------------------------------
+  /// SERVICE PROVIDERS
+  /// -------------------------------
   Future<void> fetchServiceProviders({String? filterUrl, bool loadMore = false}) async {
     try {
-      // Prevent multiple simultaneous requests
       if (loadMore && isLoadingMore.value) return;
       if (!loadMore && isLoadingProviders.value) return;
 
-      // Check if there's more data to load
       if (loadMore && !hasMoreData.value) return;
 
       if (loadMore) {
@@ -263,10 +397,8 @@ class HomeController extends GetxController {
       String baseUrl = currentFilterUrl ??
           (ApiEndPoint.provider + "?verified=true&isActive=true&isOnline=true");
 
-      // Add pagination parameters
       String separator = baseUrl.contains('?') ? '&' : '?';
-      String url = baseUrl +
-          "${separator}page=${currentPage.value}&limit=$limit";
+      String url = baseUrl + "${separator}page=${currentPage.value}&limit=$limit";
 
       final response = await ApiService.get(
         url,
@@ -279,9 +411,6 @@ class HomeController extends GetxController {
         final providersResponse = ProvidersResponse.fromJson(response.data);
 
         if (providersResponse.success) {
-          // Update pagination info
-          // Update pagination info
-          // Update pagination info
           if (response.data['pagination'] != null) {
             totalPages.value = (response.data['pagination']['totalPage'] ?? 1).toInt();
             totalProviders.value = (response.data['pagination']['total'] ?? 0).toInt();
@@ -290,8 +419,8 @@ class HomeController extends GetxController {
 
           if (loadMore) {
             // Append new data
-            //serviceProviders.addAll(providersResponse.data);
-            //filteredProviders.addAll(providersResponse.data);
+            serviceProviders.addAll(providersResponse.data);
+            filteredProviders.addAll(providersResponse.data);
           } else {
             // Replace data
             serviceProviders.value = providersResponse.data;
@@ -334,9 +463,6 @@ class HomeController extends GetxController {
     }
   }
 
-
-
-  // Load next page
   Future<void> loadMoreProviders() async {
     if (hasMoreData.value && !isLoadingMore.value) {
       currentPage.value++;
@@ -344,18 +470,21 @@ class HomeController extends GetxController {
     }
   }
 
+  /// -------------------------------
+  /// PROFILE
+  /// -------------------------------
   Future<void> getProfile() async {
     update();
     try {
       final response = await ApiService.get(
-          ApiEndPoint.user,
-          header: {"Authorization": "Bearer ${LocalStorage.token}"}
+        ApiEndPoint.user,
+        header: {"Authorization": "Bearer ${LocalStorage.token}"},
       );
       if (response.statusCode == 200) {
         final profileModel = ProfileModel.fromJson(response.data);
         profileData = profileModel.data;
-        name.value = response.data["data"]["name"]??"";
-        image.value = response.data["data"]["image"]??"";
+        name.value = response.data["data"]["name"] ?? "";
+        image.value = response.data["data"]["image"] ?? "";
       } else {
         Utils.errorSnackBar(response.statusCode, response.message);
       }
@@ -365,12 +494,15 @@ class HomeController extends GetxController {
     update();
   }
 
+  /// -------------------------------
+  /// CATEGORIES
+  /// -------------------------------
   Future<void> fetchCategories() async {
     try {
       isLoadingCategories.value = true;
 
       final response = await ApiService.get(
-        ApiEndPoint.category+"?limit=20",
+        ApiEndPoint.category + "?limit=20",
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
         },
@@ -381,9 +513,9 @@ class HomeController extends GetxController {
 
         categories.value = data.map((item) {
           return {
-            "id": item['_id']??"",
-            "name": item['name']??"",
-            "icon": item['icon']??"assets/images/noImage.png",
+            "id": item['_id'] ?? "",
+            "name": item['name'] ?? "",
+            "icon": item['icon'] ?? "assets/images/noImage.png",
           };
         }).toList();
 
@@ -410,7 +542,9 @@ class HomeController extends GetxController {
     }
   }
 
-  // Fetch subcategories for a specific category
+  /// -------------------------------
+  /// SUBCATEGORIES
+  /// -------------------------------
   Future<void> fetchSubCategories(String categoryId) async {
     try {
       isLoadingSubCategories[categoryId] = true;
@@ -456,14 +590,9 @@ class HomeController extends GetxController {
     }
   }
 
-  bool isFavorite(String providerId) {
-    return favoriteIds.contains(providerId);
-  }
-
-  List<ProviderModel> get favoriteProviders {
-    return serviceProviders.where((provider) => isFavorite(provider.id)).toList();
-  }
-
+  /// -------------------------------
+  /// FILTERING
+  /// -------------------------------
   void onServiceCategoryTap(String category) {
     if (category == "All") {
       filteredProviders.value = serviceProviders;
@@ -476,15 +605,10 @@ class HomeController extends GetxController {
     }
   }
 
-  void onProviderTap(String id) {
-    Get.to(() => const ServiceDetailsScreen(), arguments: id);
-  }
-
-  // New method to apply filters with API call
   Future<void> applyFiltersWithAPI(Map<String, dynamic> filterData) async {
     try {
-      // Build query parameters
-      List<String> queryParams = ["verified=true", "isActive=true", "isOnline=true"];
+      //List<String> queryParams = ["verified=true", "isActive=true", "isOnline=true"];
+      List<String> queryParams = [];
 
       if (filterData['categoryId'] != null && filterData['categoryId'].toString().isNotEmpty) {
         queryParams.add("categoryId=${filterData['categoryId']}");
@@ -514,15 +638,24 @@ class HomeController extends GetxController {
         queryParams.add("location=${filterData['location']}");
       }
 
-      // Build the complete URL
+      if (filterData['userLat'] != null && filterData['userLat'].toString().isNotEmpty) {
+        queryParams.add("userLat=${filterData['userLat']}");
+      }
+
+      if (filterData['userLng'] != null && filterData['userLng'].toString().isNotEmpty) {
+        queryParams.add("userLng=${filterData['userLng']}");
+      }
+
       String filterUrl = ApiEndPoint.provider + "?" + queryParams.join("&");
       print("Filter URL: $filterUrl");
+
+      // Mark filter as active
+      isFilterActive.value = true;
 
       // Reset pagination and fetch with new filters
       currentPage.value = 1;
       hasMoreData.value = true;
       await fetchServiceProviders(filterUrl: filterUrl);
-
     } catch (e) {
       Get.snackbar(
         AppString.error,
@@ -534,7 +667,6 @@ class HomeController extends GetxController {
     }
   }
 
-  // Original applyFilters method (for local filtering if needed)
   void applyFilters(Map<String, dynamic> filterData) {
     List<ProviderModel> filtered = List.from(serviceProviders);
 
@@ -556,10 +688,23 @@ class HomeController extends GetxController {
     update();
   }
 
+  /// -------------------------------
+  /// NAVIGATION
+  /// -------------------------------
+  void onProviderTap(String id) {
+    Get.to(() => const ServiceDetailsScreen(), arguments: id);
+  }
+
+  /// -------------------------------
+  /// REFRESH
+  /// -------------------------------
   Future<void> refreshData() async {
     currentPage.value = 1;
     hasMoreData.value = true;
     currentFilterUrl = null;
+    latitude = null;
+    longitude = null;
+    locationSuggestions.clear();
     await Future.wait([
       fetchCategories(),
       fetchServiceProviders(),
@@ -569,7 +714,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    //searchController.dispose();
+    _debounce?.cancel();
     super.onClose();
   }
 }

@@ -12,9 +12,81 @@ import '../../../../utils/custom_appbar/custom_appbar.dart';
 import '../../../home/widget/custom_button_home.dart';
 import '../controller/edit_profile_controller.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
   EditProfile({super.key});
+
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
   String? selectedLocation;
+
+  // Focus node for location field
+  final FocusNode _locationFocusNode = FocusNode();
+
+  // Flag to prevent listener from triggering during programmatic updates
+  bool _isSelectingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Get controller instance
+    final controller = Get.find<EditProfileController>();
+
+    // Listen to location field changes
+    controller.locationController.addListener(() {
+      // Only trigger search if not programmatically selecting and field has focus
+      if (!_isSelectingLocation && _locationFocusNode.hasFocus) {
+        controller.onLocationChanged(controller.locationController.text);
+      }
+    });
+
+    // Listen to focus changes
+    _locationFocusNode.addListener(() {
+      if (!_locationFocusNode.hasFocus) {
+        // Clear suggestions when field loses focus (with slight delay)
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (mounted && !_locationFocusNode.hasFocus) {
+            controller.clearLocationSuggestions();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _locationFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _selectLocation(EditProfileController controller, LocationModel location) {
+    // Set flag to prevent listener from triggering
+    setState(() {
+      _isSelectingLocation = true;
+    });
+
+    // Update text field
+    controller.locationController.text = location.shortName;
+
+    // Call controller methods
+    controller.selectLocation(location);
+    controller.clearLocationSuggestions();
+
+    // Unfocus to hide keyboard
+    _locationFocusNode.unfocus();
+
+    // Reset flag after a short delay
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) {
+        setState(() {
+          _isSelectingLocation = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +175,8 @@ class EditProfile extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: AppColors.primaryColor,
                                 shape: BoxShape.circle,
-                                border:
-                                Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                    color: Colors.white, width: 2),
                               ),
                               child: GestureDetector(
                                 onTap: () {
@@ -159,15 +231,8 @@ class EditProfile extends StatelessWidget {
                           // Phone number with country code picker
                           _buildPhoneNumberField(controller, context),
                           SizedBox(height: 12),
-                          EditPersonal(
-                            title: AppString.location,
-                            controller: controller.locationController,
-                          ),
-                          SizedBox(height: 12),
-                          EditPersonal(
-                            title: AppString.add_primary_locatiopn,
-                            controller: controller.primaryLocationController,
-                          ),
+                          // Location field with autocomplete
+                          _buildLocationFieldWithAutocomplete(controller),
                           SizedBox(height: 20.h),
                           controller.isLoading
                               ? Center(
@@ -289,62 +354,141 @@ class EditProfile extends StatelessWidget {
     );
   }
 
-  Widget _buildLocationDropdown(EditProfileController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CommonText(
-          text: AppString.add_primary_locatiopn,
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w400,
-          color: AppColors.black400,
-        ),
-        SizedBox(height: 12),
-        Container(
-          width: double.infinity,
-          height: 44,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.black100, width: 1),
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: Obx(
-                  () => DropdownButton<String>(
-                value: controller.selectedLocation.value.isEmpty
-                    ? null
-                    : controller.selectedLocation.value,
-                hint: CommonText(
-                  text: AppString.select_location,
-                  fontSize: 12,
-                  color: AppColors.black200,
-                  textAlign: TextAlign.left,
-                ),
-                icon: Icon(
-                  Icons.keyboard_arrow_down,
-                  color: AppColors.black300,
-                  size: 24.sp,
-                ),
-                isExpanded: true,
-                items: controller.locations.map((String location) {
-                  return DropdownMenuItem<String>(
-                    value: location,
-                    child: CommonText(
-                      text: location,
-                      fontSize: 14,
-                      color: AppColors.black400,
-                      textAlign: TextAlign.left,
-                    ),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  controller.setSelectedLocation(newValue ?? '');
-                },
-              ),
+  // Location field with autocomplete suggestions
+  Widget _buildLocationFieldWithAutocomplete(EditProfileController controller) {
+    return GetBuilder<EditProfileController>(
+      builder: (ctrl) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CommonText(
+              text: AppString.location,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+              color: AppColors.black400,
             ),
-          ),
-        ),
-      ],
+            SizedBox(height: 6),
+
+            // Location Text Field
+            CommonTextField(
+              controller: controller.locationController,
+              focusNode: _locationFocusNode,
+              hintText: AppString.hint_type_here,
+              hintTextColor: AppColors.black200,
+              suffixIcon: ctrl.isLocationLoading
+                  ? Padding(
+                padding: EdgeInsets.all(12.w),
+                child: SizedBox(
+                  height: 20.h,
+                  width: 20.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              )
+                  : controller.locationController.text.isNotEmpty
+                  ? IconButton(
+                icon: Icon(
+                  Icons.clear,
+                  color: AppColors.black300,
+                  size: 20.sp,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isSelectingLocation = true;
+                    controller.locationController.clear();
+                    controller.clearLocationSuggestions();
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      if (mounted) {
+                        _isSelectingLocation = false;
+                      }
+                    });
+                  });
+                },
+              )
+                  : null,
+            ),
+
+            // Location Suggestions Dropdown
+            if (ctrl.locationSuggestions.isNotEmpty && _locationFocusNode.hasFocus)
+              Container(
+                margin: EdgeInsets.only(top: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  border: Border.all(color: AppColors.black100),
+                  borderRadius: BorderRadius.circular(4.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                constraints: BoxConstraints(
+                  maxHeight: 200.h,
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: ctrl.locationSuggestions.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    color: AppColors.black100,
+                  ),
+                  itemBuilder: (context, index) {
+                    final location = ctrl.locationSuggestions[index];
+                    return InkWell(
+                      onTap: () {
+                        _selectLocation(controller, location);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 12.h,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: AppColors.primaryColor,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CommonText(
+                                    text: location.shortName,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.black400,
+                                    textAlign: TextAlign.left,
+                                    maxLines: 1,
+                                  ),
+                                  if (location.displayName != location.shortName)
+                                    CommonText(
+                                      text: location.displayName,
+                                      fontSize: 12,
+                                      color: AppColors.black200,
+                                      textAlign: TextAlign.left,
+                                      maxLines: 2,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
@@ -352,10 +496,13 @@ class EditProfile extends StatelessWidget {
 class EditPersonal extends StatelessWidget {
   final String title;
   final TextEditingController controller;
+  final FocusNode? focusNode;
+
   const EditPersonal({
     super.key,
     required this.title,
     required this.controller,
+    this.focusNode,
   });
 
   @override
@@ -373,6 +520,7 @@ class EditPersonal extends StatelessWidget {
         SizedBox(height: 6),
         CommonTextField(
           controller: controller,
+          focusNode: focusNode,
           hintTextColor: AppColors.black400,
         )
       ],

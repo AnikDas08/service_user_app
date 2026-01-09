@@ -30,6 +30,43 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final double maxPrice = 150000;
   TextEditingController locationControllers = TextEditingController();
 
+  // Focus node for location field
+  final FocusNode _locationFocusNode = FocusNode();
+
+  // Flag to prevent listener from triggering during programmatic updates
+  bool _isSelectingLocation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen to location field changes
+    locationControllers.addListener(() {
+      // Only trigger search if not programmatically selecting and field has focus
+      if (!_isSelectingLocation && _locationFocusNode.hasFocus) {
+        controller.onLocationChanged(locationControllers.text);
+      }
+    });
+
+    // Listen to focus changes
+    _locationFocusNode.addListener(() {
+      if (!_locationFocusNode.hasFocus) {
+        // Clear suggestions when field loses focus (with slight delay)
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (mounted && !_locationFocusNode.hasFocus) {
+            controller.clearLocationSuggestions();
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _locationFocusNode.dispose();
+    locationControllers.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -121,13 +158,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
                       SizedBox(height: 16.h),
 
-                      // Location Section
-                      _buildSectionTitle(AppString.location_text),
-                      SizedBox(height: 12.h),
-                      CommonTextField(
-                        controller: locationControllers,
-                        hintText: AppString.hint_type_here,
-                      ),
+                      // Location Section with Autocomplete
+                      _buildLocationSection(),
 
                       SizedBox(height: 16.h),
 
@@ -413,6 +445,164 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     );
   }
 
+  // Location Section with Autocomplete
+  Widget _buildLocationSection() {
+    return GetBuilder<HomeController>(
+      builder: (ctrl) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionTitle(AppString.location_text),
+            SizedBox(height: 12.h),
+
+            // Location Text Field
+            CommonTextField(
+              controller: locationControllers,
+              focusNode: _locationFocusNode,
+              hintText: AppString.hint_type_here,
+              suffixIcon: ctrl.isLocationLoading
+                  ? Padding(
+                padding: EdgeInsets.all(12.w),
+                child: SizedBox(
+                  height: 20.h,
+                  width: 20.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              )
+                  : locationControllers.text.isNotEmpty
+                  ? IconButton(
+                icon: Icon(
+                  Icons.clear,
+                  color: AppColors.black300,
+                  size: 20.sp,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isSelectingLocation = true;
+                    locationControllers.clear();
+                    controller.clearLocationSuggestions();
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                      if (mounted) {
+                        _isSelectingLocation = false;
+                      }
+                    });
+                  });
+                },
+              )
+                  : null,
+            ),
+
+            // Location Suggestions Dropdown
+            if (ctrl.locationSuggestions.isNotEmpty && _locationFocusNode.hasFocus)
+              Container(
+                margin: EdgeInsets.only(top: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  border: Border.all(color: AppColors.black100),
+                  borderRadius: BorderRadius.circular(4.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                constraints: BoxConstraints(
+                  maxHeight: 200.h,
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  itemCount: ctrl.locationSuggestions.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    color: AppColors.black100,
+                  ),
+                  itemBuilder: (context, index) {
+                    final location = ctrl.locationSuggestions[index];
+                    return InkWell(
+                      onTap: () {
+                        _selectLocation(location);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 12.h,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              color: AppColors.primaryColor,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CommonText(
+                                    text: location.shortName,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.black400,
+                                    textAlign: TextAlign.left,
+                                    maxLines: 1,
+                                  ),
+                                  if (location.displayName != location.shortName)
+                                    CommonText(
+                                      text: location.displayName,
+                                      fontSize: 12,
+                                      color: AppColors.black200,
+                                      textAlign: TextAlign.left,
+                                      maxLines: 2,
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _selectLocation(LocationModel location) {
+    // Set flag to prevent listener from triggering
+    setState(() {
+      _isSelectingLocation = true;
+    });
+
+    // Update text field
+    locationControllers.text = location.shortName;
+
+    // Call controller methods
+    controller.selectLocation(location);
+    controller.clearLocationSuggestions();
+
+    // Unfocus to hide keyboard and trigger focus listener
+    _locationFocusNode.unfocus();
+
+    // Reset flag after a short delay
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) {
+        setState(() {
+          _isSelectingLocation = false;
+        });
+      }
+    });
+  }
+
   Widget _buildPriceSlider() {
     return Column(
       children: [
@@ -484,25 +674,15 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future<void> _selectDate() async {
-    // ⭐️ Replacing the use of showDatePicker with your custom dialog
     showCustomCalendarView(
-      // The initial date should be the currently selected date or today
       initialDate: selectedDate ?? DateTime.now(),
-
-      // The callback function handles the date selection from the custom dialog
       onDateSelected: (DateTime pickedDate) {
-        // This setState is called when the user selects a date and the dialog closes
         setState(() {
           selectedDate = pickedDate;
         });
       },
-      // You can ignore `isSecond` for a single date picker
       isSecond: false,
     );
-
-    // Note: Since showCustomCalendarView is a void function that uses a callback
-    // to handle the result, this method no longer needs to be `async`
-    // and wait for a result, but we keep `Future<void>` for consistency.
   }
 
   Future<void> _selectTime() async {
@@ -537,7 +717,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     String? formattedDate;
 
     if (selectedDate != null && selectedTime != null) {
-      // Both date and time are selected
       final dateTime = DateTime(
         selectedDate!.year,
         selectedDate!.month,
@@ -548,7 +727,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       );
       formattedDate = dateTime.toIso8601String();
     } else if (selectedDate != null && selectedTime == null) {
-      // Only date is selected (no time)
       final dateOnly = DateTime(
         selectedDate!.year,
         selectedDate!.month,
@@ -559,7 +737,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       );
       formattedDate = dateOnly.toIso8601String();
     } else if (selectedDate == null && selectedTime != null) {
-      // Only time is selected (use current date with selected time)
       final now = DateTime.now();
       final dateTime = DateTime(
         now.year,
@@ -574,7 +751,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     print("Date: $formattedDate");
 
-    // Create filter data to pass back
+    // Create filter data with lat/lon from selected location
     Map<String, dynamic> filterData = {
       'categoryId': selectedCategoryId,
       'subCategoryId': selectedSubCategoryId,

@@ -195,7 +195,7 @@ class EditProfileController extends GetxController {
     longitude = location.lon.toString();
 
     // Use formatted address instead of display name
-    locationController.text = location.formattedAddress;
+    locationController.text = location.displayName;
 
     clearLocationSuggestions();
     update();
@@ -466,118 +466,131 @@ class EditProfileController extends GetxController {
 
 // Enhanced Location Model with proper address formatting
 class LocationModel {
+  final String placeId;
   final String displayName;
+  final String lat;
+  final String lon;
+
+  // Address fields (OSM)
+  final String houseNumber;
+  final String road;
+  final String neighbourhood;
+  final String suburb;
+  final String city;
+  final String town;
+  final String village;
+  final String county;
+  final String state;
+  final String postcode;
+  final String country;
+  final String countryCode;
+
+  // Computed fields
   final String shortName;
-  final double lat;
-  final double lon;
-  final String? building;
-  final String? road;
-  final String? suburb;
-  final String? city;
-  final String? state;
-  final String? country;
+  final String searchableName;
+  final String fullAddress;
 
   LocationModel({
+    required this.placeId,
     required this.displayName,
-    required this.shortName,
     required this.lat,
     required this.lon,
-    this.building,
-    this.road,
-    this.suburb,
-    this.city,
-    this.state,
-    this.country,
+    required this.houseNumber,
+    required this.road,
+    required this.neighbourhood,
+    required this.suburb,
+    required this.city,
+    required this.town,
+    required this.village,
+    required this.county,
+    required this.state,
+    required this.postcode,
+    required this.country,
+    required this.countryCode,
+    required this.shortName,
+    required this.searchableName,
+    required this.fullAddress,
   });
-
-  /// Get formatted address like "Aqua Tower, Mohakhali, Dhaka"
-  String get formattedAddress {
-    List<String> parts = [];
-
-    // Add building/place name
-    if (building != null && building!.isNotEmpty) {
-      parts.add(building!);
-    }
-
-    // Add road if different from building
-    if (road != null && road!.isNotEmpty && road != building) {
-      parts.add(road!);
-    }
-
-    // Add suburb/neighbourhood
-    if (suburb != null && suburb!.isNotEmpty) {
-      parts.add(suburb!);
-    }
-
-    // Add city
-    if (city != null && city!.isNotEmpty) {
-      parts.add(city!);
-    }
-
-    // If no parts found, use short name
-    if (parts.isEmpty) {
-      return shortName.isNotEmpty ? shortName : displayName;
-    }
-
-    return parts.join(', ');
-  }
-
-  /// Get a shorter version for display in suggestions
-  String get shortFormattedAddress {
-    List<String> parts = [];
-
-    if (building != null && building!.isNotEmpty) {
-      parts.add(building!);
-    } else if (road != null && road!.isNotEmpty) {
-      parts.add(road!);
-    }
-
-    if (suburb != null && suburb!.isNotEmpty) {
-      parts.add(suburb!);
-    }
-
-    if (city != null && city!.isNotEmpty) {
-      parts.add(city!);
-    }
-
-    if (parts.isEmpty) {
-      return shortName;
-    }
-
-    return parts.take(3).join(', ');
-  }
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     final address = json['address'] ?? {};
 
+    String getValue(String key) =>
+        address[key]?.toString() ?? '';
+
+    /// -------- Short Name (Most specific) --------
+    String shortName =
+    getValue('neighbourhood').isNotEmpty
+        ? getValue('neighbourhood')
+        : getValue('suburb').isNotEmpty
+        ? getValue('suburb')
+        : getValue('road').isNotEmpty
+        ? getValue('road')
+        : getValue('city').isNotEmpty
+        ? getValue('city')
+        : getValue('town').isNotEmpty
+        ? getValue('town')
+        : getValue('village').isNotEmpty
+        ? getValue('village')
+        : getValue('state');
+
+    /// -------- Searchable Name --------
+    List<String> searchParts = [];
+    if (getValue('neighbourhood').isNotEmpty) {
+      searchParts.add(getValue('neighbourhood'));
+    }
+    if (getValue('road').isNotEmpty) {
+      searchParts.add(getValue('road'));
+    }
+    if (getValue('city').isNotEmpty) {
+      searchParts.add(getValue('city'));
+    } else if (getValue('town').isNotEmpty) {
+      searchParts.add(getValue('town'));
+    }
+
+    String searchableName = searchParts.isNotEmpty
+        ? searchParts.join(', ')
+        : json['display_name'];
+
+    /// -------- Full Address (Manual structured) --------
+    List<String> fullParts = [
+      getValue('house_number'),
+      getValue('road'),
+      getValue('neighbourhood'),
+      getValue('suburb'),
+      getValue('city'),
+      getValue('town'),
+      getValue('village'),
+      getValue('county'),
+      getValue('state'),
+      getValue('postcode'),
+      getValue('country'),
+    ].where((e) => e.isNotEmpty).toList();
+
+    String fullAddress = fullParts.join(', ');
+
     return LocationModel(
+      placeId: json['place_id'].toString(),
       displayName: json['display_name'] ?? '',
-      shortName: json['name'] ?? json['display_name'] ?? '',
-      lat: double.tryParse(json['lat']?.toString() ?? '0') ?? 0.0,
-      lon: double.tryParse(json['lon']?.toString() ?? '0') ?? 0.0,
-      building: address['building'] ??
-          address['house'] ??
-          address['shop'] ??
-          address['office'] ??
-          address['amenity'],
-      road: address['road'] ??
-          address['street'] ??
-          address['pedestrian'],
-      suburb: address['suburb'] ??
-          address['neighbourhood'] ??
-          address['quarter'] ??
-          address['residential'],
-      city: address['city'] ??
-          address['town'] ??
-          address['municipality'] ??
-          address['village'],
-      state: address['state'] ??
-          address['state_district'] ??
-          address['province'],
-      country: address['country'],
+      lat: json['lat'] ?? '',
+      lon: json['lon'] ?? '',
+
+      houseNumber: getValue('house_number'),
+      road: getValue('road'),
+      neighbourhood: getValue('neighbourhood'),
+      suburb: getValue('suburb'),
+      city: getValue('city'),
+      town: getValue('town'),
+      village: getValue('village'),
+      county: getValue('county'),
+      state: getValue('state'),
+      postcode: getValue('postcode'),
+      country: getValue('country'),
+      countryCode: getValue('country_code'),
+
+      shortName: shortName,
+      searchableName: searchableName,
+      fullAddress: fullAddress,
     );
   }
-
-  @override
-  String toString() => formattedAddress;
 }

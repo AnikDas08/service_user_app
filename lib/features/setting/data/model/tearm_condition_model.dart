@@ -1,3 +1,5 @@
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
+
 class TearmConditionModel {
   final String id;
   final String content;
@@ -10,7 +12,7 @@ class TearmConditionModel {
   factory TearmConditionModel.fromJson(Map<String, dynamic> json) {
     return TearmConditionModel(
       id: json['_id'] ?? '',
-      content: json['termsAndConditions'] ?? 'No Data Found',
+      content: json['termsAndConditions'] ?? AppString.dataEmpty,
     );
   }
 }

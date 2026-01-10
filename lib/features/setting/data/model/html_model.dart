@@ -1,3 +1,5 @@
+import 'package:haircutmen_user_app/utils/constants/app_string.dart';
+
 class HtmlModel {
   final String id;
   final String content;
@@ -10,7 +12,7 @@ class HtmlModel {
   factory HtmlModel.fromJson(Map<String, dynamic> json) {
     return HtmlModel(
       id: json['_id'] ?? '',
-      content: json['content'] ?? 'No Data Found',
+      content: json['content'] ?? AppString.dataEmpty,
     );
   }
 }

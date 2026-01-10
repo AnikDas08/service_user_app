@@ -546,21 +546,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   CommonText(
-                                    text: location.shortName,
+                                    text: location.displayName,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     color: AppColors.black400,
                                     textAlign: TextAlign.left,
                                     maxLines: 1,
                                   ),
-                                  if (location.displayName != location.shortName)
-                                    CommonText(
-                                      text: location.displayName,
-                                      fontSize: 12,
-                                      color: AppColors.black200,
-                                      textAlign: TextAlign.left,
-                                      maxLines: 2,
-                                    ),
                                 ],
                               ),
                             ),
@@ -584,7 +576,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     });
 
     // Update text field
-    locationControllers.text = location.shortName;
+    locationControllers.text = location.displayName;
 
     // Call controller methods
     controller.selectLocation(location);
@@ -757,8 +749,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       'subCategoryId': selectedSubCategoryId,
       'date': formattedDate,
       'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
-      'userLng': "90.3890144",
-      'userLat': "23.7643863",
+      'userLng': controller.longitude??"",
+      'userLat': controller.latitude,
       'minPrice': 0,
       'maxPrice': priceRange.toString(),
     };

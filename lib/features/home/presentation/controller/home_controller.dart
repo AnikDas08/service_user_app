@@ -18,37 +18,131 @@ import 'home_nav_controller.dart';
 /// Location Model
 /// -------------------------------
 class LocationModel {
+  final String placeId;
   final String displayName;
   final String lat;
   final String lon;
+
+  // Address fields (OSM)
+  final String houseNumber;
+  final String road;
+  final String neighbourhood;
+  final String suburb;
+  final String city;
+  final String town;
+  final String village;
+  final String county;
+  final String state;
+  final String postcode;
+  final String country;
+  final String countryCode;
+
+  // Computed fields
   final String shortName;
+  final String searchableName;
+  final String fullAddress;
 
   LocationModel({
+    required this.placeId,
     required this.displayName,
     required this.lat,
     required this.lon,
+    required this.houseNumber,
+    required this.road,
+    required this.neighbourhood,
+    required this.suburb,
+    required this.city,
+    required this.town,
+    required this.village,
+    required this.county,
+    required this.state,
+    required this.postcode,
+    required this.country,
+    required this.countryCode,
     required this.shortName,
+    required this.searchableName,
+    required this.fullAddress,
   });
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     final address = json['address'] ?? {};
-    String city = address['city'] ?? address['town'] ?? address['village'] ?? '';
-    String state = address['state'] ?? '';
-    String country = address['country'] ?? '';
 
-    String shortName = '';
-    if (city.isNotEmpty && state.isNotEmpty && country.isNotEmpty) {
-      shortName = "$city, $state, $country";
-    } else {
-      List<String> parts = (json['display_name'] as String).split(',');
-      shortName = parts.take(3).map((e) => e.trim()).join(', ');
+    String getValue(String key) =>
+        address[key]?.toString() ?? '';
+
+    /// -------- Short Name (Most specific) --------
+    String shortName =
+    getValue('neighbourhood').isNotEmpty
+        ? getValue('neighbourhood')
+        : getValue('suburb').isNotEmpty
+        ? getValue('suburb')
+        : getValue('road').isNotEmpty
+        ? getValue('road')
+        : getValue('city').isNotEmpty
+        ? getValue('city')
+        : getValue('town').isNotEmpty
+        ? getValue('town')
+        : getValue('village').isNotEmpty
+        ? getValue('village')
+        : getValue('state');
+
+    /// -------- Searchable Name --------
+    List<String> searchParts = [];
+    if (getValue('neighbourhood').isNotEmpty) {
+      searchParts.add(getValue('neighbourhood'));
+    }
+    if (getValue('road').isNotEmpty) {
+      searchParts.add(getValue('road'));
+    }
+    if (getValue('city').isNotEmpty) {
+      searchParts.add(getValue('city'));
+    } else if (getValue('town').isNotEmpty) {
+      searchParts.add(getValue('town'));
     }
 
+    String searchableName = searchParts.isNotEmpty
+        ? searchParts.join(', ')
+        : json['display_name'];
+
+    /// -------- Full Address (Manual structured) --------
+    List<String> fullParts = [
+      getValue('house_number'),
+      getValue('road'),
+      getValue('neighbourhood'),
+      getValue('suburb'),
+      getValue('city'),
+      getValue('town'),
+      getValue('village'),
+      getValue('county'),
+      getValue('state'),
+      getValue('postcode'),
+      getValue('country'),
+    ].where((e) => e.isNotEmpty).toList();
+
+    String fullAddress = fullParts.join(', ');
+
     return LocationModel(
-      displayName: json['display_name'],
-      lat: json['lat'],
-      lon: json['lon'],
+      placeId: json['place_id'].toString(),
+      displayName: json['display_name'] ?? '',
+      lat: json['lat'] ?? '',
+      lon: json['lon'] ?? '',
+
+      houseNumber: getValue('house_number'),
+      road: getValue('road'),
+      neighbourhood: getValue('neighbourhood'),
+      suburb: getValue('suburb'),
+      city: getValue('city'),
+      town: getValue('town'),
+      village: getValue('village'),
+      county: getValue('county'),
+      state: getValue('state'),
+      postcode: getValue('postcode'),
+      country: getValue('country'),
+      countryCode: getValue('country_code'),
+
       shortName: shortName,
+      searchableName: searchableName,
+      fullAddress: fullAddress,
     );
   }
 }

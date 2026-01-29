@@ -408,17 +408,17 @@ class EditProfileController extends GetxController {
       fullNumber = countryDialCode + numberController.text.trim();
 
       // Prepare body
-      Map<String, String> body = {
+      // Change <String, String> to <String, dynamic>
+      Map<String, dynamic> body = {
         "name": nameController.text.trim(),
         "contact": numberController.text.trim(),
         "countryCode": countryDialCode,
         "location": locationController.text.trim(),
       };
 
-      // Add latitude and longitude if available
       if (latitude != null && longitude != null) {
-        body["latitude"] = latitude!;
-        body["longitude"] = longitude!;
+        body["coordinates"] = longitude;
+        body["coordinates"] = latitude;
       }
 
       String? imagePath = profileImage.value?.path;

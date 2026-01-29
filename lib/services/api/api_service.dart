@@ -85,7 +85,7 @@ class ApiService {
   static Future<ApiResponseModel> multipart(
     String url, {
     Map<String, String> header = const {},
-    Map<String, String> body = const {},
+    Map<String, dynamic> body = const {},
     String method = "POST",
     String imageName = 'image',
     String? imagePath,

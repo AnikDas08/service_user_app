@@ -1,7 +1,7 @@
 class ApiEndPoint {
-  static const baseUrl = "http://72.61.159.185:5000/api/v1/";
-  static const imageUrl = "http://72.61.159.185:5000";
-  static const socketUrl = "http://72.61.159.185:5000";
+  static const baseUrl = "http://10.10.7.26:5050/api/v1/";
+  static const imageUrl = "http://10.10.7.26:5050";
+  static const socketUrl = "http://10.10.7.26:5050";
 
 
 

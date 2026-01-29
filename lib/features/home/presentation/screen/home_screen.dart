@@ -288,18 +288,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 SizedBox(width: 10),
 
-                controller.searchController.text == ""
-                    ? IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    size: 18.sp,
-                    color: AppColors.black100,
-                  ),
-                  onPressed: () {
-                    controller.searchController.clear();
-                  },
-                )
-                    : SizedBox.shrink(),
+                // Show searching indicator or clear button
+                Obx(() {
+                  if (controller.isSearching.value) {
+                    return SizedBox(
+                      width: 18.sp,
+                      height: 18.sp,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primaryColor,
+                      ),
+                    );
+                  } else if (controller.searchController.text.isNotEmpty) {
+                    return IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        size: 18.sp,
+                        color: AppColors.black100,
+                      ),
+                      onPressed: () {
+                        controller.searchController.clear();
+                      },
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
               ],
             ),
           ),
@@ -407,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 // Show clear filter button when filters are active
                 Obx(() {
-                  if (controller.isFilterActive.value) {
+                  if (controller.isFilterActive.value || controller.searchController.text.isNotEmpty) {
                     return GestureDetector(
                       onTap: () {
                         controller.clearFilters();
@@ -559,7 +572,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       name: provider.name,
                       service: provider.category,
                       distance:
-                      "${provider.serviceDistance.toStringAsFixed(2)}km",
+                      "${provider.distance.toStringAsFixed(2)}km",
                       rating: provider.reviews.averageRating.toString(),
                       reviews: provider.reviews.totalReviews.toString(),
                       price: "RSD ${provider.price.toStringAsFixed(0)}",

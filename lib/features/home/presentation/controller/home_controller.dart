@@ -173,6 +173,9 @@ class HomeController extends GetxController {
   final RxBool hasMoreData = true.obs;
   final RxBool isFilterActive = false.obs;
 
+  // Search state
+  final RxBool isSearching = false.obs;
+
   // Categories from API
   final RxList<Map<String, dynamic>> categories = <Map<String, dynamic>>[].obs;
   final RxBool isLoadingCategories = false.obs;
@@ -212,6 +215,8 @@ class HomeController extends GetxController {
   @override
   void dispose() {
     _debounce?.cancel();
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
     super.dispose();
   }
 
@@ -300,15 +305,101 @@ class HomeController extends GetxController {
     print("data :$count");
   }
 
+  /// -------------------------------
+  /// SEARCH FUNCTIONALITY
+  /// -------------------------------
   void _onSearchChanged() {
-    final query = searchController.text.toLowerCase();
+    final query = searchController.text.trim();
+
+    // Cancel previous search timer
+    _debounce?.cancel();
+
     if (query.isEmpty) {
-      filteredProviders.value = serviceProviders;
+      // If search is empty, reset to show all providers or current filter
+      if (currentFilterUrl != null) {
+        fetchServiceProviders(filterUrl: currentFilterUrl);
+      } else {
+        fetchServiceProviders();
+      }
     } else {
-      filteredProviders.value = serviceProviders.where((provider) {
-        return provider.category.toLowerCase().contains(query) ||
-            provider.subCategory.toLowerCase().contains(query);
-      }).toList();
+      // Show searching indicator
+      isSearching.value = true;
+
+      // Set a 1-second delay before making the API call
+      _debounce = Timer(const Duration(seconds: 1), () {
+        _performSearch(query);
+      });
+    }
+  }
+
+  Future<void> _performSearch(String query) async {
+    try {
+      isLoadingProviders.value = true;
+      isSearching.value = false;
+
+      // Build search URL
+      String searchUrl;
+      if (currentFilterUrl != null) {
+        // If there's an active filter, append search to it
+        String separator = currentFilterUrl!.contains('?') ? '&' : '?';
+        searchUrl = currentFilterUrl! + "${separator}searchTerm=$query";
+      } else {
+        // Otherwise, create a new search URL
+        searchUrl = ApiEndPoint.provider + "?verified=true&isActive=true&isOnline=true&searchTerm=$query";
+      }
+
+      print("Search URL: $searchUrl");
+
+      final response = await ApiService.get(
+        searchUrl,
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final providersResponse = ProvidersResponse.fromJson(response.data);
+
+        if (providersResponse.success) {
+          if (response.data['pagination'] != null) {
+            totalPages.value = (response.data['pagination']['totalPage'] ?? 1).toInt();
+            totalProviders.value = (response.data['pagination']['total'] ?? 0).toInt();
+            hasMoreData.value = false; // Disable load more for search results
+          }
+
+          serviceProviders.value = providersResponse.data;
+          filteredProviders.value = providersResponse.data;
+
+          update();
+        } else {
+          Get.snackbar(
+            AppString.error,
+            providersResponse.message,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          AppString.error,
+          response.message ?? "Failed to search providers",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        AppString.error,
+        "Search error: ${e.toString()}",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoadingProviders.value = false;
+      isSearching.value = false;
     }
   }
 
@@ -799,6 +890,7 @@ class HomeController extends GetxController {
     latitude = null;
     longitude = null;
     locationSuggestions.clear();
+    searchController.clear();
     await Future.wait([
       fetchCategories(),
       fetchServiceProviders(),
@@ -809,6 +901,8 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     _debounce?.cancel();
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
     super.onClose();
   }
 }

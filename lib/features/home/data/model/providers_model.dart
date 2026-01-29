@@ -2,7 +2,8 @@ class ProviderModel {
   final String id;
   final String primaryLocation;
   final LocationData location;
-  final  num serviceDistance;
+  final num serviceDistance;
+  final num distance;
   final double pricePerHour;
   final bool isActive;
   final bool isOnline;
@@ -20,6 +21,7 @@ class ProviderModel {
     required this.primaryLocation,
     required this.location,
     required this.serviceDistance,
+    required this.distance,
     required this.pricePerHour,
     required this.isActive,
     required this.isOnline,
@@ -40,6 +42,7 @@ class ProviderModel {
       primaryLocation: json['primaryLocation'] ?? '',
       location: LocationData.fromJson(json['location'] ?? {}),
       serviceDistance: json['serviceDistance'] ?? 0,
+      distance: json['distance'] ?? 0,
       pricePerHour: (json['pricePerHour'] ?? 0.0).toDouble(),
       isActive: json['isActive'] ?? false,
       isOnline: json['isOnline'] ?? false,
@@ -60,6 +63,7 @@ class ProviderModel {
       'primaryLocation': primaryLocation,
       'location': location.toJson(),
       'serviceDistance': serviceDistance,
+      'distance': distance,
       'pricePerHour': pricePerHour,
       'isActive': isActive,
       'isOnline': isOnline,

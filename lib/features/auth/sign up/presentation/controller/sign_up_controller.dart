@@ -302,7 +302,8 @@ class SignUpController extends GetxController {
     isLoading = true;
     update();
 
-    Map<String, String> body = {
+    // Change the type to Map<String, dynamic> to allow different data types
+    Map<String, dynamic> body = {
       "role": "USER",
       "name": nameController.text,
       "email": emailController.text,
@@ -312,6 +313,7 @@ class SignUpController extends GetxController {
       "latitude": latitude ?? "",
       "longitude": longitude ?? "",
       "password": passwordController.text,
+      "coordinates": [latitude ?? 0.0, longitude ?? 0.0],
       "referralCode": "O-BQ7LRC"
     };
 

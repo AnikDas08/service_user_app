@@ -313,7 +313,7 @@ class SignUpController extends GetxController {
       "latitude": latitude ?? "",
       "longitude": longitude ?? "",
       "password": passwordController.text,
-      "coordinates": [latitude ?? 0.0, longitude ?? 0.0],
+      "coordinates": [longitude ?? 0.0, latitude ?? 0.0],
       "referralCode": "O-BQ7LRC"
     };
 

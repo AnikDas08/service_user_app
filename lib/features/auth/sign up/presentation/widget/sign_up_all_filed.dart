@@ -133,6 +133,41 @@ class _SignUpAllFieldState extends State<SignUpAllField> {
               ),
           ],
         ),
+        const CommonText(
+          text: AppString.password_text,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black400,
+          bottom: 6,
+          top: 12,
+        ),
+        CommonTextField(
+          hintText: AppString.password_hint,
+          hintTextColor: AppColors.black100,
+          controller: widget.controller.passwordController,
+          isPassword: true,
+          validator: OtherHelper.passwordValidator,
+        ),
+
+
+        const CommonText(
+          text: AppString.confirm_password_text,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: AppColors.black400,
+          bottom: 6,
+          top: 12,
+        ),
+        CommonTextField(
+          hintText: AppString.hint_confirm_password,
+          hintTextColor: AppColors.black100,
+          controller: widget.controller.confirmPasswordController,
+          isPassword: true,
+          validator: (value) => OtherHelper.confirmPasswordValidator(
+            value,
+            widget.controller.passwordController,
+          ),
+        ),
       ],
     );
   }

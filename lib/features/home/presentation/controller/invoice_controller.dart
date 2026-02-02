@@ -686,7 +686,6 @@ class InvoiceController extends GetxController {
 
   @override
   void onClose() {
-    promoCode.dispose();
     super.onClose();
   }
 }

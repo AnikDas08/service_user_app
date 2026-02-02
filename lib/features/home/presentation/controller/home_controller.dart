@@ -216,7 +216,6 @@ class HomeController extends GetxController {
   void dispose() {
     _debounce?.cancel();
     searchController.removeListener(_onSearchChanged);
-    searchController.dispose();
     super.dispose();
   }
 
@@ -902,7 +901,6 @@ class HomeController extends GetxController {
   void onClose() {
     _debounce?.cancel();
     searchController.removeListener(_onSearchChanged);
-    searchController.dispose();
     super.onClose();
   }
 }

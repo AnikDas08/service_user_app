@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
@@ -578,7 +580,7 @@ class InvoiceController extends GetxController {
       );
 
       // ✅ Prepare booking request body with only enabled fees
-      Map<String, dynamic> bookingBody = {
+      Map<String, dynamic> bookingFields = {
         "provider": invoiceData['providerId'],
         "services": invoiceData['selectedServiceIds'],
         "date": invoiceData['dateIso'],
@@ -591,23 +593,30 @@ class InvoiceController extends GetxController {
         "arrivalFee": isArrivalFeeOn.value ? arrivalFee.value : 0,
         "discount": discount.value,
         "subTotal": subTotal.value,
-        "creditApplied": creditApplied.value,
+        "bookingDescription": invoiceData['description'] ?? "",
       };
-      print("Boking : 😂😂😂😂 ${bookingBody}");
+      Map<String, dynamic> finalBody = {
+        "data": jsonEncode(bookingFields), // This sends it exactly like your Postman screenshot
+      };
 
       if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
-        bookingBody["promoCode"] = validPromoCode.value;
+        bookingFields["promoCode"] = validPromoCode.value;
       }
 
-      print("📤 Booking Request Body: $bookingBody");
+      print("📤 Booking Request Body: $bookingFields");
 
-      final response = await ApiService.post(
+      /*final response = await ApiService.post(
         "booking",
         body: bookingBody,
         header: {
           "Authorization": "Bearer ${LocalStorage.token}",
           "Content-Type": "application/json",
         },
+      );*/
+      final response = await ApiService.multipartImage(
+        "booking",
+        body: finalBody,
+        files: [{"image":invoiceData["image"]}],             // matches the 'image' key in your screenshot
       );
 
       print("📡 Booking Response Status: ${response.statusCode}");

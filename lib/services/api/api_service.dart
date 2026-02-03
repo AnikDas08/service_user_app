@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mime/mime.dart';
@@ -44,7 +45,7 @@ class ApiService {
   static Future<ApiResponseModel> multipartImage(
       String url, {
         Map<String, String> header = const {},
-        Map<String, String> body = const {},
+        Map<dynamic, dynamic> body = const {},
         String method = "POST",
         List files = const [],
       }) async {
@@ -73,7 +74,17 @@ class ApiService {
     }
 
     body.forEach((key, value) {
-      formData.fields.add(MapEntry(key, value));
+      if (key == "services" && value is List) {
+        // Some backends prefer this format for multipart arrays:
+        for (var id in value) {
+          formData.fields.add(MapEntry("services[]", id.toString()));
+          // OR try without brackets: MapEntry("services", id.toString())
+        }
+      } else if (value is List || value is Map) {
+        formData.fields.add(MapEntry(key, jsonEncode(value)));
+      } else {
+        formData.fields.add(MapEntry(key, value.toString()));
+      }
     });
 
     final headers = Map<String, String>.from(header);
@@ -112,7 +123,7 @@ class ApiService {
     }
 
     body.forEach((key, value) {
-      formData.fields.add(MapEntry(key, value));
+      formData.fields.add(MapEntry(key, value.toString()));
     });
 
     header['Content-Type'] = "multipart/form-data";

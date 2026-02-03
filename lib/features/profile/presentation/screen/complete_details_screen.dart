@@ -157,6 +157,7 @@ class CompleteDetailsScreen extends StatelessWidget {
                                       fontSize: 12.sp,
                                       color: AppColors.black300,
                                       fontWeight: FontWeight.w400,
+                                      maxLines: 3,
                                     ),
                                   ],
                                 ),

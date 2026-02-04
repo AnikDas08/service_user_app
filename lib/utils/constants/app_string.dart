@@ -328,6 +328,8 @@ class AppString {
   static const String booking_here = "No bookings found";
   static const String cancel_booking_detail = "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
   static const String booking_id_here = "Booking ID";
+  static const String description_text_here = "Description";
+  static const String image_text_here = "Image";
   static const String status_show = "View Status";
   static const String home = "Home";
   static const String appointment = "Appointment";

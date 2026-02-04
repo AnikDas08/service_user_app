@@ -22,6 +22,8 @@ class ServiceCancelController extends GetxController {
   var serviceName = ''.obs;
   var date = ''.obs;
   var time = ''.obs;
+  var description = '';
+  var image = '';
   var duration = '60 ${AppString.minutes_duration_text}'.obs;
   var amount = ''.obs;
   RxString rating = "".obs;
@@ -54,6 +56,8 @@ class ServiceCancelController extends GetxController {
           bookingData.value = response.data['data'][0];
           rating.value = response.data['data'][0]['ratings']["averageRating"].toString()??"";
           reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
+          description = response.data['data'][0]['bookingDescription'] ?? "N/A";
+          image=response.data["data"][0]["image"]??"";
           _parseBookingData();
         }
       }

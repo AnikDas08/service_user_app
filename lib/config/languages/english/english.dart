@@ -31,6 +31,8 @@ Map<String, String> english = {
   AppString.email: "Email",
   AppString.messagenot: "No messages found",
   AppString.codeHasBeenSendTo: "Code has been send to",
+  AppString.description_text_here: "Description",
+  AppString.image_text_here: "Image",
   AppString.otpIsInValid: "Otp is inValid",
   AppString.resendCode: "Resend Code",
   AppString.resendCodeIn: "Resend code in",

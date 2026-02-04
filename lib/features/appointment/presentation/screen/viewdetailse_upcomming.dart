@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:haircutmen_user_app/config/api/api_end_point.dart';
 import 'package:haircutmen_user_app/config/route/app_routes.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
@@ -232,7 +233,9 @@ class ViewDetailsUpcoming extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 12.h),
+
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           CommonText(
                             text: controller.serviceName.value,
@@ -250,8 +253,73 @@ class ViewDetailsUpcoming extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonText(
+                            text: "${AppString.description_text_here}:",
+                            fontSize: 14.sp,
+                            textAlign: TextAlign.start,
+                            color: AppColors.black500,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: CommonText(
+                              text: controller.description,
+                              fontSize: 14.sp,
+                              color: AppColors.black400,
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.start,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonText(
+                        text: "Reference Image",
+                      textAlign: TextAlign.start,
+                      fontSize: 18.sp,
+                    ),
+                    SizedBox(height: 10.h),
+                    GestureDetector(
+                      onTap: (){
+                        if (controller.image != "") {
+                          ImageViewerScreen.openSingle(
+                            Get.context!,
+                            ApiEndPoint.socketUrl + controller.image,
+                            isNetwork: true,
+                          );
+                        }
+                        else{
+                          ImageViewerScreen.openSingle(
+                            Get.context!,
+                            "assets/images/noImage.png",
+                            isNetwork: false
+                          );
+                        }
+                      },
+                      child: Image.network(
+                        ApiEndPoint.socketUrl+controller.image,
+                        width: double.infinity,
+                        height: 150.h,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Image.asset("assets/images/noImage.png"),
+                      ),
+                    )
+                  ],
                 ),
               ),
               SizedBox(height: 20.h),

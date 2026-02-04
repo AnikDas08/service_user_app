@@ -12,6 +12,7 @@ import 'services/storage/storage_services.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  //await LocalStorage.getAllPrefData();
   await init.tryCatch();
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -27,10 +28,11 @@ Future<void> main() async {
 init() async {
   DependencyInjection dI = DependencyInjection();
   dI.dependencies();
-  SocketServices.connectToSocket();
 
   await Future.wait([
     LocalStorage.getAllPrefData(),
     NotificationService.initLocalNotification(),
-  ]);
+  ]
+  );
+  SocketServices.connectToSocket();
 }

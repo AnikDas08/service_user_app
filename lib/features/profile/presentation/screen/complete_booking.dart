@@ -28,16 +28,12 @@ class CompleteBooking extends StatelessWidget {
     );
   }
 
-  // Booking Card Builder (Adapted from AppointmentController's design)
   Widget _buildBookingCard(
       Map<String, dynamic> booking, CompletedBookingController controller) {
     return GestureDetector(
       onTap: () {
-        // Navigate to a dedicated completed booking details screen if needed
-        // Since we are only viewing completed bookings, we can navigate directly
-        // to a details screen (you may need to define AppRoutes.completeddetails_screen)
         Get.toNamed(
-          AppRoutes.complete_details_screen, // Assuming you have this route
+          AppRoutes.complete_details_screen,
           arguments: {'bookingId': booking['_id']},
         );
       },
@@ -57,7 +53,6 @@ class CompleteBooking extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Provider Image (Placeholder for the image section)
             Container(
               width: 76.w,
               height: 87.h,
@@ -66,9 +61,8 @@ class CompleteBooking extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.zero,
-                // Check if the image URL is valid and build the image
                 child: (controller.getUserImage(booking).startsWith('http') ||
-                    controller.getUserImage(booking).startsWith('/')) // Using getUserImage assuming provider details are not required here, otherwise you need a getProviderImage in the CompleteBookingController
+                    controller.getUserImage(booking).startsWith('/'))
                     ? Image.network(
                   ApiEndPoint.imageUrl +
                       controller.getUserImage(booking),
@@ -87,23 +81,20 @@ class CompleteBooking extends StatelessWidget {
               ),
             ),
             SizedBox(width: 12.w),
-            // Booking Details
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: controller.getUserName(booking), // Displaying User Name
+                    text: controller.getUserName(booking),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: AppColors.black400,
                   ),
                   SizedBox(height: 4.h),
-                  // Service Name
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      // Assuming you have this SVG in your assets
                       SvgPicture.asset(
                         "assets/icons/propetion_icon.svg",
                         width: 16.w,
@@ -122,7 +113,6 @@ class CompleteBooking extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 4.h),
-                  // Date and Time
                   Row(
                     children: [
                       SvgPicture.asset(
@@ -155,7 +145,6 @@ class CompleteBooking extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 4.h),
-                  // Booking ID and View Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -179,7 +168,6 @@ class CompleteBooking extends StatelessWidget {
                           text: AppString.view_button,
                           isSelected: true,
                           onTap: () {
-                            // Implement view details logic for completed booking
                             Get.toNamed(
                               AppRoutes.complete_details_screen,
                               arguments: {'bookingId': booking['_id']},
@@ -204,11 +192,11 @@ class CompleteBooking extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: GetBuilder<CompletedBookingController>( // Correct Controller Name
+        child: GetBuilder<CompletedBookingController>(
           builder: (controller) => Column(
             children: [
               const CustomAppBar(
-                title: AppString.complete_booking, // Updated title
+                title: AppString.complete_booking,
               ),
               SizedBox(height: 20.h),
               Expanded(
@@ -230,7 +218,7 @@ class CompleteBooking extends StatelessWidget {
                       ),
                       SizedBox(height: 16.h),
                       CommonText(
-                        text: AppString.complete_booking_photo, // Updated No Data Text
+                        text: AppString.complete_booking_photo,
                         fontSize: 16.sp,
                         color: Colors.grey[600]!,
                         fontWeight: FontWeight.w500,

@@ -20,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     Future.delayed(const Duration(seconds: 3), () async {
       print("token 🤣🤣🤣🤣🤣${LocalStorage.token}");
+      print("token 🤣🤣🤣🤣🤣${LocalStorage.userId}");
       final box = GetStorage();
       String? language = box.read(StorageKey.language);
       print("language : $language");

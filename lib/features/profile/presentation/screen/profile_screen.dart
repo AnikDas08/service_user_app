@@ -144,12 +144,15 @@ class ProfileScreen extends StatelessWidget {
                              text: "${AppString.present_credit.tr}: ${controller.credit.value.toStringAsFixed(2)}",
                            fontSize: 16,
                            fontWeight: FontWeight.w500,
+                           overflow: TextOverflow.ellipsis,
                            color: AppColors.black400
                          ),
                          SizedBox(height: 18,),
                          CommonText(
                              text: AppString.one_credit,
                            fontSize: 16,
+                           maxLines: 2,
+                           overflow: TextOverflow.ellipsis,
                            fontWeight: FontWeight.w500,
                            color: AppColors.black100,
                          ),

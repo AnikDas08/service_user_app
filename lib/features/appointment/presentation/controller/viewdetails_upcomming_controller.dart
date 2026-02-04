@@ -21,6 +21,8 @@ class ViewdetailsUpcommingController extends GetxController {
   var providerImage = '';
   var providerLocation = ''.obs;
   var serviceName = ''.obs;
+  var description = '';
+  var image = '';
   var date = ''.obs;
   var time = ''.obs;
   var duration = '60 ${AppString.minutes_duration_text}'.obs;
@@ -82,6 +84,8 @@ class ViewdetailsUpcommingController extends GetxController {
         rating.value = response.data['data'][0]['ratings']["averageRating"].toString() ?? "";
         reviewCount.value = response.data['data'][0]['ratings']['totalReviews'] ?? 0;
         chantId = response.data['data'][0]['chatId'] ?? "";
+        description = response.data['data'][0]['bookingDescription'] ?? "N/A";
+        image=response.data["data"][0]["image"]??"";
         _parseBookingData();
       }
     } catch (e) {

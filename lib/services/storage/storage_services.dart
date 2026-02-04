@@ -10,6 +10,7 @@ class LocalStorage {
   static String refreshToken = "";
   static bool isLogIn = false;
   static String userId = "";
+  static String userName = "";
   static String myImage = "";
   static String myName = "";
   static String myEmail = "";
@@ -32,6 +33,7 @@ class LocalStorage {
     refreshToken = localStorage.getString(LocalStorageKeys.refreshToken) ?? "";
     isLogIn = localStorage.getBool(LocalStorageKeys.isLogIn) ?? false;
     userId = localStorage.getString(LocalStorageKeys.userId) ?? "";
+    userName = localStorage.getString(LocalStorageKeys.userName) ?? "";
     myImage = localStorage.getString(LocalStorageKeys.myImage) ?? "";
     myName = localStorage.getString(LocalStorageKeys.myName) ?? "";
     myEmail = localStorage.getString(LocalStorageKeys.myEmail) ?? "";
@@ -57,6 +59,7 @@ class LocalStorage {
     localStorage.setString(LocalStorageKeys.userId, "");
     localStorage.setString(LocalStorageKeys.myImage, "");
     localStorage.setString(LocalStorageKeys.myName, "");
+    localStorage.setString(LocalStorageKeys.userName, "");
     localStorage.setString(LocalStorageKeys.myEmail, "");
     localStorage.setBool(LocalStorageKeys.isLogIn, false);
     localStorage.setString(LocalStorageKeys.language, "");

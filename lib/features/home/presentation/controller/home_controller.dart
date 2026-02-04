@@ -7,6 +7,7 @@ import 'package:haircutmen_user_app/services/storage/storage_services.dart';
 import 'package:haircutmen_user_app/utils/constants/app_string.dart';
 import 'package:http/http.dart' as http;
 import '../../../../services/api/api_service.dart';
+import '../../../../services/storage/storage_keys.dart';
 import '../../../../utils/app_utils.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../profile/data/profiles_model.dart';
@@ -669,6 +670,9 @@ class HomeController extends GetxController {
         profileData = profileModel.data;
         name.value = response.data["data"]["name"] ?? "";
         image.value = response.data["data"]["image"] ?? "";
+        LocalStorage.userName = await response.data["data"]["name"] ?? "";
+        await LocalStorage.setString(LocalStorageKeys.userName, LocalStorage.userName);
+
       } else {
         Utils.errorSnackBar(response.statusCode, response.message);
       }

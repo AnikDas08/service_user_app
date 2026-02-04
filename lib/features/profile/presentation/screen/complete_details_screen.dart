@@ -144,6 +144,7 @@ class CompleteDetailsScreen extends StatelessWidget {
                                 SizedBox(height: 6.h),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SvgPicture.asset(
                                       "assets/icons/location_icon.svg",
@@ -152,12 +153,16 @@ class CompleteDetailsScreen extends StatelessWidget {
                                       color: AppColors.black300,
                                     ),
                                     SizedBox(width: 4.w),
-                                    CommonText(
-                                      text: controller.providerLocation.value,
-                                      fontSize: 12.sp,
-                                      color: AppColors.black300,
-                                      fontWeight: FontWeight.w400,
-                                      maxLines: 3,
+                                    Flexible(
+                                      child: CommonText(
+                                        text: controller.providerLocation.value,
+                                        fontSize: 12.sp,
+                                        color: AppColors.black300,
+                                        textAlign: TextAlign.left,
+                                        fontWeight: FontWeight.w400,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                      ),
                                     ),
                                   ],
                                 ),

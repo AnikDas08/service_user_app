@@ -21,6 +21,8 @@ Map<String, String> serbian = {
   AppString.currentPassword: "Trenutna lozinka",
   AppString.newPassword: "Nova lozinka",
   AppString.oldPassword: "Stara lozinka",
+  AppString.description_text_here: "Opis",
+  AppString.image_text_here: "Slika",
   AppString.enterOld: "Stara lozinka",
   AppString.confirmPassword: "Potvrdite lozinku",
   AppString.forgotPassword: "Zaboravili ste lozinku",

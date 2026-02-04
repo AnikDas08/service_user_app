@@ -628,7 +628,6 @@ class InvoiceController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         String? checkoutUrl;
-
         if (response.data['data'] != null && response.data['data'] is String) {
           checkoutUrl = response.data['data'];
         } else if (response.data['checkoutUrl'] != null) {
@@ -638,9 +637,7 @@ class InvoiceController extends GetxController {
         } else if (response.data['data'] != null && response.data['data']['url'] != null) {
           checkoutUrl = response.data['data']['url'];
         }
-
         print("🔗 Checkout URL: $checkoutUrl");
-
         if (checkoutUrl == null || checkoutUrl.isEmpty) {
           // Payment completed with credit only
           Utils.successSnackBar("Success", "Payment completed successfully using credit");
@@ -648,12 +645,10 @@ class InvoiceController extends GetxController {
           Get.offAllNamed(AppRoutes.homeNav);
           return;
         }
-
         // Navigate to Stripe WebView
         final result = await Get.to(
           StripeWebViewScreen(checkoutUrl: checkoutUrl),
         );
-
         if (result == 'success') {
           _showSuccessDialog(response.data);
           Get.find<ProfileController>().getProfile();
@@ -677,7 +672,6 @@ class InvoiceController extends GetxController {
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-
       print("❌ Error creating booking: $e");
 
       Get.snackbar(

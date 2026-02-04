@@ -17,6 +17,8 @@ class CompleteController extends GetxController {
   var providerName = ''.obs;
   var providerImage = ''.obs;
   var providerLocation = ''.obs;
+  var description = '';
+  var image = '';
   var serviceName = ''.obs;
   var date = ''.obs;
   var time = ''.obs;
@@ -52,6 +54,8 @@ class CompleteController extends GetxController {
           bookingData.value = response.data['data'][0];
           rating.value = response.data['data'][0]['ratings']["averageRating"].toString()??"";
           reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
+          description = response.data['data'][0]['bookingDescription'] ?? "";
+          image=response.data["data"][0]["image"]??"";
           _parseBookingData();
         }
       }

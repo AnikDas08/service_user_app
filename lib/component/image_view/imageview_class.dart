@@ -86,7 +86,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
           errorBuilder: (context, error, stackTrace) {
             return Container(
               child: Center(
-                child: CommonImage(imageSrc: "assets/images/profile_image.jpg", size: 100),
+                child: CommonImage(imageSrc: imageUrl, size: 100),
               ),
             );
           },

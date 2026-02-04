@@ -78,7 +78,7 @@ class ScanScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CommonText(
-                                text: "${AppString.userName.tr} ${LocalStorage.myName}",
+                                text: "${AppString.userName.tr} ${LocalStorage.userName}",
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 maxLines: 1,

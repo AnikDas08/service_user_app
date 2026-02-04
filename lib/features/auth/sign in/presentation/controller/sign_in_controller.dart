@@ -74,11 +74,13 @@ class SignInController extends GetxController {
       LocalStorage.token = data['data']["accessToken"];
       LocalStorage.isLogIn = true;
       LocalStorage.userId = data['data']["id"];
-      print("dkjfklsdjfkd 😍😍😍😍😍 ${LocalStorage.userId}");
+      //LocalStorage.userName = data['data']["name"];
+      //print("dkjfklsdjfkd 😍😍😍😍😍 ${LocalStorage.userId}");
 
       LocalStorage.setBool(LocalStorageKeys.isLogIn, LocalStorage.isLogIn);
       LocalStorage.setString(LocalStorageKeys.token, LocalStorage.token);
       LocalStorage.setString(LocalStorageKeys.userId, LocalStorage.userId);
+      //LocalStorage.setString(LocalStorageKeys.userName, LocalStorage.userId);
 
       Get.offAllNamed(AppRoutes.homeNav);
 

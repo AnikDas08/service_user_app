@@ -19,6 +19,8 @@ Map<String, String> russian = {
   AppString.phoneNumber: "Номер телефона",
   AppString.test: "Тест",
   AppString.changePassword: "Изменить пароль",
+  AppString.description_text_here: "Описание",
+  AppString.image_text_here: "Изображение",
   AppString.currentPassword: "Текущий пароль",
   AppString.newPassword: "Новый пароль",
   AppString.oldPassword: "Старый пароль",

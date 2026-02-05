@@ -61,28 +61,6 @@ class EditProfileController extends GetxController {
   String? latitude;
   String? longitude;
 
-  List<String> locations = [
-    'New York',
-    'Los Angeles',
-    'Chicago',
-    'Houston',
-    'Phoenix',
-    'Philadelphia',
-    'San Antonio',
-    'San Diego',
-    'Dallas',
-    'San Jose',
-    'Austin',
-    'Jacksonville',
-    'Fort Worth',
-    'Columbus',
-    'Charlotte',
-    'San Francisco',
-    'Indianapolis',
-    'Seattle',
-    'Denver',
-    'Boston',
-  ];
 
   void setSelectedLocation(String location) {
     selectedLocation.value = location;

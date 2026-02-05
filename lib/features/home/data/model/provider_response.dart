@@ -38,6 +38,7 @@ class ProvidersData {
   final String primaryLocation;
   final LocationData location;
   final  num serviceDistance;
+  final  num distance;
   final double pricePerHour;
   final List<String> serviceImages;
   final bool isRead;
@@ -56,6 +57,7 @@ class ProvidersData {
     required this.primaryLocation,
     required this.location,
     required this.serviceDistance,
+    required this.distance,
     required this.pricePerHour,
     required this.serviceImages,
     required this.isRead,
@@ -83,6 +85,7 @@ class ProvidersData {
       primaryLocation: json['primaryLocation'] ?? '',
       location: LocationData.fromJson(json['location'] ?? {}),
       serviceDistance: json['serviceDistance'] ?? 0,
+      distance: json['distance'] ?? 0.0,
       pricePerHour: (json['pricePerHour'] ?? 0).toDouble(),
       serviceImages: json['serviceImages'] != null
           ? List<String>.from(json['serviceImages'])

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:haircutmen_user_app/utils/constants/app_colors.dart';
 import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
@@ -78,6 +79,9 @@ class SignUpScreen extends StatelessWidget {
               
                           /// All Text Filed here
                           SignUpAllField(controller: controller),
+
+                          16.height,
+                          _buildPrivacySection(controller),
               
                           16.height,
               
@@ -106,6 +110,63 @@ class SignUpScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+  Widget _buildPrivacySection(SignUpController controller) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(() => Checkbox(
+          value: controller.isPrivacyAccepted.value,
+          onChanged: (value) => controller.togglePrivacyAcceptance(),
+          activeColor: AppColors.primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        )),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(top: 14.h),
+            child: RichText(
+              textAlign: TextAlign.start,
+              text: TextSpan(
+                text: AppString.continue_by,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: AppColors.black400,
+                  fontWeight: FontWeight.w400,
+                ),
+                children: [
+                  TextSpan(
+                    text: AppString.privacy_policy_text,
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Get.toNamed(AppRoutes.privacyPolicy);// or Navigator.push(...)
+                      },
+                  ),
+                  TextSpan(text: " ${AppString.and_text} "),
+                  TextSpan(
+                    text: AppString.term_condition_text,
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Get.toNamed(AppRoutes.termsOfServices); // or Navigator.push(...)
+                      },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

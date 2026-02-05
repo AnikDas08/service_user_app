@@ -125,11 +125,13 @@ class ServiceDetailsController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        final dataList = response.data['data'] as List<dynamic>?;
-        if (dataList != null && dataList.isNotEmpty) {
-          providerData = ProvidersData.fromJson(dataList[0]);
+        // Changed: data is now a Map, not a List
+        final dataMap = response.data['data'] as Map<String, dynamic>?;
 
-          // Convert API services to local format - only services with category
+        if (dataMap != null) {
+          providerData = ProvidersData.fromJson(dataMap);  // Use dataMap directly
+
+          // Convert API services to local format
           _convertServicesToLocalFormat();
 
           // Check if this provider is in favorites
@@ -572,6 +574,7 @@ class ServiceDetailsController extends GetxController {
   String get providerAbout => providerData?.aboutMe ?? "No information available";
   String get providerLocation => providerData?.primaryLocation ?? "Location not set";
   String get providerDistance => "${providerData?.serviceDistance.toStringAsFixed(2) ?? 0}Km";
+  String get newDistance => "${providerData?.distance.toStringAsFixed(2) ?? 0}Km";
   List<String> get spokenLanguages => providerData?.serviceLanguage ?? [];
   String get spokenLanguagesText => spokenLanguages.join(", ");
   bool get isVerified => providerData?.verified ?? false;

@@ -265,7 +265,7 @@ class ViewDetailsPending extends StatelessWidget {
                           SizedBox(width: 10),
                           Expanded(
                             child: CommonText(
-                              text: controller.description,
+                              text: controller.description??"N/A",
                               fontSize: 14.sp,
                               color: AppColors.black400,
                               maxLines: 4,

@@ -155,6 +155,7 @@ class SignUpController extends GetxController {
   /// Flags
   bool isPopUpOpen = false;
   bool isLoading = false;
+  var isPrivacyAccepted = false.obs;
   bool isLoadingVerify = false;
   bool isLoadingReset = false;
 
@@ -285,6 +286,10 @@ class SignUpController extends GetxController {
     update();
   }
 
+  void togglePrivacyAcceptance() {
+    isPrivacyAccepted.value = !isPrivacyAccepted.value;
+  }
+
 
 
   void selectLocation(LocationModel location) {
@@ -299,6 +304,14 @@ class SignUpController extends GetxController {
   /// SIGN UP
   /// -------------------------------
   signUpUser() async {
+
+    if (!isPrivacyAccepted.value) {
+      Utils.errorSnackBar(
+          "Required",
+          "Please accept the Privacy Policy and Terms of Service to continue."
+      );
+      return; // Stop the function here
+    }
     isLoading = true;
     update();
 

@@ -270,7 +270,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             ),
             SizedBox(width: 4.w),
             CommonText(
-              text: "${AppString.distance} :${controller.providerDistance}",
+              text: "${AppString.distance} :${controller.newDistance}",
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: AppColors.black300,
@@ -282,6 +282,7 @@ class ServiceDetailsScreen extends StatelessWidget {
         SizedBox(height: 18.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CommonText(
               text: "${AppString.spoken} : ",
@@ -293,6 +294,7 @@ class ServiceDetailsScreen extends StatelessWidget {
               text: controller.spokenLanguagesText,
               fontSize: 16,
               fontWeight: FontWeight.w500,
+              maxLines: 2,
               color: AppColors.primaryColor,
             ),
           ],
@@ -300,6 +302,7 @@ class ServiceDetailsScreen extends StatelessWidget {
       ],
     );
   }
+
 
   Widget _buildServicesList(ServiceDetailsController controller) {
     return Column(
@@ -403,9 +406,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-
                             SizedBox(height: 4.h),
-
                             Row(
                               children: [
                                 CommonText(

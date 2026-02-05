@@ -177,7 +177,7 @@ class DetailsController extends GetxController {
 
   // Helper method to calculate distance
   String getDistance(ProviderModel provider) {
-    return "${provider.serviceDistance.toStringAsFixed(2)}km";
+    return "${provider.distance.toStringAsFixed(2)}km";
   }
 
   // Retry loading providers

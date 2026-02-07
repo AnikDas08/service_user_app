@@ -52,7 +52,7 @@ class CompleteController extends GetxController {
         // API returns data as a List, get the first item
         if (response.data['data'] is List && response.data['data'].isNotEmpty) {
           bookingData.value = response.data['data'][0];
-          rating.value = response.data['data'][0]['ratings']["averageRating"].toString()??"";
+          rating.value = (response.data['data'][0]['ratings']["averageRating"] as num? ?? 0.0).toStringAsFixed(2);
           reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
           description = response.data['data'][0]['bookingDescription'] ?? "";
           image=response.data["data"][0]["image"]??"";

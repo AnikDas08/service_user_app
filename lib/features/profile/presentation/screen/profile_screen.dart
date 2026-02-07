@@ -149,7 +149,7 @@ class ProfileScreen extends StatelessWidget {
                          ),
                          SizedBox(height: 18,),
                          CommonText(
-                             text: AppString.one_credit,
+                             text: "${AppString.one_credit} ${controller.creditShow} RSD",
                            fontSize: 16,
                            maxLines: 2,
                            overflow: TextOverflow.ellipsis,

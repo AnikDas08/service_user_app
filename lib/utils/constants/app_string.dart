@@ -381,7 +381,7 @@ class AppString {
   static const String favourite_list = "All Favourite List";
   static const String favourite_item = "No favourite providers found";
   static const String present_credit = "Present Credit ";
-  static const String one_credit = "One Credit equal 1 RSD";
+  static const String one_credit = "One Credit equal";
   static const String full_name = "Full Name";
   static const String hints_full_name = "Enter Your Full  Name";
   static const String contact_hint = "Enter Your Phone Number";

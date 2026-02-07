@@ -373,6 +373,7 @@ class _EditProfileState extends State<EditProfile> {
             CommonTextField(
               controller: controller.locationController,
               focusNode: _locationFocusNode,
+              maxLines: 2,
               hintText: AppString.hint_type_here,
               hintTextColor: AppColors.black200,
               suffixIcon: ctrl.isLocationLoading

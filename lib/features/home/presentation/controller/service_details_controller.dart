@@ -550,7 +550,7 @@ class ServiceDetailsController extends GetxController {
         final data = response.data['data'];
         // Set review data
         review.value = data['reviews'] ?? [];
-        averageRating.value = (data['averageRating'] ?? 0.0).toDouble();
+        averageRating.value = double.parse((data['averageRating'] ?? 0.0).toDouble().toStringAsFixed(2));
         totalReviews.value = data['totalReviews'] ?? 0;
 
         print("✅ Reviews loaded successfully - Total: ${totalReviews.value}");

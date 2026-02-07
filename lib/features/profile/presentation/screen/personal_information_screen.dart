@@ -111,7 +111,7 @@ class PersonalInformationScreen extends StatelessWidget {
                           SizedBox(height: 12),
                           InformationRow(title: AppString.contact_text,value: controller.fullNumber.value,),
                           SizedBox(height: 12),
-                          InformationRow(title: AppString.location_text,value: controller.profileData?.location??'',),
+                          InformationRow(title: AppString.location_text,value: controller.location.value??"",),
                           SizedBox(height: 12),
                         ],
                       ),
@@ -146,24 +146,27 @@ class InformationRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 100,
-          child: CommonText(
-            text: title,
-            fontSize: 14,
-            textAlign: TextAlign.start,
-            fontWeight: FontWeight.w400,
-            maxLines: 2,
-            color: AppColors.black400,
+        Flexible(
+          child: SizedBox(
+            width: 100,
+            child: CommonText(
+              text: title,
+              fontSize: 14,
+              textAlign: TextAlign.start,
+              fontWeight: FontWeight.w400,
+              color: AppColors.black400,
+            ),
           ),
         ),
-        Expanded(
+        Flexible(
           child: CommonText(
             text: ": $value",
             fontSize: 14,
             textAlign: TextAlign.start,
+            maxLines: 8,
             fontWeight: FontWeight.w400,
             color: AppColors.black400,
           ),

@@ -148,7 +148,7 @@ class Reviews {
 
   factory Reviews.fromJson(Map<String, dynamic> json) {
     return Reviews(
-      averageRating: (json['averageRating'] ?? 0.0).toDouble(),
+      averageRating: double.parse((json['averageRating'] ?? 0.0).toDouble().toStringAsFixed(2)),
       totalReviews: json['totalReviews'] ?? 0,
     );
   }

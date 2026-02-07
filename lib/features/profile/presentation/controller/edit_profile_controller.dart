@@ -377,6 +377,17 @@ class EditProfileController extends GetxController {
       Utils.errorSnackBar(0, "Token not found, please login again");
       return;
     }
+    if (latitude == null || longitude == null || latitude!.isEmpty || longitude!.isEmpty) {
+      Get.snackbar(
+        "Location Required",
+        "Please select a location from the suggestions list to ensure accuracy.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        icon: const Icon(Icons.location_on, color: Colors.white),
+      );
+      return; // Stop the function here
+    }
 
     isLoading = true;
     update();
@@ -392,12 +403,14 @@ class EditProfileController extends GetxController {
         "contact": numberController.text.trim(),
         "countryCode": countryDialCode,
         "location": locationController.text.trim(),
+        "coordinates[0]": longitude ?? "0.0",
+        "coordinates[1]": latitude ?? "0.0",
       };
 
-      if (latitude != null && longitude != null) {
+      /*if (latitude != null && longitude != null) {
         body["coordinates"] = longitude;
         body["coordinates"] = latitude;
-      }
+      }*/
 
       String? imagePath = profileImage.value?.path;
 

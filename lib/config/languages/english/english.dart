@@ -377,7 +377,7 @@ Map<String, String> english = {
   AppString.favourite_list: "All Favourite List",
   AppString.favourite_item: "No favourite providers found",
   AppString.present_credit: "Present Credit",
-  AppString.one_credit: "One Credit equal 1 RSD",
+  AppString.one_credit: "One Credit equal",
   AppString.full_name: "Full Name",
   AppString.hints_full_name: "Enter Your Full  Name",
   AppString.contact_hint: "Enter Your Phone Number",

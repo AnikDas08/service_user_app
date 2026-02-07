@@ -81,7 +81,7 @@ class ViewdetailsUpcommingController extends GetxController {
       if (response.statusCode == 200) {
         // API returns data as a List, get the first item
         bookingData.value = response.data['data'][0];
-        rating.value = response.data['data'][0]['ratings']["averageRating"].toString() ?? "";
+        rating.value = (response.data['data'][0]['ratings']["averageRating"] ?? 0).toStringAsFixed(2);
         reviewCount.value = response.data['data'][0]['ratings']['totalReviews'] ?? 0;
         chantId = response.data['data'][0]['chatId'] ?? "";
         description = response.data['data'][0]['bookingDescription'] ?? "N/A";

@@ -312,6 +312,17 @@ class SignUpController extends GetxController {
       );
       return; // Stop the function here
     }
+    if (latitude == null || longitude == null || latitude!.isEmpty || longitude!.isEmpty) {
+      Get.snackbar(
+        "Location Required",
+        "Please select your location from the suggestions list to ensure service accuracy.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        icon: const Icon(Icons.location_on, color: Colors.white),
+      );
+      return; // Stop the function here
+    }
     isLoading = true;
     update();
 

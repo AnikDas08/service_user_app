@@ -38,6 +38,7 @@ class ProfileController extends GetxController {
   var imageUser = "".obs;
   var countrCode = "".obs;
   var fullNumber = "".obs;
+  num creditShow = 0;
 
   ProfileData? profileData; // will hold the fetched profile data
   bool isProfileLoading = false; // for loading state
@@ -46,6 +47,7 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
     getProfile();
+    _fetchSystemFees();
   }
 
   /// select image function here
@@ -123,6 +125,28 @@ class ProfileController extends GetxController {
     }
     isProfileLoading = false;
     update();
+  }
+
+  Future<void> _fetchSystemFees() async {
+    try {
+      final response = await ApiService.get(
+        "system",
+        header: {
+          "Authorization": "Bearer ${LocalStorage.token}",
+        },
+      );
+
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final data = response.data['data'];
+        creditShow=data["oneRsdToCredits"];
+
+      } else {
+        print("⚠️ Failed to load system fees");
+      }
+    } catch (e) {
+      print("❌ Error fetching system fees: $e");
+    }
   }
 
   /// update profile function here

@@ -377,7 +377,7 @@ Map<String, String> serbian = {
   AppString.favourite_list: "Sva lista omiljenih",
   AppString.favourite_item: "Omiljeni pružaoci nisu pronađeni",
   AppString.present_credit: "Trenutni kredit ",
-  AppString.one_credit: "Jedan kredit jednako 1 RSD",
+  AppString.one_credit: "Jedan kredit jednako",
   AppString.full_name: "Puno ime",
   AppString.hints_full_name: "Unesite vaše puno ime",
   AppString.contact_hint: "Unesite vaš broj telefona",

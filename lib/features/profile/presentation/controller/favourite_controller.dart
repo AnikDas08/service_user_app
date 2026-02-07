@@ -32,6 +32,7 @@ class FavouriteController extends GetxController {
         final List<dynamic> data = response.data['data'];
 
         // Store raw data from API
+        // Store raw data from API
         serviceProviders.value = data.map((item) {
           return {
             "id": item['_id'],
@@ -40,11 +41,26 @@ class FavouriteController extends GetxController {
             "category": item['category'],
             "subCategory": item['subCategory'],
             "price": (item['price'] ?? 0).toDouble(),
-            "serviceDistance": (item['serviceDistance'] ?? 0).toDouble(),
+
+            // Fix 1: Ensure distance is handled as a number before formatting
+            "serviceDistance": (item['distance'] ?? 0.0).toDouble().toStringAsFixed(2),
+
             "primaryLocation": item['primaryLocation'],
             "pricePerHour": (item['pricePerHour'] ?? 0).toDouble(),
             "isActive": item['isActive'] ?? false,
             "isOnline": item['isOnline'] ?? false,
+            "location": {
+              "type": item['location']?['type'],
+              "coordinates": item['location']?['coordinates'],
+            },
+            "reviews": {
+              "_id": item['reviews']?['_id'],
+
+              // Fix 2: Cast to num? and use a numeric default (0.0) instead of a string ("0.0")
+              "averageRating": (item['reviews']?['averageRating'] as num? ?? 0.0).toStringAsFixed(2),
+
+              "totalReviews": item['reviews']?['totalReviews'] ?? 0,
+            },
           };
         }).toList();
 

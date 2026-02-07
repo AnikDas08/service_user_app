@@ -390,7 +390,7 @@ Map<String, String> russian = {
   AppString.favourite_list: "Весь список избранного",
   AppString.favourite_item: "Избранные поставщики не найдены",
   AppString.present_credit: "Текущий кредит ",
-  AppString.one_credit: "Один кредит равен 1 RSD",
+  AppString.one_credit: "Один кредит равен",
   AppString.full_name: "Полное имя",
   AppString.hints_full_name: "Введите ваше полное имя",
   AppString.contact_hint: "Введите ваш номер телефона",

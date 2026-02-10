@@ -384,7 +384,7 @@ class AppointmentController extends GetxController {
         // This ensures the date displays correctly in user's timezone
         DateTime dateLocal = dateUtc.toLocal();
 
-        return '${dateLocal.month.toString().padLeft(2, '0')}.${dateLocal.day.toString().padLeft(2, '0')}.${dateLocal.year}';
+        return '${dateLocal.day.toString().padLeft(2, '0')}.${dateLocal.month.toString().padLeft(2, '0')}.${dateLocal.year}';
       } catch (e) {
         print('Error parsing date: $e');
         return '08.22.2025';

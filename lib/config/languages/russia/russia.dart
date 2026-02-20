@@ -131,7 +131,7 @@ Map<String, String> russian = {
   AppString.have_account: "Нет аккаунта?",
 
   // Sign Up Text
-  AppString.signup_text: "Зарегистрироваться",
+  AppString.signup_text: "Регистрация ",
   AppString.name_text: "Полное имя",
   AppString.hints_name: "Введите ваше полное имя...",
   AppString.phone_number_text: "Номер телефона",

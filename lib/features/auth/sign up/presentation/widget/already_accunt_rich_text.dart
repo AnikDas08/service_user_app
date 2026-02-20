@@ -22,7 +22,7 @@ class AlreadyAccountRichText extends StatelessWidget {
           children: [
             /// Already Have Account
             TextSpan(
-              text: AppString.already_have_account_chair,
+              text: AppString.already_have_account_chair.tr,
               style: GoogleFonts.plusJakartaSans(
                 color: AppColors.primaryColor,
                 fontSize: 14,
@@ -32,7 +32,7 @@ class AlreadyAccountRichText extends StatelessWidget {
 
             /// Sign In Button Here
             TextSpan(
-              text: AppString.signIn,
+              text: AppString.signIn.tr,
               recognizer:
                   TapGestureRecognizer()
                     ..onTap = () {

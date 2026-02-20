@@ -44,7 +44,7 @@ Map<String, String> serbian = {
   AppString.forgotThePassword: "Zaboravili ste lozinku",
   AppString.signIn: "Prijavite se",
   AppString.login: "Prijavite se",
-  AppString.doNotHaveAccount: "Nemate nalog? ",
+  AppString.doNotHaveAccount: "Nemaš nalog? ",
   AppString.signUp: "Registrujte se",
   AppString.alreadyHaveAccount: "Već imate nalog? ",
   AppString.fullName: "Puno ime",
@@ -128,7 +128,7 @@ Map<String, String> serbian = {
   AppString.have_account: "Nemate nalog?",
 
   // Sign Up Text
-  AppString.signup_text: "Registrujte se",
+  AppString.signup_text: "Registruj se",
   AppString.name_text: "Puno ime",
   AppString.hints_name: "Unesite vaše puno ime...",
   AppString.phone_number_text: "Broj telefona",

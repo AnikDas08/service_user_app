@@ -131,7 +131,7 @@ class SignUpScreen extends StatelessWidget {
             child: RichText(
               textAlign: TextAlign.start,
               text: TextSpan(
-                text: AppString.continue_by,
+                text: AppString.continue_by.tr,
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: AppColors.black400,
@@ -139,7 +139,7 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: AppString.privacy_policy_text,
+                    text: AppString.privacy_policy_text.tr,
                     style: TextStyle(
                       color: AppColors.primaryColor,
                       decoration: TextDecoration.underline,
@@ -149,9 +149,9 @@ class SignUpScreen extends StatelessWidget {
                         Get.toNamed(AppRoutes.privacyPolicy);// or Navigator.push(...)
                       },
                   ),
-                  TextSpan(text: " ${AppString.and_text} "),
+                  TextSpan(text: " ${AppString.and_text.tr} "),
                   TextSpan(
-                    text: AppString.term_condition_text,
+                    text: AppString.term_condition_text.tr,
                     style: TextStyle(
                       color: AppColors.primaryColor,
                       decoration: TextDecoration.underline,

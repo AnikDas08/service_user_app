@@ -56,7 +56,7 @@ contractSupportDialog({
                 Expanded(
                   child: CommonTextField(
                     controller: emailController,
-                    hintText: "resoyi2307@wivstore.com",
+                    hintText: "delwar.wbs@gmail.com",
                     readOnly: true,
                     hintTextColor: AppColors.primaryColor,
                     validator: OtherHelper.validator,
@@ -70,8 +70,9 @@ contractSupportDialog({
         ),
         actions: [
           CustomButton(text: AppString.contact_support_button, isSelected: true, onTap: ()async{
+            Get.back();
             final String email = emailController.text.trim().isEmpty
-                ? 'resoyi2307@wivstore.com'
+                ? 'delwar.wbs@gmail.com'
                 : emailController.text.trim();
 
             final Uri emailUri = Uri(

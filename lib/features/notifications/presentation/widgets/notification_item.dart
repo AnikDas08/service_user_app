@@ -64,13 +64,13 @@ class _NotificationItemState extends State<NotificationItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       /// Notification Title here
-                      Flexible(
+                      Expanded(
                         child: CommonText(
                           text: widget.item.type ?? '',
-                          fontSize: 16,
+                          fontSize: 14,
                           fontWeight: FontWeight.w700,
                           textAlign: TextAlign.start,
-                          maxLines: 1,
+                          maxLines: 2,
                         ),
                       ),
 
@@ -83,7 +83,7 @@ class _NotificationItemState extends State<NotificationItem> {
                         fontWeight: FontWeight.w700,
                         textAlign: TextAlign.start,
                         color: AppColors.black,
-                        maxLines: 1,
+                        maxLines: 3,
                       ),
                     ],
                   ),
@@ -91,9 +91,9 @@ class _NotificationItemState extends State<NotificationItem> {
                   /// Notification Message here
                   CommonText(
                     text: widget.item.title ?? '',
-                    fontSize: 14,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    maxLines: 2,
+                    maxLines: 4,
                     color: AppColors.black,
                     textAlign: TextAlign.start,
                     bottom: 10,

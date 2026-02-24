@@ -11,8 +11,8 @@ import '../controller/service_details_controller.dart';
 
 class ScheduleSlot {
   final String id;
-  final DateTime start;  // UTC time from API
-  final DateTime end;    // UTC time from API
+  final DateTime start;
+  final DateTime end;
   final DateTime? date;
   bool isSelected;
 
@@ -26,22 +26,24 @@ class ScheduleSlot {
 
   bool get isValid => date != null;
 
-  // ✅ FIX: Use LOCAL time for display
+  // ✅ NEW: Check if slot end time is in the past
+  // If current time is past the START of slot, it's no longer bookable
+  bool get isPast {
+    final now = DateTime.now(); // This is local time
+    final slotStart = start.toLocal(); // Convert UTC → local
+    return slotStart.isBefore(now);
+  }
+
   String get displayTime {
-    // Convert UTC to local time
     DateTime localStart = start.toLocal();
     DateTime localEnd = end.toLocal();
-
-    // ✅ Use localStart and localEnd instead of start and end
     String startHour = localStart.hour.toString().padLeft(2, '0');
     String startMinute = localStart.minute.toString().padLeft(2, '0');
     String endHour = localEnd.hour.toString().padLeft(2, '0');
     String endMinute = localEnd.minute.toString().padLeft(2, '0');
-
     return '$startHour:$startMinute - $endHour:$endMinute';
   }
 
-  // Optional: Add getters for local times if needed elsewhere
   DateTime get localStart => start.toLocal();
   DateTime get localEnd => end.toLocal();
 }
@@ -513,18 +515,33 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
             itemCount: availableSlots.length,
             itemBuilder: (context, index) {
               ScheduleSlot slot = availableSlots[index];
+
+              // ✅ NEW: Determine colors based on isPast
+              final bool isPast = slot.isPast;
+              final Color borderColor = isPast
+                  ? Colors.grey.shade300
+                  : slot.isSelected
+                  ? AppColors.primaryColor
+                  : AppColors.black50;
+              final Color bgColor = isPast
+                  ? Colors.grey.shade100
+                  : slot.isSelected
+                  ? AppColors.primaryColor.withOpacity(0.1)
+                  : Colors.transparent;
+              final Color textColor = isPast
+                  ? Colors.grey.shade400
+                  : slot.isSelected
+                  ? AppColors.primaryColor
+                  : AppColors.black;
+
               return GestureDetector(
                 onTap: () => _onSlotTap(slot, requiredSlots),
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
                   decoration: BoxDecoration(
-                    color: slot.isSelected
-                        ? AppColors.primaryColor.withOpacity(0.1)
-                        : Colors.transparent,
+                    color: bgColor,
                     border: Border.all(
-                      color: slot.isSelected
-                          ? AppColors.primaryColor
-                          : AppColors.black50,
+                      color: borderColor,
                       width: slot.isSelected ? 2 : 1,
                     ),
                     borderRadius: BorderRadius.circular(8.r),
@@ -534,9 +551,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                       text: slot.displayTime,
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
-                      color: slot.isSelected
-                          ? AppColors.primaryColor
-                          : AppColors.black,
+                      color: textColor,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -666,6 +681,19 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
   }
 
   void _onSlotTap(ScheduleSlot slot, num requiredSlots) {
+    // ✅ NEW: Block past slots
+    if (slot.isPast) {
+      Get.snackbar(
+        'Slot Unavailable',
+        'This time slot has already passed',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.primaryColor,
+        colorText: AppColors.white,
+        duration: Duration(seconds: 3),
+      );
+      return;
+    }
+
     if (controller.selectedServiceIds.isEmpty) {
       Get.snackbar(
         AppString.service_selected,
@@ -692,9 +720,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
     setState(() {
       slot.isSelected = !slot.isSelected;
       if (slot.isSelected) {
-        if (!selectedSlots.contains(slot)) {
-          selectedSlots.add(slot);
-        }
+        if (!selectedSlots.contains(slot)) selectedSlots.add(slot);
       } else {
         selectedSlots.remove(slot);
       }
@@ -749,9 +775,10 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
 
                 availableSlots.add(ScheduleSlot(
                   id: slot['_id'],
-                  start: startUtc,  // Store as UTC
-                  end: endUtc,      // Store as UTC
-                  date: date,       // Store the selected date
+                  // ✅ Force UTC parsing
+                  start: DateTime.parse(slot['start']).toUtc(),
+                  end: DateTime.parse(slot['end']).toUtc(),
+                  date: date,
                 ));
 
                 // Debug: Print to verify conversion

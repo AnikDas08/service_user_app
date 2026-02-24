@@ -445,7 +445,7 @@ class AppointmentController extends GetxController {
             _buildDetailRow(AppString.date, getFormattedDate(booking)),
             _buildDetailRow(AppString.time, getFormattedTime(booking)),
             _buildDetailRow(AppString.booking_id, getBookingId(booking)),
-            _buildDetailRow(AppString.price, 'BDT ${getAmount(booking)}'),
+            _buildDetailRow(AppString.price, 'RSD ${getAmount(booking)}'),
             _buildDetailRow(AppString.status, booking['status']?.toString() ?? 'N/A'),
           ],
         ),

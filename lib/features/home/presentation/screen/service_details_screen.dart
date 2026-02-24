@@ -290,12 +290,15 @@ class ServiceDetailsScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: AppColors.black400,
             ),
-            CommonText(
-              text: controller.spokenLanguagesText,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              maxLines: 2,
-              color: AppColors.primaryColor,
+            Flexible(
+              child: CommonText(
+                text: controller.spokenLanguagesText,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                maxLines: 2,
+                textAlign: TextAlign.start,
+                color: AppColors.primaryColor,
+              ),
             ),
           ],
         ),
@@ -760,7 +763,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 CommonText(
-                  text: AppString.messagenot,
+                  text: "No reviews at the moment",
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black200,

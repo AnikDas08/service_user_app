@@ -208,11 +208,26 @@ class CompletedBookingController extends GetxController {
     }
     return 'Customer';
   }
+  String getProviderName(Map<String, dynamic> booking) {
+    if (booking['provider'] != null && booking['provider'] is Map) {
+      return booking['provider']['name'] ?? 'Customer';
+    }
+    return 'Customer';
+  }
 
   // Get parsed user image
   String getUserImage(Map<String, dynamic> booking) {
     if (booking['user'] != null && booking['user'] is Map) {
       String? imageUrl = booking['user']['image'];
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        return imageUrl;
+      }
+    }
+    return 'assets/images/item_image.png'; // Default placeholder
+  }
+  String getProviderImage(Map<String, dynamic> booking) {
+    if (booking['provider'] != null && booking['provider'] is Map) {
+      String? imageUrl = booking['provider']['image'];
       if (imageUrl != null && imageUrl.isNotEmpty) {
         return imageUrl;
       }

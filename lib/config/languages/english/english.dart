@@ -325,7 +325,7 @@ Map<String, String> english = {
   AppString.service_fee: "Service Fee",
   AppString.appointment_text: "Appointment",
   AppString.booking_here: "No bookings found",
-  AppString.cancel_booking_detail: "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.",
+  AppString.cancel_booking_detail: "Are you sure you want to cancel this service? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.",
   AppString.booking_id_here: "Booking ID",
   AppString.status_show: "View Status",
   AppString.home: "Home",

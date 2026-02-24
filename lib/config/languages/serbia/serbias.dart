@@ -325,7 +325,7 @@ Map<String, String> serbian = {
   AppString.service_fee: "Naknada za uslugu",
   AppString.appointment_text: "Zakazivanje",
   AppString.booking_here: "Rezervacije nisu pronađene",
-  AppString.cancel_booking_detail: "Da li ste sigurni da želite da otkažete ovaj apartman? Molimo imajte na umu da će se primeniti naknada za otkazivanje od 30%. Ako želite da nastavite, kliknite DA za otkazivanje.",
+  AppString.cancel_booking_detail: "Da li ste sigurni da želite da otkažete ovu uslugu? Imajte u vidu da će se naplatiti naknada za otkazivanje od 30%. Ako želite da nastavite, kliknite „DA“ da biste otkazali.",
   AppString.booking_id_here: "ID rezervacije",
   AppString.status_show: "Pogledaj status",
   AppString.home: "Početna",

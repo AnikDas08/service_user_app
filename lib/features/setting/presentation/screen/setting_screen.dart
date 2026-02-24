@@ -79,9 +79,10 @@ class SettingScreen extends StatelessWidget {
                   InkWell(
                     onTap:
                         () => deletePopUp(
-                      controller: controller.passwordController,
+                      textController: controller.passwordController,
                       onTap: controller.deleteAccountRepo,
                       isLoading: controller.isLoading,
+                      controller: controller,
                     ),
                     child: const SettingItem(
                       title: AppString.deleteAccount,

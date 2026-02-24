@@ -326,7 +326,7 @@ class AppString {
   static const String service_fee = "Service Fee";
   static const String appointment_text = "Appointment";
   static const String booking_here = "No bookings found";
-  static const String cancel_booking_detail = "Are you sure you want to cancel this apartment? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
+  static const String cancel_booking_detail = "Are you sure you want to cancel this service? Please note, a 30% cancellation fee will apply. If you'd like to proceed, click YES to cancel.";
   static const String booking_id_here = "Booking ID";
   static const String description_text_here = "Description";
   static const String image_text_here = "Image";

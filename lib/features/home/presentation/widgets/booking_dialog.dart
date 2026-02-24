@@ -14,8 +14,8 @@ import '../controller/service_details_controller.dart';
 
 class ScheduleSlot {
   final String id;
-  final DateTime start;  // UTC time from API
-  final DateTime end;    // UTC time from API
+  final DateTime start;
+  final DateTime end;
   bool isSelected;
 
   ScheduleSlot({
@@ -25,22 +25,24 @@ class ScheduleSlot {
     this.isSelected = false,
   });
 
-  // ✅ FIX: Use LOCAL time for display
+  // ✅ NEW: Check if slot end time is in the past
+  // If current time is past the START of slot, it's no longer bookable
+  bool get isPast {
+    final now = DateTime.now(); // This is local time
+    final slotStart = start.toLocal(); // Convert UTC → local
+    return slotStart.isBefore(now);
+  }
+
   String get displayTime {
-    // Convert UTC to local time
     DateTime localStart = start.toLocal();
     DateTime localEnd = end.toLocal();
-
-    // ✅ Use localStart and localEnd (NOT start and end)
     String startHour = localStart.hour.toString().padLeft(2, '0');
     String startMinute = localStart.minute.toString().padLeft(2, '0');
     String endHour = localEnd.hour.toString().padLeft(2, '0');
     String endMinute = localEnd.minute.toString().padLeft(2, '0');
-
     return '$startHour:$startMinute - $endHour:$endMinute';
   }
 
-  // Optional: Add getters for local times
   DateTime get localStart => start.toLocal();
   DateTime get localEnd => end.toLocal();
 }
@@ -179,8 +181,10 @@ class _BookingDialogState extends State<BookingDialog> {
             for (var slot in slots) {
               availableSlots.add(ScheduleSlot(
                 id: slot['_id'],
-                start: DateTime.parse(slot['start']),
-                end: DateTime.parse(slot['end']),
+                // ✅ Force UTC parsing
+                start: DateTime.parse(slot['start']).toUtc(),
+                end: DateTime.parse(slot['end']).toUtc(),
+                //date: date,
               ));
             }
 
@@ -810,8 +814,20 @@ class _BookingDialogState extends State<BookingDialog> {
             ScheduleSlot slot = availableSlots[index];
             return GestureDetector(
               onTap: () {
-                num requiredSlots = serviceController.selectedServiceIds.length;
+                // ✅ NEW: Block past slots
+                if (slot.isPast) {
+                  Get.snackbar(
+                    'Slot Unavailable',
+                    'This time slot has already passed',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: AppColors.primaryColor,
+                    colorText: AppColors.white,
+                    duration: Duration(seconds: 2),
+                  );
+                  return;
+                }
 
+                num requiredSlots = serviceController.selectedServiceIds.length;
                 if (!slot.isSelected && selectedSlots.length >= requiredSlots) {
                   Get.snackbar(
                     AppString.limit_here_show,
@@ -825,9 +841,7 @@ class _BookingDialogState extends State<BookingDialog> {
                 }
                 slot.isSelected = !slot.isSelected;
                 if (slot.isSelected) {
-                  if (!selectedSlots.contains(slot)) {
-                    selectedSlots.add(slot);
-                  }
+                  if (!selectedSlots.contains(slot)) selectedSlots.add(slot);
                 } else {
                   selectedSlots.remove(slot);
                 }
@@ -837,14 +851,19 @@ class _BookingDialogState extends State<BookingDialog> {
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
                 decoration: BoxDecoration(
-                  color: slot.isSelected
+                  // ✅ NEW: Grey background for past slots
+                  color: slot.isPast
+                      ? Colors.grey.shade100
+                      : slot.isSelected
                       ? AppColors.primaryColor.withOpacity(0.1)
                       : Colors.transparent,
                   border: Border.all(
-                    color: slot.isSelected
+                    color: slot.isPast
+                        ? Colors.grey.shade300
+                        : slot.isSelected
                         ? AppColors.primaryColor
                         : AppColors.black50,
-                    width: slot.isSelected ? 2 : 1,
+                    width: slot.isSelected && !slot.isPast ? 2 : 1,
                   ),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
@@ -853,7 +872,10 @@ class _BookingDialogState extends State<BookingDialog> {
                     text: slot.displayTime,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
-                    color: slot.isSelected
+                    // ✅ NEW: Grey text for past slots
+                    color: slot.isPast
+                        ? Colors.grey.shade400
+                        : slot.isSelected
                         ? AppColors.primaryColor
                         : AppColors.black,
                     textAlign: TextAlign.center,

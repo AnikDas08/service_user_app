@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/home/presentation/controller/home_nav_controller.dart';
 import 'package:haircutmen_user_app/utils/log/app_log.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../config/api/api_end_point.dart';
@@ -27,6 +28,7 @@ class SocketServices {
       appLog("================> get Data on socket: $data");
       NotificationService.showNotification(data);
       Get.find<HomeController>().countNotification();
+      Get.find<HomeController>().countMessa();
     });
   }
 

@@ -61,11 +61,11 @@ class CompleteBooking extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.zero,
-                child: (controller.getUserImage(booking).startsWith('http') ||
-                    controller.getUserImage(booking).startsWith('/'))
+                child: (controller.getProviderImage(booking).startsWith('http') ||
+                    controller.getProviderImage(booking).startsWith('/'))
                     ? Image.network(
                   ApiEndPoint.imageUrl +
-                      controller.getUserImage(booking),
+                      controller.getProviderImage(booking),
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Image.asset(

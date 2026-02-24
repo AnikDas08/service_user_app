@@ -336,8 +336,7 @@ Map<String, String> russian = {
   AppString.service_fee: "Плата за обслуживание",
   AppString.appointment_text: "Назначение",
   AppString.booking_here: "Бронирования не найдены",
-  AppString
-      .cancel_booking_detail: "Вы уверены, что хотите отменить эту квартиру? Обратите внимание, что будет применена комиссия за отмену в размере 30%. Если вы хотите продолжить, нажмите ДА для отмены.",
+  AppString.cancel_booking_detail: "Вы уверены, что хотите отменить эту услугу? Обратите внимание, что будет применён штраф за отмену в размере 30%. Если вы хотите продолжить, нажмите «ДА», чтобы отменить.",
   AppString.booking_id_here: "ID бронирования",
   AppString.status_show: "Просмотр статуса",
   AppString.home: "Главная",

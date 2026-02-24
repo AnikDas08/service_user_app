@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/setting/presentation/controller/setting_controller.dart';
 import 'package:haircutmen_user_app/utils/helpers/other_helper.dart';
 import '../../services/storage/storage_services.dart';
 import '../../utils/constants/app_colors.dart';
@@ -154,8 +155,9 @@ logOutPopUp() {
 }
 
 deletePopUp({
-  required TextEditingController controller,
+  required TextEditingController textController,
   required VoidCallback onTap,
+  required SettingController controller,
   bool isLoading = false,
 }) {
   final formKey = GlobalKey<FormState>();
@@ -192,7 +194,7 @@ deletePopUp({
                   bottom: 20.h,
                 ),
                 CommonTextField(
-                  controller: controller,
+                  controller: textController,
                   hintText: AppString.enter_password.tr,
                   isPassword: true,
                   validator: OtherHelper.validator,
@@ -226,7 +228,10 @@ deletePopUp({
                         if (formKey.currentState!.validate()) {
                           Get.back(); // প্রথম popup বন্ধ করো
                           await Future.delayed(const Duration(milliseconds: 400)); // একটু delay দাও
-                          confirmDelete(); // তারপর confirmDelete popup দেখাও
+                          confirmDelete(
+                              controller: controller,
+                            textController: textController,
+                          ); // তারপর confirmDelete popup দেখাও
                         }
                       }
 
@@ -244,6 +249,9 @@ deletePopUp({
 
 confirmDelete({
   bool isLoading = false,
+  required SettingController controller,
+  required TextEditingController textController,
+
 }) {
   final formKey = GlobalKey<FormState>();
   showDialog(
@@ -304,7 +312,7 @@ confirmDelete({
                     buttonHeight: 48.h,
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        Get.back();
+                        controller.deleteAccountRepo();
                       }
                     },
                   ),

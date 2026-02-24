@@ -315,6 +315,9 @@ class HomeController extends GetxController {
     _debounce?.cancel();
 
     if (query.isEmpty) {
+      // ✅ Immediately reset searching state
+      isSearching.value = false;
+
       // If search is empty, reset to show all providers or current filter
       if (currentFilterUrl != null) {
         fetchServiceProviders(filterUrl: currentFilterUrl);

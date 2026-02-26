@@ -188,62 +188,46 @@ class ViewdetailsUpcommingController extends GetxController {
     }
   }
 
-  // Check if cancellation is within penalty time
-  bool isWithinPenaltyTime() {
+  // Check if the current time is AFTER the booking started
+  bool isPastOrder() {
     try {
-      if (bookingData['slots'] == null || bookingData['slots'].isEmpty) {
-        return false;
-      }
-
-      // Parse UTC booking start time from API
-      // Example: "2025-11-27T20:00:00.000Z" is in UTC
-      DateTime bookingStartTimeUtc = DateTime.parse(bookingData['slots'][0]['start']);
-
-      // Convert to local time (Bangladesh time is UTC+6)
-      DateTime bookingStartTimeLocal = bookingStartTimeUtc.toLocal();
-
-      // Get current local time
-      DateTime currentTime = DateTime.now();
-
-      // Calculate the penalty deadline
-      // If penaltyTime = 2 hours, and booking is at 14:00, penalty starts at 12:00
-      DateTime penaltyDeadline = bookingStartTimeLocal.subtract(
-          Duration(hours: penaltyTime.value)
-      );
-
-      print("🕐 Current Time (Local): $currentTime");
-      print("📅 Booking Start Time (Local): $bookingStartTimeLocal");
-      print("⚠️ Penalty Deadline (Local): $penaltyDeadline");
-      print("⏰ Penalty Time: ${penaltyTime.value} hours");
-
-      // Within penalty = Current time is AFTER penalty deadline AND BEFORE booking time
-      // Example: If booking is at 14:00, penalty is 2 hours
-      // - Penalty starts at: 12:00 (14:00 - 2 hours)
-      // - If current time is 13:00 → within penalty (fee applies)
-      // - If current time is 11:00 → NOT within penalty (no fee)
-      // - If current time is 15:00 → booking already passed
-      bool withinPenalty = currentTime.isAfter(penaltyDeadline) &&
-          currentTime.isBefore(bookingStartTimeLocal);
-
-      print("💰 Within Penalty Period: $withinPenalty");
-
-      return withinPenalty;
-
+      if (bookingData['slots'] == null || bookingData['slots'].isEmpty) return false;
+      DateTime bookingStartTimeLocal = DateTime.parse(bookingData['slots'][0]['start']).toLocal();
+      return DateTime.now().isAfter(bookingStartTimeLocal);
     } catch (e) {
-      print("❌ Error checking penalty time: $e");
       return false;
     }
   }
 
+  // Check if the current time is inside the Penalty Window (Deadline < Current < Start)
+  bool isWithinPenaltyTime() {
+    try {
+      if (bookingData['slots'] == null || bookingData['slots'].isEmpty) return false;
+
+      DateTime bookingStartTimeLocal = DateTime.parse(bookingData['slots'][0]['start']).toLocal();
+      DateTime penaltyDeadline = bookingStartTimeLocal.subtract(Duration(hours: penaltyTime.value));
+      DateTime currentTime = DateTime.now();
+
+      return currentTime.isAfter(penaltyDeadline) && currentTime.isBefore(bookingStartTimeLocal);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Helper to check if a penalty or restriction applies (Both Past and Late)
+  bool shouldShowPenaltyMessage() {
+    return isPastOrder() || isWithinPenaltyTime();
+  }
+
   // Get the appropriate cancellation message
   String getCancellationMessage() {
-    if (isWithinPenaltyTime()) {
-      // Show penalty message if canceling within penalty time window
+    // If it's a past order OR within the penalty window, show the detailed penalty message
+    if (shouldShowPenaltyMessage()) {
       return AppString.cancel_booking_detail;
-    } else {
-      // Show normal message if canceling outside penalty time window
-      return AppString.appointment_booking;
     }
+
+    // Otherwise, show the standard appointment text
+    return AppString.appointment_booking;
   }
 
   // Cancel booking

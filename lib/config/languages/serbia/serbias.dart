@@ -417,7 +417,7 @@ Map<String, String> serbian = {
   AppString.payment_cancel: "Plaćanje otkazano",
   AppString.sub_total: "Međuzbir",
   AppString.weather_fee: "Naknada za vreme",
-  AppString.convineance_fee: "Naknada za pogodnost",
+  AppString.convineance_fee: "Naknada za uslugu",
   AppString.arrival_fee: "Naknada za dolazak",
   AppString.discount: "Popust",
   AppString.avilable_credit: "Dostupan kredit",

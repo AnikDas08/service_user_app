@@ -421,7 +421,7 @@ class AppString {
   static const String payment_cancel = "Payment cancelled";
   static const String sub_total = "Sub Total";
   static const String weather_fee = "Weather Fee";
-  static const String convineance_fee = "Convenience Fee";
+  static const String convineance_fee = "Service fee";
   static const String arrival_fee = "Arrival Fee";
   static const String discount = "Discount";
   static const String avilable_credit = "Available Credit";

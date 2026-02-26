@@ -12,7 +12,6 @@ import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
 
 class InvoiceController extends GetxController {
-  final RxInt creditApplied = 0.obs;
   // Text Controllers
   TextEditingController promoCode = TextEditingController();
 
@@ -21,9 +20,11 @@ class InvoiceController extends GetxController {
   List<Map<String, dynamic>> selectedServices = [];
 
   // Observable values
-  final RxInt subTotal = 0.obs;
-  final RxInt discount = 0.obs;
-  final RxInt totalPrice = 0.obs;
+  final RxDouble subTotal = 0.0.obs;
+  final RxDouble discount = 0.0.obs;
+  final RxDouble totalPrice = 0.0.obs;
+  final RxDouble creditApplied = 0.0.obs;
+  final RxDouble credits = 0.0.obs;
   final RxInt discountPercent = 0.obs;
   final RxBool isPromoApplied = false.obs;
   final RxBool isProcessing = false.obs;
@@ -34,7 +35,6 @@ class InvoiceController extends GetxController {
   final RxInt weatherFee = 0.obs;
   final RxInt convenienceFee = 0.obs;
   final RxInt arrivalFee = 0.obs;
-  final RxDouble credits = 0.0.obs;
 
   // ✅ NEW: Track which fees are enabled
   final RxBool isWeatherFeeOn = false.obs;
@@ -67,7 +67,7 @@ class InvoiceController extends GetxController {
     }
 
     num calculatedSubTotal = invoiceData['totalPrice'] ?? 0;
-    subTotal.value = calculatedSubTotal.toInt();
+    subTotal.value = calculatedSubTotal.toDouble();
 
     print("💰 SubTotal: ${subTotal.value}");
     print("🎯 Services: $selectedServices");
@@ -162,7 +162,7 @@ class InvoiceController extends GetxController {
     if (runningTotal < 0) {
       creditToApply = 0; // Don't apply credit if total is already negative
     }
-    creditApplied.value = creditToApply.toInt();
+    creditApplied.value = creditToApply.toDouble();
     print("💵 Step 4 - Credit Available: ${credits.value}, Applied: $creditToApply");
 
     // Step 5: Subtract applied credit from total
@@ -175,7 +175,7 @@ class InvoiceController extends GetxController {
       runningTotal = 0;
     }
 
-    totalPrice.value = runningTotal.toInt();
+    totalPrice.value = runningTotal.toDouble();
 
     print("💵 ============ FINAL CALCULATION ============");
     print("💵 SubTotal: ${subTotal.value}");
@@ -250,11 +250,11 @@ class InvoiceController extends GetxController {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CircularProgressIndicator(color: AppColors.primaryColor),
-                SizedBox(height: 16),
+                /*SizedBox(height: 16),
                 Text(
                   AppString.validat_promo_code,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -281,7 +281,7 @@ class InvoiceController extends GetxController {
         String promoCodeValue = promoData['code'] ?? code;
 
         discountPercent.value = discountValue.toInt();
-        discount.value = ((subTotal.value * discountPercent.value) / 100).round();
+        discount.value = (subTotal.value * discountPercent.value) / 100.0;
         _calculateTotalPrice();
         isPromoApplied.value = true;
         validPromoCode.value = promoCodeValue;
@@ -362,7 +362,7 @@ class InvoiceController extends GetxController {
               _buildConfirmRow('${AppString.credit_applied.tr}:', 'RSD ${creditApplied.value}'),
               SizedBox(height: 8),
             ],
-            _buildConfirmRow('${AppString.payment_pay.tr}:', 'RSD ${totalPrice.value}'),
+            _buildConfirmRow('${AppString.payment_pay.tr}:', 'RSD ${totalPrice.value.toStringAsFixed(2)}'),
             SizedBox(height: 16),
             Text(
               AppString.process.tr,

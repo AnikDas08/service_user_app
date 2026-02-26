@@ -429,7 +429,7 @@ Map<String, String> russian = {
   AppString.payment_cancel: "Оплата отменена",
   AppString.sub_total: "Промежуточный итог",
   AppString.weather_fee: "Погодная плата",
-  AppString.convineance_fee: "Плата за удобство",
+  AppString.convineance_fee: "Плата за услугу",
   AppString.arrival_fee: "Плата за прибытие",
   AppString.discount: "Скидка",
   AppString.avilable_credit: "Доступный кредит",

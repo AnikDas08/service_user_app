@@ -25,6 +25,7 @@ class SettingController extends GetxController {
 
     if (response.statusCode == 200) {
       Get.offAllNamed(AppRoutes.signIn);
+      Utils.successSnackBar("Successful", response.message);
     } else {
       Utils.errorSnackBar(response.statusCode, response.message);
     }

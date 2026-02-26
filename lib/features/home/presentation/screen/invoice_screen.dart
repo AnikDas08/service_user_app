@@ -383,7 +383,7 @@ class InvoiceScreen extends StatelessWidget {
           children: [
             CommonText(
               textAlign: TextAlign.start,
-              text: "${AppString.discount} (${controller.discountPercent}%)",
+              text: "${AppString.discount.tr} (${controller.discountPercent}%)",
               fontWeight: FontWeight.w400,
               fontSize: 14.sp,
               color: AppColors.black400,

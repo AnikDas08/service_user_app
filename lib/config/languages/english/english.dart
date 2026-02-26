@@ -417,7 +417,7 @@ Map<String, String> english = {
   AppString.payment_cancel: "Payment cancelled",
   AppString.sub_total: "Sub Total",
   AppString.weather_fee: "Weather Fee",
-  AppString.convineance_fee: "Convenience Fee",
+  AppString.convineance_fee: "Service fee",
   AppString.arrival_fee: "Arrival Fee",
   AppString.discount: "Discount",
   AppString.avilable_credit: "Available Credit",

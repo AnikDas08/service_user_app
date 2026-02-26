@@ -251,6 +251,7 @@ class ViewDetailsPending extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 12),
+                      if(controller.description!="")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,6 +281,7 @@ class ViewDetailsPending extends StatelessWidget {
                   ),
                 ),
               ),
+              if(controller.image!="")
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(

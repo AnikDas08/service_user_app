@@ -4,6 +4,7 @@ import 'package:haircutmen_user_app/features/appointment/presentation/controller
 import '../../../../config/route/app_routes.dart';
 import '../../../../services/api/api_service.dart';
 import '../../../../services/storage/storage_services.dart';
+import '../../../../utils/constants/app_string.dart';
 
 class CompleteController extends GetxController {
   // Loading state - make it observable
@@ -24,6 +25,8 @@ class CompleteController extends GetxController {
   var time = ''.obs;
   var duration = '60 Minutes Duration'.obs;
   var amount = ''.obs;
+  var subTotal = ''.obs;
+  var avgDuration = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
 
@@ -174,10 +177,13 @@ class CompleteController extends GetxController {
     }
 
     // Duration is always 1 hour (60 minutes)
-    duration.value = '60 Minutes Duration';
+    int avgDurationMinutes = bookingData['provider']?['avgDuration'] ?? 60;
+    duration.value = _minutesToDurationLabel(avgDurationMinutes);
 
     // Amount
     amount.value = bookingData['amount']?.toString() ?? '0';
+    subTotal.value = bookingData['subTotal']?.toString() ?? '0';
+    avgDuration.value = bookingData['provider']?['avgDuration']?.toString() ?? '0';
 
     // Booking ID (last 4 digits)
     if (bookingData['_id'] != null && bookingData['_id'].toString().length >= 4) {
@@ -272,6 +278,17 @@ class CompleteController extends GetxController {
         'Failed to cancel booking',
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+  String _minutesToDurationLabel(int minutes) {
+    switch (minutes) {
+      case 30: return '30 ${AppString.minutes_duration_text}';
+      case 60: return '1 Hour';
+      case 90: return '1 Hour 30 ${AppString.minutes_duration_text}';
+      case 120: return '2 Hour';
+      case 150: return '2 Hour 30 ${AppString.minutes_duration_text}';
+      case 180: return '3 Hour';
+      default: return '$minutes ${AppString.minutes_duration_text}';
     }
   }
 }

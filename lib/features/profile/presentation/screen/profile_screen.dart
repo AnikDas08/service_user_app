@@ -23,9 +23,9 @@ class ProfileScreen extends StatelessWidget {
         init: ProfileController(),
         builder: (controller) {
           return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                     children: [
                       CustomAppBar(title: AppString.profile_text,showBackButton: false,),
@@ -159,11 +159,12 @@ class ProfileScreen extends StatelessWidget {
                            ),
                          ],
                        ),
-                     )
+                     ),
+                      SizedBox(height: 20.h,)
                     ],
                   ),
-              ),
-              ),
+                ),
+            ),
           );
         },
       ),

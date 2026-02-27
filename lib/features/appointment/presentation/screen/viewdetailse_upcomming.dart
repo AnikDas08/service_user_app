@@ -245,7 +245,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                           ),
                           SizedBox(width: 10),
                           CommonText(
-                            text: ":RSD ${controller.amount.value}",
+                            text: ": RSD ${controller.amount.value}",
                             fontSize: 14.sp,
                             color: AppColors.black400,
                             fontWeight: FontWeight.w500,

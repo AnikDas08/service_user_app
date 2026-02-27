@@ -412,14 +412,14 @@ class ServiceDetailsScreen extends StatelessWidget {
                             SizedBox(height: 4.h),
                             Row(
                               children: [
-                                CommonText(
+                                /*CommonText(
                                   text: "60 ${AppString.minutes}",
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w400,
                                   color: AppColors.black200,
                                   textAlign: TextAlign.left,
                                 ),
-                                SizedBox(width: 8.w),
+                                SizedBox(width: 8.w),*/
                                 CommonText(
                                   text: "• ${service['price']}",
                                   fontSize: 14.sp,
@@ -538,7 +538,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       CommonText(
-                        text: AppString.total_duration_text,
+                        text: "Total",
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
                         color: AppColors.black400,

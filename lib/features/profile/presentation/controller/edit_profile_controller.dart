@@ -371,46 +371,51 @@ class EditProfileController extends GetxController {
   }
 
   /// update profile function here
+  /// update profile function here
   Future<void> editProfileRepo() async {
     final token = LocalStorage.token;
     if (token.isEmpty) {
       Utils.errorSnackBar(0, "Token not found, please login again");
       return;
     }
-    if (latitude == null || longitude == null || latitude!.isEmpty || longitude!.isEmpty) {
+
+    // --- Logic to check if location was actually changed ---
+    bool isLocationModified = locationController.text.trim() != profileData?.location;
+
+    // If they typed something new but didn't pick from the OSM suggestions,
+    // we should warn them because we won't have the new coordinates.
+    if (isLocationModified && (latitude == null || longitude == null)) {
       Get.snackbar(
         "Location Required",
-        "Please select a location from the suggestions list to ensure accuracy.",
+        "You modified the address. Please select a location from the suggestions to update coordinates.",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
         icon: const Icon(Icons.location_on, color: Colors.white),
       );
-      return; // Stop the function here
+      return;
     }
 
     isLoading = true;
     update();
 
     try {
-      // Combine country code with phone number
-      fullNumber = countryDialCode + numberController.text.trim();
-
-      // Prepare body
-      // Change <String, String> to <String, dynamic>
+      // 1. Initialize body with non-location fields
       Map<String, dynamic> body = {
         "name": nameController.text.trim(),
         "contact": numberController.text.trim(),
         "countryCode": countryDialCode,
-        "location": locationController.text.trim(),
-        "coordinates[0]": longitude ?? "0.0",
-        "coordinates[1]": latitude ?? "0.0",
       };
 
-      /*if (latitude != null && longitude != null) {
-        body["coordinates"] = longitude;
-        body["coordinates"] = latitude;
-      }*/
+      // 2. Only add location and coordinates if the user changed them
+      if (isLocationModified) {
+        body["location"] = locationController.text.trim();
+        body["coordinates[0]"] = longitude; // From the selected LocationModel
+        body["coordinates[1]"] = latitude;  // From the selected LocationModel
+        print("Sending updated location: ${locationController.text}");
+      } else {
+        print("Location not changed, skipping location keys in request.");
+      }
 
       String? imagePath = profileImage.value?.path;
 
@@ -426,6 +431,7 @@ class EditProfileController extends GetxController {
       if (response.statusCode == 200) {
         final data = response.data['data'];
         if (data != null) {
+          // Update local profileData with new values from server
           profileData = profileData?.copyWith(
             name: data['name'] ?? profileData?.name,
             contact: data['contact'] ?? profileData?.contact,
@@ -433,11 +439,16 @@ class EditProfileController extends GetxController {
             image: data['image'] ?? profileData?.image,
           );
 
-          final profileModel = ProfileModel.fromJson(response.data);
+          // Reset latitude/longitude after a successful save
+          latitude = null;
+          longitude = null;
+
           update();
 
           Utils.successSnackBar(
               "Profile Updated Successfully", response.message);
+
+          // Refresh the global profile state
           await Get.find<ProfileController>().getProfile();
         } else {
           Utils.errorSnackBar(
@@ -447,7 +458,7 @@ class EditProfileController extends GetxController {
         Utils.errorSnackBar(response.statusCode, response.message);
       }
     } catch (e) {
-      Utils.errorSnackBar(0, e.toString());
+      Utils.errorSnackBar(0, "An error occurred: ${e.toString()}");
     }
 
     isLoading = false;

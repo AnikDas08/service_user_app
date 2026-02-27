@@ -96,7 +96,7 @@ class NotificationsController extends GetxController {
   void onNotificationTap(NotificationModel item) {
     // Check if title is "Booking Payment Successful"
     print("Id id ${item.title}");
-    if (item.title == "Booking Completed Successfully") {
+    if (item.title == "Booking Completed Successfully. Please click here to give your review.") {
       // Get providerId from notification data
       providerId = item.referenceId?["_id"];
       print("Provider Id 😍😍😍😍 $providerId");

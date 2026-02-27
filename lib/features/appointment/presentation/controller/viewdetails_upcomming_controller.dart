@@ -27,6 +27,8 @@ class ViewdetailsUpcommingController extends GetxController {
   var time = ''.obs;
   var duration = '60 ${AppString.minutes_duration_text}'.obs;
   var amount = ''.obs;
+  var subTotal = ''.obs;
+  var avgDuration = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
   String chantId = "";
@@ -177,10 +179,13 @@ class ViewdetailsUpcommingController extends GetxController {
     }
 
     // Duration is always 1 hour (60 minutes)
-    duration.value = '60 ${AppString.minutes_duration_text}';
+    int avgDurationMinutes = bookingData['provider']?['avgDuration'] ?? 60;
+    duration.value = _minutesToDurationLabel(avgDurationMinutes);
 
     // Amount
     amount.value = bookingData['amount']?.toString() ?? '0';
+    subTotal.value = bookingData['subTotal']?.toString() ?? '0';
+    avgDuration.value = bookingData['provider']?['avgDuration']?.toString() ?? '0';
 
     // Booking ID (last 4 digits)
     if (bookingData['_id'] != null && bookingData['_id'].toString().length >= 4) {
@@ -284,6 +289,17 @@ class ViewdetailsUpcommingController extends GetxController {
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+  String _minutesToDurationLabel(int minutes) {
+    switch (minutes) {
+      case 30: return '30 ${AppString.minutes_duration_text}';
+      case 60: return '1 Hour';
+      case 90: return '1 Hour 30 ${AppString.minutes_duration_text}';
+      case 120: return '2 Hour';
+      case 150: return '2 Hour 30 ${AppString.minutes_duration_text}';
+      case 180: return '3 Hour';
+      default: return '$minutes ${AppString.minutes_duration_text}';
     }
   }
 }

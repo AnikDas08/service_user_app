@@ -595,13 +595,13 @@ class InvoiceController extends GetxController {
         "subTotal": subTotal.value,
         "bookingDescription": invoiceData['description'] ?? "",
       };
-      Map<String, dynamic> finalBody = {
-        "data": jsonEncode(bookingFields), // This sends it exactly like your Postman screenshot
-      };
-
       if (isPromoApplied.value && validPromoCode.value.isNotEmpty) {
         bookingFields["promoCode"] = validPromoCode.value;
       }
+
+      Map<String, dynamic> finalBody = {
+        "data": jsonEncode(bookingFields), // This sends it exactly like your Postman screenshot
+      };
 
       print("📤 Booking Request Body: $bookingFields");
 
@@ -616,7 +616,7 @@ class InvoiceController extends GetxController {
       final response = await ApiService.multipartImage(
         "booking",
         body: finalBody,
-        files: [{"image":invoiceData["image"]}],             // matches the 'image' key in your screenshot
+        files: [{"image":invoiceData["image"]}],// matches the 'image' key in your screenshot
       );
 
       print("📡 Booking Response Status: ${response.statusCode}");

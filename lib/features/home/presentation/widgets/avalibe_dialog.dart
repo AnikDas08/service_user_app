@@ -350,7 +350,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                     ],
                   ),
                   SizedBox(height: 4.h),
-                  Row(
+                  /*Row(
                     children: [
                       Icon(
                         Icons.access_time,
@@ -368,8 +368,8 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 4.h),
-                  Row(
+                  SizedBox(height: 4.h),*/
+                  /*Row(
                     children: [
                       Icon(
                         Icons.timelapse,
@@ -385,7 +385,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                         textAlign: TextAlign.left,
                       ),
                     ],
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -408,12 +408,12 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                /*SizedBox(height: 4.h),
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 14.sp,
                   color: AppColors.primaryColor,
-                ),
+                ),*/
               ],
             ),
           ],

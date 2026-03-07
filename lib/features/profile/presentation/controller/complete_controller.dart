@@ -26,6 +26,11 @@ class CompleteController extends GetxController {
   var duration = '60 Minutes Duration'.obs;
   var amount = ''.obs;
   var subTotal = ''.obs;
+  var location="".obs;
+  var weatherFee = ''.obs;
+  var convenienceFee = ''.obs;
+  var arrivalFee = ''.obs;
+  var discount = ''.obs;
   var avgDuration = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
@@ -59,6 +64,11 @@ class CompleteController extends GetxController {
           reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
           description = response.data['data'][0]['bookingDescription'] ?? "";
           image=response.data["data"][0]["image"]??"";
+          location.value=response.data["data"][0]["location"]??"";
+          weatherFee.value = bookingData['weatherFee']?.toString() ?? '0';
+          convenienceFee.value = bookingData['convenienceFee']?.toString() ?? '0';
+          arrivalFee.value = bookingData['arrivalFee']?.toString() ?? '0';
+          discount.value = bookingData['discount']?.toString() ?? '0';
           _parseBookingData();
         }
       }

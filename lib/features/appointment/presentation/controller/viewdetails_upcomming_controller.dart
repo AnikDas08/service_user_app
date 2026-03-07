@@ -27,8 +27,13 @@ class ViewdetailsUpcommingController extends GetxController {
   var time = ''.obs;
   var duration = '60 ${AppString.minutes_duration_text}'.obs;
   var amount = ''.obs;
+  var location="".obs;
   var subTotal = ''.obs;
   var avgDuration = ''.obs;
+  var weatherFee = ''.obs;
+  var convenienceFee = ''.obs;
+  var arrivalFee = ''.obs;
+  var discount = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
   String chantId = "";
@@ -88,6 +93,11 @@ class ViewdetailsUpcommingController extends GetxController {
         chantId = response.data['data'][0]['chatId'] ?? "";
         description = response.data['data'][0]['bookingDescription'] ?? "N/A";
         image=response.data["data"][0]["image"]??"";
+        location.value=response.data["data"][0]["location"]??"";
+        weatherFee.value = bookingData['weatherFee']?.toString() ?? '0';
+        convenienceFee.value = bookingData['convenienceFee']?.toString() ?? '0';
+        arrivalFee.value = bookingData['arrivalFee']?.toString() ?? '0';
+        discount.value = bookingData['discount']?.toString() ?? '0';
         _parseBookingData();
       }
     } catch (e) {

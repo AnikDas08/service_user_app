@@ -155,7 +155,7 @@ class CompleteDetailsScreen extends StatelessWidget {
                                     SizedBox(width: 4.w),
                                     Flexible(
                                       child: CommonText(
-                                        text: controller.providerLocation.value,
+                                        text: controller.location.value,
                                         fontSize: 12.sp,
                                         color: AppColors.black300,
                                         textAlign: TextAlign.left,
@@ -234,7 +234,7 @@ class CompleteDetailsScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 12.h),
-                      Row(
+                      /*Row(
                         children: [
                           CommonText(
                             text: controller.serviceName.value,
@@ -250,8 +250,24 @@ class CompleteDetailsScreen extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ],
-                      ),
+                      ),*/
                       SizedBox(height: 12),
+                      SizedBox(height: 16),
+                      Divider(color: AppColors.black200),
+                      SizedBox(height: 8),
+                      _priceRow(AppString.sub_total, "RSD ${controller.subTotal.value}"),
+                      SizedBox(height: 6.h),
+                      _priceRow(AppString.weather_fee, "RSD ${controller.weatherFee.value}"),
+                      SizedBox(height: 6.h),
+                      _priceRow(AppString.service_fee, "RSD ${controller.convenienceFee.value}"),
+                      SizedBox(height: 6.h),
+                      _priceRow(AppString.arrival_fee, "RSD ${controller.arrivalFee.value}"),
+                      SizedBox(height: 6.h),
+                      _priceRow("${AppString.discount.tr} (${controller.discount.value}%)", "- RSD ${controller.discount.value}", valueColor: Colors.green),
+                      SizedBox(height: 8),
+                      Divider(color: AppColors.black200),
+                      SizedBox(height: 6.h),
+                      _priceRow(AppString.total_price, "RSD ${controller.amount.value}", isBold: true),
                     ],
                   ),
                 ),
@@ -261,6 +277,25 @@ class CompleteDetailsScreen extends StatelessWidget {
           );
         }),
       ),
+    );
+  }
+  Widget _priceRow(String label, String value, {Color? valueColor, bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CommonText(
+          text: label,
+          fontSize: 13.sp,
+          color: AppColors.black400,
+          fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+        ),
+        CommonText(
+          text: value,
+          fontSize: 13.sp,
+          color: valueColor ?? (isBold ? AppColors.black500 : AppColors.black400),
+          fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+        ),
+      ],
     );
   }
 }

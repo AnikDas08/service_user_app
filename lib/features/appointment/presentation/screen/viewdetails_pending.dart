@@ -26,359 +26,397 @@ class ViewDetailsPending extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomAppBar(
-                  title: AppString.status_show,
-                  titleColor: AppColors.primaryColor,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 10.h),
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: CustomAppBar(
+                    title: AppString.status_show,
+                    titleColor: AppColors.primaryColor,
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          controller.providerImage.value.isNotEmpty?Container(
-                            decoration: BoxDecoration(shape: BoxShape.circle),
-                            child: GestureDetector(
-                              onTap: (){
-                                if (controller.providerImage.value.isNotEmpty) {
-                                  ImageViewerScreen.openSingle(
-                                    Get.context!,
-                                    ApiEndPoint.socketUrl+controller.providerImage.value,
-                                  );
-                                }
-                                else{
-                                  ImageViewerScreen.openSingle(
-                                    Get.context!,
-                                    "assets/images/noImage.png",
-                                  );
-                                }
-                              },
-                              child: CircleAvatar(
-                                backgroundImage: controller.providerImage.value.isNotEmpty
-                                    ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage.value)
-                                    : AssetImage("assets/images/noImage.png"),
-                                radius: 45,
+                ),
+                SizedBox(height: 20.h),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 10.h),
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            controller.providerImage.value.isNotEmpty?Container(
+                              decoration: BoxDecoration(shape: BoxShape.circle),
+                              child: GestureDetector(
+                                onTap: (){
+                                  if (controller.providerImage.value.isNotEmpty) {
+                                    ImageViewerScreen.openSingle(
+                                      Get.context!,
+                                      ApiEndPoint.socketUrl+controller.providerImage.value,
+                                    );
+                                  }
+                                  else{
+                                    ImageViewerScreen.openSingle(
+                                      Get.context!,
+                                      "assets/images/noImage.png",
+                                    );
+                                  }
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage: controller.providerImage.value.isNotEmpty
+                                      ? NetworkImage(ApiEndPoint.socketUrl+controller.providerImage.value)
+                                      : AssetImage("assets/images/noImage.png"),
+                                  radius: 45,
+                                ),
+                              ),
+                            ):Image.asset("assets/images/noImage.png",width: 45,height: 45,),
+                            SizedBox(width: 12.w),
+                            // Booking Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CommonText(
+                                    text: controller.providerName.value,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.black400,
+                                  ),
+                                  SizedBox(height: 6.h),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/propetion_icon.svg",
+                                        width: 16.w,
+                                        height: 16.h,
+                                        color: AppColors.black400,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      CommonText(
+                                        text: controller.serviceName.value,
+                                        fontSize: 14.sp,
+                                        color: AppColors.black400,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 6.h),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        size: 18,
+                                        color: Colors.amber,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Obx(
+                                            () => CommonText(
+                                          text: controller.rating.value.toString(),
+                                          fontSize: 12.sp,
+                                          color: AppColors.black300,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Obx(
+                                            () => CommonText(
+                                          text: "(${controller.reviewCount.value.toString()})",
+                                          fontSize: 12.sp,
+                                          color: AppColors.black200,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 6.h),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "assets/icons/location_icon.svg",
+                                        width: 16.w,
+                                        height: 16.h,
+                                        color: AppColors.black300,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Flexible(
+                                        child: CommonText(
+                                          text: controller.location.value,
+                                          fontSize: 12.sp,
+                                          maxLines: 4,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.start,
+                                          color: AppColors.black300,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          ):Image.asset("assets/images/noImage.png",width: 45,height: 45,),
-                          SizedBox(width: 12.w),
-                          // Booking Details
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
                               children: [
-                                CommonText(
-                                  text: controller.providerName.value,
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
+                                SvgPicture.asset(
+                                  "assets/icons/day_icon.svg",
+                                  width: 16.w,
+                                  height: 16.h,
                                   color: AppColors.black400,
                                 ),
-                                SizedBox(height: 6.h),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/icons/propetion_icon.svg",
-                                      width: 16.w,
-                                      height: 16.h,
-                                      color: AppColors.black400,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    CommonText(
-                                      text: controller.serviceName.value,
-                                      fontSize: 14.sp,
-                                      color: AppColors.black400,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 6.h),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.star,
-                                      size: 18,
-                                      color: Colors.amber,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Obx(
-                                          () => CommonText(
-                                        text: controller.rating.value.toString(),
-                                        fontSize: 12.sp,
-                                        color: AppColors.black300,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                    SizedBox(width: 12.w),
-                                    Obx(
-                                          () => CommonText(
-                                        text: "(${controller.reviewCount.value.toString()})",
-                                        fontSize: 12.sp,
-                                        color: AppColors.black200,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 6.h),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SvgPicture.asset(
-                                      "assets/icons/location_icon.svg",
-                                      width: 16.w,
-                                      height: 16.h,
-                                      color: AppColors.black300,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Flexible(
-                                      child: CommonText(
-                                        text: controller.providerLocation.value,
-                                        fontSize: 12.sp,
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.start,
-                                        color: AppColors.black300,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
+                                SizedBox(width: 4.w),
+                                CommonText(
+                                  text: controller.date.value,
+                                  fontSize: 14.sp,
+                                  color: AppColors.black400,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                "assets/icons/day_icon.svg",
-                                width: 16.w,
-                                height: 16.h,
-                                color: AppColors.black400,
-                              ),
-                              SizedBox(width: 4.w),
-                              CommonText(
-                                text: controller.date.value,
-                                fontSize: 14.sp,
-                                color: AppColors.black400,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              CommonText(
-                                text: "${AppString.booking_id} : ${controller.bookingId.value}",
-                                fontSize: 14.sp,
-                                color: AppColors.black400,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                "assets/icons/time_icon.svg",
-                                width: 16.w,
-                                height: 16.h,
-                                color: AppColors.primaryColor,
-                              ),
-                              SizedBox(width: 4.w),
-                              CommonText(
-                                text: controller.time.value,
-                                fontSize: 14.sp,
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
-                          ),
-                          CommonText(
-                            text: controller.duration.value,
-                            fontSize: 14.sp,
-                            color: AppColors.primaryColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12.h),
-                      Row(
-                        children: [
-                          CommonText(
-                            text: controller.serviceName.value,
-                            fontSize: 14.sp,
-                            color: AppColors.black400,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          SizedBox(width: 10),
-                          CommonText(
-                            text: ": RSD ${controller.amount.value}",
-                            fontSize: 14.sp,
-                            color: AppColors.black400,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 12),
-                      if(controller.description!="")
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CommonText(
-                            text: "${AppString.description_text_here}:",
-                            fontSize: 14.sp,
-                            textAlign: TextAlign.start,
-                            color: AppColors.black500,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: CommonText(
-                              text: controller.description??"N/A",
-                              fontSize: 14.sp,
-                              color: AppColors.black400,
-                              maxLines: 4,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.start,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if(controller.image!="")
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CommonText(
-                      text: "Reference Image",
-                      textAlign: TextAlign.start,
-                      fontSize: 18.sp,
-                    ),
-                    SizedBox(height: 10.h),
-                    GestureDetector(
-                      onTap: (){
-                        if (controller.image != "") {
-                          ImageViewerScreen.openSingle(
-                            Get.context!,
-                            ApiEndPoint.socketUrl + controller.image,
-                            isNetwork: true,
-                          );
-                        }
-                        else{
-                          ImageViewerScreen.openSingle(
-                              Get.context!,
-                              "assets/images/noImage.png",
-                              isNetwork: false
-                          );
-                        }
-                      },
-                      child: Image.network(
-                        ApiEndPoint.socketUrl+controller.image,
-                        width: double.infinity,
-                        height: 150.h,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.asset("assets/images/noImage.png"),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 20.h),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: CustomButton(
-                  text: AppString.cancel_button,
-                  fontSize: 18,
-                  isSelected: true,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          backgroundColor: AppColors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          content: CommonText(
-                            maxLines: 5,
-                            text: controller.getCancellationMessage(),
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          actions: [
                             Row(
                               children: [
-                                Expanded(
-                                  child: CustomButton(
-                                    text: AppString.no_button,
-                                    isSelected: false,
-                                    onTap: () {
-                                      Get.back();
-                                    },
-                                  ),
-                                ),
-                                SizedBox(width: 25),
-                                Expanded(
-                                  child: CustomButton(
-                                    text: AppString.yes_button,
-                                    isSelected: true,
-                                    onTap: () async {
-                                      // Cancel the booking first
-                                      await controller.cancelBooking();
-                                    },
-                                  ),
+                                CommonText(
+                                  text: "${AppString.booking_id} : ${controller.bookingId.value}",
+                                  fontSize: 14.sp,
+                                  color: AppColors.black400,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ],
                             ),
                           ],
-                        );
-                      },
-                    );
-                  },
+                        ),
+                        SizedBox(height: 12.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                SvgPicture.asset(
+                                  "assets/icons/time_icon.svg",
+                                  width: 16.w,
+                                  height: 16.h,
+                                  color: AppColors.primaryColor,
+                                ),
+                                SizedBox(width: 4.w),
+                                CommonText(
+                                  text: controller.time.value,
+                                  fontSize: 14.sp,
+                                  color: AppColors.primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
+                            ),
+                            CommonText(
+                              text: controller.duration.value,
+                              fontSize: 14.sp,
+                              color: AppColors.primaryColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                        /*Row(
+                          children: [
+                            CommonText(
+                              text: controller.serviceName.value,
+                              fontSize: 14.sp,
+                              color: AppColors.black400,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            SizedBox(width: 10),
+                            CommonText(
+                              text: ": RSD ${controller.amount.value}",
+                              fontSize: 14.sp,
+                              color: AppColors.black400,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12),*/
+                        if(controller.description!="")
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CommonText(
+                              text: "${AppString.description_text_here}:",
+                              fontSize: 14.sp,
+                              textAlign: TextAlign.start,
+                              color: AppColors.black500,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: CommonText(
+                                text: controller.description??"N/A",
+                                fontSize: 14.sp,
+                                color: AppColors.black400,
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.start,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Divider(color: AppColors.black200),
+                        SizedBox(height: 8),
+                        _priceRow(AppString.sub_total, "RSD ${controller.subTotal.value}"),
+                        SizedBox(height: 6.h),
+                        _priceRow(AppString.weather_fee, "RSD ${controller.weatherFee.value}"),
+                        SizedBox(height: 6.h),
+                        _priceRow(AppString.service_fee, "RSD ${controller.convenienceFee.value}"),
+                        SizedBox(height: 6.h),
+                        _priceRow(AppString.arrival_fee, "RSD ${controller.arrivalFee.value}"),
+                        SizedBox(height: 6.h),
+                        _priceRow("${AppString.discount.tr} (${controller.discount.value}%)", "- RSD ${controller.discount.value}", valueColor: Colors.green),
+                        SizedBox(height: 8),
+                        Divider(color: AppColors.black200),
+                        SizedBox(height: 6.h),
+                        _priceRow(AppString.total_price, "RSD ${controller.amount.value}", isBold: true),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                if(controller.image!="")
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonText(
+                        text: "Reference Image",
+                        textAlign: TextAlign.start,
+                        fontSize: 18.sp,
+                      ),
+                      SizedBox(height: 10.h),
+                      GestureDetector(
+                        onTap: (){
+                          if (controller.image != "") {
+                            ImageViewerScreen.openSingle(
+                              Get.context!,
+                              ApiEndPoint.socketUrl + controller.image,
+                              isNetwork: true,
+                            );
+                          }
+                          else{
+                            ImageViewerScreen.openSingle(
+                                Get.context!,
+                                "assets/images/noImage.png",
+                                isNetwork: false
+                            );
+                          }
+                        },
+                        child: Image.network(
+                          ApiEndPoint.socketUrl+controller.image,
+                          width: double.infinity,
+                          height: 150.h,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Image.asset("assets/images/noImage.png"),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+                  child: CustomButton(
+                    text: AppString.cancel_button,
+                    fontSize: 18,
+                    isSelected: true,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: AppColors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            content: CommonText(
+                              maxLines: 5,
+                              text: controller.getCancellationMessage(),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            actions: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomButton(
+                                      text: AppString.no_button,
+                                      isSelected: false,
+                                      onTap: () {
+                                        Get.back();
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 25),
+                                  Expanded(
+                                    child: CustomButton(
+                                      text: AppString.yes_button,
+                                      isSelected: true,
+                                      onTap: () async {
+                                        // Cancel the booking first
+                                        await controller.cancelBooking();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
         }),
       ),
+    );
+  }
+  Widget _priceRow(String label, String value, {Color? valueColor, bool isBold = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CommonText(
+          text: label,
+          fontSize: 13.sp,
+          color: AppColors.black400,
+          fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+        ),
+        CommonText(
+          text: value,
+          fontSize: 13.sp,
+          color: valueColor ??
+              (isBold ? AppColors.black500 : AppColors.black400),
+          fontWeight: isBold ? FontWeight.w600 : FontWeight.w400,
+        ),
+      ],
     );
   }
 }

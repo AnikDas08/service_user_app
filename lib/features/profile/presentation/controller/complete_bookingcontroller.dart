@@ -19,8 +19,14 @@ class CompletedBookingController extends GetxController {
   int totalPages = 1;
   int totalItems = 0;
 
+
   // ScrollController for pagination
   ScrollController scrollController = ScrollController();
+  var location="".obs;
+  var weatherFee = ''.obs;
+  var convenienceFee = ''.obs;
+  var arrivalFee = ''.obs;
+  var discount = ''.obs;
 
   @override
   void onInit() {
@@ -99,7 +105,11 @@ class CompletedBookingController extends GetxController {
 
       if (response.statusCode == 200) {
         final List<dynamic> bookingsData = response.data['data'] ?? [];
-
+        location.value=response.data["data"][0]["location"]??"";
+        weatherFee.value = response.data["data"][0]['weatherFee']?.toString() ?? '0';
+        convenienceFee.value = response.data["data"][0]['convenienceFee']?.toString() ?? '0';
+        arrivalFee.value = response.data["data"][0]['arrivalFee']?.toString() ?? '0';
+        discount.value = response.data["data"][0]['discount']?.toString() ?? '0';
         // Update pagination info
         if (response.data['pagination'] != null) {
           final pagination = response.data['pagination'];

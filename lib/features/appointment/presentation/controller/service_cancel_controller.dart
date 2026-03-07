@@ -26,7 +26,12 @@ class ServiceCancelController extends GetxController {
   var image = '';
   var duration = '60 ${AppString.minutes_duration_text}'.obs;
   var amount = ''.obs;
+  var weatherFee = ''.obs;
+  var convenienceFee = ''.obs;
+  var arrivalFee = ''.obs;
+  var discount = ''.obs;
   var subTotal = ''.obs;
+  var location="".obs;
   var avgDuration = ''.obs;
   RxString rating = "".obs;
   RxInt reviewCount = 0.obs;
@@ -60,6 +65,11 @@ class ServiceCancelController extends GetxController {
           reviewCount.value = response.data['data'][0]['ratings']['totalReviews']??0;
           description = response.data['data'][0]['bookingDescription'] ?? "N/A";
           image=response.data["data"][0]["image"]??"";
+          location.value=response.data["data"][0]["location"]??"";
+          weatherFee.value = bookingData['weatherFee']?.toString() ?? '0';
+          convenienceFee.value = bookingData['convenienceFee']?.toString() ?? '0';
+          arrivalFee.value = bookingData['arrivalFee']?.toString() ?? '0';
+          discount.value = bookingData['discount']?.toString() ?? '0';
           _parseBookingData();
         }
       }

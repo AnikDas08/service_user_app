@@ -58,16 +58,7 @@ class ServiceProviderCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4.r),
-                    child: imageUrl.startsWith("assets")
-                        ? Center(
-                      child: CommonText(
-                        text: imageUrl,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.black400,
-                      ),
-                    )
-                        : Image.network(
+                    child: Image.network(
                       imageUrl,
                       width: double.infinity,
                       height: 110.h,

@@ -157,7 +157,7 @@ class ViewDetailsUpcoming extends StatelessWidget {
                                         child: CommonText(
                                           text: controller.location.value,
                                           fontSize: 12.sp,
-                                          maxLines: 4,
+                                          maxLines: 7,
                                           textAlign: TextAlign.start,
                                           overflow: TextOverflow.ellipsis,
                                           color: AppColors.black300,

@@ -86,7 +86,7 @@ class CompleteBooking extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CommonText(
-                    text: controller.getUserName(booking),
+                    text: controller.getProviderName(booking),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     color: AppColors.black400,

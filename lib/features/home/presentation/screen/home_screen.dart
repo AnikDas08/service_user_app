@@ -567,6 +567,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: providers.length,
                   itemBuilder: (context, index) {
                     final provider = providers[index];
+                    print("image : ${provider.image}");
                     return ServiceProviderCard(
                       id: provider.id,
                       name: provider.name,
@@ -577,9 +578,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       reviews: provider.reviews.totalReviews.toString(),
                       price: "RSD ${provider.price.toStringAsFixed(0)}",
                       imageUrl:
-                      provider.image != null
+                      provider.image != null||provider.image!.isNotEmpty||provider.image!=""
                           ? ApiEndPoint.socketUrl + provider.image!
-                          : "assets/images/item_image.png",
+                          : "assets/images/noImage.png",
                       onTap: () => controller.onProviderTap(provider.id),
                       onFavorite: () => controller.favouriteItem(provider.id),
                     );

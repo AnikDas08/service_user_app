@@ -157,7 +157,7 @@ class ViewDetailsPending extends StatelessWidget {
                                         child: CommonText(
                                           text: controller.location.value,
                                           fontSize: 12.sp,
-                                          maxLines: 4,
+                                          maxLines: 7,
                                           overflow: TextOverflow.ellipsis,
                                           textAlign: TextAlign.start,
                                           color: AppColors.black300,

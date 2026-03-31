@@ -173,7 +173,7 @@ class AppointmentScreen extends StatelessWidget {
                       Expanded(
                         child: CustomButton(
                           text: AppString.upcoming_button,
-                          fontSize: 14,
+                          fontSize: 12.sp,
                           height: 34,
                           isSelected: controller.selectedFilter == 0,
                           onTap: () => controller.changeFilter(0),
@@ -183,7 +183,7 @@ class AppointmentScreen extends StatelessWidget {
                       Expanded(
                         child: CustomButton(
                           text: AppString.pending_button,
-                          fontSize: 14,
+                          fontSize: 12.sp,
                           height: 34,
                           isSelected: controller.selectedFilter == 1,
                           onTap: () => controller.changeFilter(1),
@@ -193,7 +193,7 @@ class AppointmentScreen extends StatelessWidget {
                       Expanded(
                         child: CustomButton(
                           text: AppString.canceled_button,
-                          fontSize: 14,
+                          fontSize: 12.sp,
                           height: 34,
                           isSelected: controller.selectedFilter == 2,
                           onTap: () => controller.changeFilter(2),

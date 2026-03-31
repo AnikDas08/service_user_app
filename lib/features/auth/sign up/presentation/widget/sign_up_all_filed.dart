@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 import '../../../../../utils/constants/app_colors.dart';
@@ -20,15 +21,15 @@ class SignUpAllField extends StatefulWidget {
 
 class _SignUpAllFieldState extends State<SignUpAllField> {
   Country selectedCountry = Country(
-    phoneCode: '880',
-    countryCode: 'BD',
+    phoneCode: '381',
+    countryCode: 'RS',
     e164Sc: 0,
     geographic: true,
     level: 1,
-    name: 'Bangladesh',
-    example: 'Bangladesh',
-    displayName: 'Bangladesh',
-    displayNameNoCountryCode: 'BD',
+    name: 'Serbia',
+    example: 'Serbia',
+    displayName: 'Serbia',
+    displayNameNoCountryCode: 'RS',
     e164Key: '',
   );
 

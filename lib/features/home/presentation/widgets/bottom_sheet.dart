@@ -60,12 +60,16 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     });
   }
 
+
+
   @override
   void dispose() {
     _locationFocusNode.dispose();
     locationControllers.dispose();
     super.dispose();
   }
+
+  bool isPriceChanged = false;
 
   @override
   Widget build(BuildContext context) {
@@ -158,8 +162,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
                       SizedBox(height: 16.h),
 
-                      // Location Section with Autocomplete
-                      _buildLocationSection(),
+                      /*// Location Section with Autocomplete
+                      _buildLocationSection(),*/
 
                       SizedBox(height: 16.h),
 
@@ -167,6 +171,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       _buildSectionTitle(AppString.price),
                       SizedBox(height: 5.h),
                       _buildPriceSlider(),
+                      SizedBox(height: 16.h),
+                      _buildLocationUsageNote(),
 
                       SizedBox(height: 30.h),
 
@@ -615,6 +621,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             onChanged: (double value) {
               setState(() {
                 priceRange = value;
+                isPriceChanged = true;
               });
             },
           ),
@@ -748,12 +755,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       'categoryId': selectedCategoryId,
       'subCategoryId': selectedSubCategoryId,
       'date': formattedDate,
-      'location': locationControllers.text.isNotEmpty ? locationControllers.text : null,
-      'userLng': controller.longitude??"",
-      'userLat': controller.latitude,
-      'minPrice': 0,
-      'maxPrice': priceRange.toString(),
     };
+    if (isPriceChanged) {
+      filterData['minPrice'] = 0;
+      filterData['maxPrice'] = priceRange.toInt().toString();
+    }
     print("Filter data : $filterData");
 
     // Call the controller method to apply filters and fetch from API
@@ -761,5 +767,39 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
     // Close bottom sheet
     Get.back();
+  }
+
+  Widget _buildLocationUsageNote() {
+    return Container(
+      margin: EdgeInsets.only(top: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: AppColors.black100.withOpacity(0.3), // Subtle background
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.near_me_rounded,
+            size: 16.sp,
+            color: AppColors.primaryColor,
+          ),
+          SizedBox(width: 8.w),
+          Flexible(
+            child: CommonText(
+              text: AppString.noteText,
+
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: AppColors.black400,
+              maxLines: 4,
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

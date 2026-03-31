@@ -177,16 +177,16 @@ deletePopUp({
               children: [
                 Center(
                   child: CommonText(
-                    text: AppString.areYouSure,
+                    text: AppString.areYouSure.tr,
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.black,
-                    maxLines: 1,
+                    maxLines: 4,
                     bottom: 24.h,
                   ),
                 ),
                 CommonText(
-                  text: AppString.password_show,
+                  text: AppString.password_show.tr,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black,
@@ -270,7 +270,7 @@ confirmDelete({
               children: [
                 Center(
                   child: CommonText(
-                    text: "Do you want to Delete you Account?",
+                    text: AppString.delete_account_android,
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.black,
@@ -279,7 +279,7 @@ confirmDelete({
                   ),
                 ),
                 CommonText(
-                  text: "After 30 days your account will be deleted.All the data are remove from your account.",
+                  text: AppString.delete_after,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                   color: AppColors.black,

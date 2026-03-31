@@ -825,13 +825,13 @@ class HomeController extends GetxController {
         queryParams.add("time=${filterData['time']}");
       }
 
-      if (filterData['location'] != null && filterData['location'].toString().isNotEmpty) {
+      /*if (filterData['location'] != null && filterData['location'].toString().isNotEmpty) {
         queryParams.add("location=${filterData['location']}");
-      }
+      }*/
 
-      if (filterData['userLat'] != null && filterData['userLat'].toString().isNotEmpty) {
+      /*if (filterData['userLat'] != null && filterData['userLat'].toString().isNotEmpty) {
         queryParams.add("userLat=${filterData['userLat']}");
-      }
+      }*/
 
       if (filterData['userLng'] != null && filterData['userLng'].toString().isNotEmpty) {
         queryParams.add("userLng=${filterData['userLng']}");

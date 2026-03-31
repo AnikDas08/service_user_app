@@ -23,7 +23,7 @@ class CompleteController extends GetxController {
   var serviceName = ''.obs;
   var date = ''.obs;
   var time = ''.obs;
-  var duration = '60 Minutes Duration'.obs;
+  var duration = '60 ${AppString.minutes_duration_text.tr}'.obs;
   var amount = ''.obs;
   var subTotal = ''.obs;
   var location="".obs;
@@ -292,13 +292,13 @@ class CompleteController extends GetxController {
   }
   String _minutesToDurationLabel(int minutes) {
     switch (minutes) {
-      case 30: return '30 ${AppString.minutes_duration_text}';
-      case 60: return '1 Hour';
-      case 90: return '1 Hour 30 ${AppString.minutes_duration_text}';
-      case 120: return '2 Hour';
-      case 150: return '2 Hour 30 ${AppString.minutes_duration_text}';
-      case 180: return '3 Hour';
-      default: return '$minutes ${AppString.minutes_duration_text}';
+      case 30: return '30 ${AppString.minutes_duration_text.tr}';
+      case 60: return '1 ${AppString.hour_text.tr}';
+      case 90: return '1 ${AppString.hour_text.tr} 30 ${AppString.minutes_duration_text.tr}';
+      case 120: return '2 ${AppString.hour_text.tr}';
+      case 150: return '2 ${AppString.hour_text.tr} 30 ${AppString.minutes_duration_text.tr}';
+      case 180: return '3 ${AppString.hour_text.tr}';
+      default: return '$minutes ${AppString.minutes_duration_text.tr}';
     }
   }
 }

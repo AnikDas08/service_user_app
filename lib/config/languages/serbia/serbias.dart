@@ -8,11 +8,12 @@ Map<String, String> serbian = {
   AppString.youSureWantToLogout: "Da li ste sigurni da želite da se odjavite",
   AppString.no: "Ne",
   AppString.yes: "Da",
-  AppString.areYouSure: "Da li ste sigurni",
+  AppString.areYouSure: "Da li želite da obrišete nalog?",
   AppString.enterYouPassword: "Unesite vašu lozinku",
   AppString.cancel: "Otkaži",
   AppString.done: "Gotovo",
-  AppString.deleteDetails: "Sve vaše izmene će biti obrisane i više nećete moći da im pristupite.",
+  AppString.deleteDetails:
+      "Sve vaše izmene će biti obrisane i više nećete moći da im pristupite.",
   AppString.someThingWrong: "Nešto nije u redu",
   AppString.tryAgain: "Pokušajte ponovo",
   AppString.phoneNumber: "Broj telefona",
@@ -72,7 +73,8 @@ Map<String, String> serbian = {
   AppString.requestTimeOut: "Vreme zahteva je isteklo",
   AppString.thisFieldIsRequired: "Ovo polje je obavezno",
   AppString.enterValidEmail: "Unesite važeću email adresu",
-  AppString.passwordMustBeeEightCharacters: "Lozinka mora imati 8 karaktera i sadržati i slova i brojeve",
+  AppString.passwordMustBeeEightCharacters:
+      "Lozinka mora imati najmanje 8 karaktera i sadržati i slova i brojeve.",
   AppString.thePasswordDoesNotMatch: "Lozinka se ne poklapa",
   AppString.startServer: "Molimo, pokrenite server",
   AppString.unknownError: "Nepoznata greška",
@@ -114,7 +116,8 @@ Map<String, String> serbian = {
   AppString.otpTitle: "Verifikujte vaš email",
 
   // Enter your email to reset password
-  AppString.enterYourEmailToResetPassword: "\"Poslali smo jednokretnulozinku (OTP) na vaš email. Molimo unesite je ispod da biste nastavili.\"",
+  AppString.enterYourEmailToResetPassword:
+      "\"Poslali smo jednokretnulozinku (OTP) na vaš email. Molimo unesite je ispod da biste nastavili.\"",
 
   // On boarding text
   AppString.onboarding_text: "Velodora ",
@@ -146,22 +149,25 @@ Map<String, String> serbian = {
 
   // Forget Password
   AppString.forget_password_text: "Zaboravili ste lozinku?",
-  AppString.forget_password_details_text: "Unesite vašu email adresu i mi ćemo vam\nposlati OTP za resetovanje lozinke.",
+  AppString.forget_password_details_text:
+      "Unesite vašu email adresu i mi ćemo vam\nposlati OTP za resetovanje lozinke.",
   AppString.verify_button: "Verifikuj sada",
 
   // Verify Screen
   AppString.verify_email_text: "Verifikujte vaš OTP",
-  AppString.verify_email_details: "Poslali smo jednokretnulozinku (OTP) na vaš email. Molimo unesite je ispod da biste nastavili",
+  AppString.verify_email_details:
+      "Poslali smo jednokretnulozinku (OTP) na vaš email. Molimo unesite je ispod da biste nastavili",
   AppString.continue_button: "Nastavi",
   AppString.resend_button: "Pošalji OTP ponovo",
 
   // Create Password
   AppString.create_password_text: "Kreirajte novu lozinku",
-  AppString.create_password_details_text: "Molimo unesite novu lozinku za vaš nalog. Uverite se da ima najmanje 8 karaktera i uključuje kombinaciju slova, brojeva i simbola radi bezbednosti",
+  AppString.create_password_details_text:
+      "Molimo unesite novu lozinku za vaš nalog. Uverite se da ima najmanje 8 karaktera i uključuje kombinaciju slova, brojeva i simbola radi bezbednosti",
   AppString.new_passowrd_text: "Nova lozinka",
   AppString.confirm_password_text: "Potvrdite lozinku",
   AppString.hint_new_password: "Unesite novu lozinku",
-  AppString.hint_confirm_password: "Unesite potvrdu lozinke",
+  AppString.hint_confirm_password: "Potvrdite lozinku",
   AppString.confirm_button: "Potvrdi",
   AppString.add_primary_locatiopn: "Dodajte primarnu lokaciju",
   AppString.password_change_now: "Vaša lozinka je\npromenjena",
@@ -174,6 +180,7 @@ Map<String, String> serbian = {
   AppString.type_first: "Kucajte...",
   AppString.service_text: "Tip usluge",
   AppString.service: "Usluga",
+  AppString.services: "Usluga",
   AppString.service_hint: "Tip usluge",
   AppString.additional_service_text: "Dodatni tip usluge",
   AppString.additional_service_hints: "Tip usluga",
@@ -184,13 +191,18 @@ Map<String, String> serbian = {
   AppString.price_text: "Cena",
   AppString.price_hints: "Unesite vašu lokaciju",
   AppString.price_hours: "Cena (po satu)",
-  AppString.add_new: "Molimo priložite fotografije vašeg rada (nije obavezno) Maksimalno 10 slika",
+  AppString.add_new:
+      "Molimo priložite fotografije vašeg rada (nije obavezno) Maksimalno 10 slika",
   AppString.upload_image_text: "Otpremite sliku",
   AppString.add_text: "Dodaj",
-  AppString.continue_by: "Nastavljanjem",
-  AppString.privacy_policy_text: "Politika privatnosti",
-  AppString.and_text: "I",
-  AppString.term_condition_text: "Uslovi i odredbe",
+  AppString.continue_by: "Nastavljanjem se slažete sa našom ",
+  AppString.privacy_policy_text: "Politikom privatnosti",
+  AppString.privacy_policy_name: "Politikom privatnosti i Uslovima korišćenja",
+  AppString.delete_account_android: "Da li želite da obrišete nalog?",
+  AppString.delete_after: "Vaš nalog će biti obrisan nakon 30 dana. Svi podaci će biti uklonjeni sa vašeg naloga.",
+  AppString.and_text: "i",
+  AppString.term_condition_text: "Uslovima korišćenja",
+  AppString.review_not: "Trenutno nema recenzija",
   AppString.complete_booking: "Završene rezervacije",
   AppString.complete_booking_photo: "Još nema završenih rezervacija.",
 
@@ -258,7 +270,8 @@ Map<String, String> serbian = {
   AppString.total_duration_text: "Ukupno trajanje",
   AppString.total_text: "Ukupno",
   AppString.work_photo: "Nema fotografija rada",
-  AppString.appointment_booking: "Da li ste sigurni da želite da otkažete ovaj termin?",
+  AppString.appointment_booking:
+      "Da li ste sigurni da želite da otkažete ovaj termin?",
   AppString.image_unavailable: "Slika nije dostupna",
   AppString.reviews: "Još nema recenzija",
   AppString.booking_id: "ID rezervacije",
@@ -267,7 +280,8 @@ Map<String, String> serbian = {
   AppString.customer_text: "Kupac",
   AppString.status: "Status",
   AppString.close_button: "Zatvori",
-  AppString.minutes_duration_text: "Trajanje u minutima",
+  AppString.minutes_duration_text: "minuta trajanje",
+  AppString.hour_text: "sat",
   AppString.error: "Greška",
   AppString.subCategory: "Potkategorija",
   AppString.valid_booking_id: "Nevažeći ID rezervacije",
@@ -288,8 +302,9 @@ Map<String, String> serbian = {
   AppString.done_button: "Gotovo",
   AppString.select_time: "Izaberite vremenski termin",
   AppString.available_date: "Nema dostupnih datuma",
-  AppString.provider_available: "Pružalac nema dostupne datume\nu ovom trenutku",
-  AppString.spoken: "Govorni",
+  AppString.provider_available:
+      "Pružalac nema dostupne datume\nu ovom trenutku",
+  AppString.spoken: "Jezici",
   AppString.subService: "Tip usluge",
   AppString.failed_fetch_booking: "Neuspelo dobijanje detalja rezervacije",
   AppString.failed_booking: "Neuspelo otkazivanje rezervacije",
@@ -299,19 +314,22 @@ Map<String, String> serbian = {
   AppString.noSubcategory: "Potkategorije nisu dostupne",
   AppString.select_subtype: "Izaberite potkategoriju",
   AppString.service_selected: "Usluga nije izabrana",
-  AppString.select_date_work: "Molimo izaberite datum pre izbora vremenskih termina",
+  AppString.select_date_work:
+      "Molimo izaberite datum pre izbora vremenskih termina",
   AppString.select_service: "Molimo izaberite najmanje jednu uslugu",
   AppString.limit_here_show: "Limit termina dostignut",
   AppString.failed_image: "Neuspeo izbor slike",
   AppString.select_date_easy: "Molimo izaberite datum",
   AppString.availibility_here: "Nema dostupnosti",
   AppString.invalid_time_slot: "Nevažeći vremenski termini",
-  AppString.time_slot_available: "Nema dostupnih vremenskih termina za ovaj datum",
+  AppString.time_slot_available:
+      "Nema dostupnih vremenskih termina za ovaj datum",
   AppString.time_slot_avaibales: "Vremenski termini nisu dostupni",
   AppString.select_different: "Molimo izaberite drugi datum",
   AppString.valid_time_slot: "Nevažeći vremenski termini",
   AppString.image_available: "Slika nije dostupna",
-  AppString.booking_confirmed: "Detalji rezervacije pripremljeni. Molimo pregledajte i potvrdite plaćanje.",
+  AppString.booking_confirmed:
+      "Detalji rezervacije pripremljeni. Molimo pregledajte i potvrdite plaćanje.",
   AppString.available: "Dostupno",
   AppString.booked: "rezervisano",
   AppString.select: "Izaberi",
@@ -325,7 +343,8 @@ Map<String, String> serbian = {
   AppString.service_fee: "Naknada za uslugu",
   AppString.appointment_text: "Zakazivanje",
   AppString.booking_here: "Rezervacije nisu pronađene",
-  AppString.cancel_booking_detail: "Da li ste sigurni da želite da otkažete ovu uslugu? Imajte u vidu da će se naplatiti naknada za otkazivanje od 30%. Ako želite da nastavite, kliknite „DA“ da biste otkazali.",
+  AppString.cancel_booking_detail:
+      "Da li ste sigurni da želite da otkažete ovu uslugu? Imajte u vidu da će se naplatiti naknada za otkazivanje od 30%. Ako želite da nastavite, kliknite „DA“ da biste otkazali.",
   AppString.booking_id_here: "ID rezervacije",
   AppString.status_show: "Pogledaj status",
   AppString.home: "Početna",
@@ -369,7 +388,8 @@ Map<String, String> serbian = {
   AppString.personal_information: "Lične informacije",
   AppString.service_information: "Moja usluga",
   AppString.language_text: "Jezik",
-  AppString.contact_support_text: "Molimo kontaktirajte nas putem\nemaila za bilo koje vaše potrebe",
+  AppString.contact_support_text:
+      "Molimo kontaktirajte nas putem\nemaila za bilo koje vaše potrebe",
   AppString.contact_support_button: "Kontakt putem emaila",
   AppString.setting: "Podešavanja ",
   AppString.complete_service: "Završene usluge ",
@@ -377,7 +397,7 @@ Map<String, String> serbian = {
   AppString.favourite_list: "Sva lista omiljenih",
   AppString.favourite_item: "Omiljeni pružaoci nisu pronađeni",
   AppString.present_credit: "Trenutni kredit ",
-  AppString.one_credit: "Jedan kredit jednako",
+  AppString.one_credit: "Vrednost jednog kredita je ",
   AppString.full_name: "Puno ime",
   AppString.hints_full_name: "Unesite vaše puno ime",
   AppString.contact_hint: "Unesite vaš broj telefona",
@@ -409,13 +429,15 @@ Map<String, String> serbian = {
   AppString.logout_correct: "Da li želite da se odjavite?",
   AppString.yes_button: "Da",
   AppString.no_button: "Ne",
+  AppString.noteText:
+      "Napomena: Rezultati pretrage su zasnovani na Vašoj trenutnoj lokaciji kako biste lakše pronašli najbolje pružaoce usluga u blizini.",
   AppString.scan_now: "Skeniraj",
   AppString.review: "Recenzije",
   AppString.minutes: "minuta",
   AppString.no_comment: "Nema komentara",
   AppString.payment_successful: "Plaćanje uspešno",
   AppString.payment_cancel: "Plaćanje otkazano",
-  AppString.sub_total: "Međuzbir",
+  AppString.sub_total: "Usluga",
   AppString.weather_fee: "Naknada za vreme",
   AppString.convineance_fee: "Naknada za uslugu",
   AppString.arrival_fee: "Naknada za dolazak",
@@ -438,8 +460,10 @@ Map<String, String> serbian = {
 
   // QR Scan
   AppString.qr_text: "QR kod",
-  AppString.qr_details: "Usluga završena? Molimo dozvolite pružaocu da skenira vaš QR kod",
-  AppString.scan_qr: "Usluga završena? Molimo dozvolite PRO da skenira vaš QR kod",
+  AppString.qr_details:
+      "Usluga završena? Molimo dozvolite pružaocu da skenira vaš QR kod",
+  AppString.scan_qr:
+      "Usluga završena? Molimo dozvolite PRO da skenira vaš QR kod",
   AppString.barcode_text: "Unesite ID pružaoca usluge",
   AppString.qr_name: "MD Kamran khan",
   AppString.feedback_text: "Dajte vaše mišljenje",
@@ -447,7 +471,7 @@ Map<String, String> serbian = {
   AppString.qr_id: "Korisnički ID : ",
   AppString.feed_back: "Dajte vaše mišljenje",
   AppString.type_review: "Unesite recenziju",
-  AppString.password_show: "Unesite svoju lozinku da potvrdite svoj nalog.",
+  AppString.password_show: "Vaš nalog će biti obrisan nakon 30 dana. Svi podaci će biti uklonjeni sa vašeg naloga.",
   AppString.enter_password: "Unesite svoju lozinku",
 
   AppString.mon: "Pon",
@@ -457,4 +481,4 @@ Map<String, String> serbian = {
   AppString.fri: "Pet",
   AppString.sat: "Sub",
   AppString.sun: "Ned",
-  };
+};

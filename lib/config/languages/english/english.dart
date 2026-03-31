@@ -174,6 +174,7 @@ Map<String, String> english = {
   AppString.type_first: "Type...",
   AppString.service_text: "Service Type",
   AppString.service: "Service",
+  AppString.services: "Service",
   AppString.service_hint: "Type of Service",
   AppString.additional_service_text: "Additional Service Type",
   AppString.additional_service_hints: "Type of Services",
@@ -187,10 +188,14 @@ Map<String, String> english = {
   AppString.add_new: "Please Attach Your Work Photos (Not Mandatory) Maximum 10 Image",
   AppString.upload_image_text: "Upload Image",
   AppString.add_text: "Add",
-  AppString.continue_by: "By Continue",
+  AppString.delete_account_android: "Do you want to Delete you Account?",
+  AppString.delete_after: "After 30 days your account will be deleted. All data will be removed from your account. ",
+  AppString.continue_by: "By continuing, you agree to our ",
   AppString.privacy_policy_text: "Privacy Policy",
+  AppString.privacy_policy_name: "Privacy Policy and Terms & Conditions",
   AppString.and_text: "And",
   AppString.term_condition_text: "Terms & Condition",
+  AppString.review_not: "No reviews at the moment",
   AppString.complete_booking: "Completed Bookings",
   AppString.complete_booking_photo: "No completed bookings yet.",
 
@@ -268,6 +273,7 @@ Map<String, String> english = {
   AppString.status: "Status",
   AppString.close_button: "Close",
   AppString.minutes_duration_text: "Minutes Duration",
+  AppString.hour_text: "Hour",
   AppString.error: "Error",
   AppString.subCategory: "Sub Category",
   AppString.valid_booking_id: "Invalid booking ID",
@@ -364,6 +370,7 @@ Map<String, String> english = {
 
   // Message Screen
   AppString.search_text: "Search here",
+  AppString.noteText: "Note: Search results are based on your current location to find the best providers near you.",
 
   // Profile Screen
   AppString.personal_information: "Personal Information",
@@ -415,7 +422,7 @@ Map<String, String> english = {
   AppString.no_comment: "No comment",
   AppString.payment_successful: "Payment successful",
   AppString.payment_cancel: "Payment cancelled",
-  AppString.sub_total: "Sub Total",
+  AppString.sub_total: "Service",
   AppString.weather_fee: "Weather Fee",
   AppString.convineance_fee: "Service fee",
   AppString.arrival_fee: "Arrival Fee",

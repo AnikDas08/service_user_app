@@ -160,8 +160,8 @@ class SignUpController extends GetxController {
   bool isLoadingReset = false;
 
   /// Country
-  String countryCode = '+880';
-  String countryFlag = '🇧🇩';
+  String countryCode = '+381';
+  String countryFlag = '🇷🇸';
 
   /// Timer
   Timer? _timer;
@@ -185,6 +185,9 @@ class SignUpController extends GetxController {
   String? latitude;
   String? longitude;
 
+
+
+
   static SignUpController get instance => Get.put(SignUpController());
 
   /// Controllers
@@ -201,7 +204,7 @@ class SignUpController extends GetxController {
   TextEditingController(text: kDebugMode ? 'hello123' : '');
 
   TextEditingController phoneNumberController =
-  TextEditingController(text: kDebugMode ? '1865965581' : '');
+  TextEditingController(text: kDebugMode ? '' : '');
 
   TextEditingController otpController =
   TextEditingController(text: kDebugMode ? '123456' : '');

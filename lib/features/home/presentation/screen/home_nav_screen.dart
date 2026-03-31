@@ -83,9 +83,7 @@ class HomeNavScreen extends StatelessWidget {
                   return BottomNavigationBarItem(
                     icon: Padding(
                       padding: const EdgeInsets.only(bottom: 10, top: 10),
-                      child:
-                      _navItems[index]["label"] == AppString.message
-                          ? Stack(
+                      child: Stack(
                         clipBehavior: Clip.none,
                         children: [
                           SvgPicture.asset(
@@ -100,38 +98,32 @@ class HomeNavScreen extends StatelessWidget {
                             ),
                           ),
 
-                          /// 🔴 PERFECT BADGE
-                          if(homeController.message.value > 0)
-                          Positioned(
-                            right: -6.r,   // Proper right alignment
-                            top: -8.r,     // Proper top alignment
-                            child: Container(
-                              padding: EdgeInsets.all(4.r), // Ensures circle shape
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: CommonText(
-                                text: Get.find<HomeController>().message.value.toString(),
-                                color: Colors.white,
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
+                          /// 🔴 Reactive Badge using Obx
+                          if (_navItems[index]["label"] == AppString.message)
+                            Obx(() {
+                              final count = Get.find<HomeController>().message.value;
+                              if (count > 0) {
+                                return Positioned(
+                                  right: -6.r,
+                                  top: -8.r,
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.r),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: CommonText(
+                                      text: count.toString(),
+                                      color: Colors.white,
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink(); // Hide badge if count is 0
+                            }),
                         ],
-                      )
-                          :
-                      SvgPicture.asset(
-                        _navItems[index]["icon"]!,
-                        width: 22,
-                        height: 22,
-                        colorFilter: ColorFilter.mode(
-                          controller.selectedIndex == index
-                              ? AppColors.primaryColor
-                              : Colors.black,
-                          BlendMode.srcIn,
-                        ),
                       ),
                     ),
                     label: _navItems[index]["label"]!.tr,

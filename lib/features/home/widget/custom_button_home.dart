@@ -46,14 +46,17 @@ class CustomButton extends StatelessWidget {
             color: backgroundColor ?? (isSelected ? AppColors.primaryColor : AppColors.primaryColor),
           ),
         ),
-        child: Center(
-          child: CommonText(
-            text: text,
-            fontSize: isSmall ? 12.sp : fontSize,
-            fontWeight: FontWeight.w500,
-            color: textColor ?? (isSelected ? Colors.white : AppColors.primaryColor),
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: CommonText(
+                text: text,
+                fontSize: isSmall ? 12.sp : fontSize,
+                fontWeight: FontWeight.w500,
+                color: textColor ?? (isSelected ? Colors.white : AppColors.primaryColor),
+              ),
+            ),
           ),
-        ),
       ),
     );
   }

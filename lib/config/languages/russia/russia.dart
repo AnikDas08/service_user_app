@@ -8,12 +8,12 @@ Map<String, String> russian = {
   AppString.youSureWantToLogout: "Вы уверены, что хотите выйти",
   AppString.no: "Нет",
   AppString.yes: "Да",
-  AppString.areYouSure: "Вы уверены",
+  AppString.areYouSure: "Вы хотите удалить свой аккаунт?",
   AppString.enterYouPassword: "Введите ваш пароль",
   AppString.cancel: "Отмена",
   AppString.done: "Готово",
-  AppString
-      .deleteDetails: "Все ваши изменения будут удалены, и вы больше не сможете получить к ним доступ.",
+  AppString.deleteDetails:
+      "Все ваши изменения будут удалены, и вы больше не сможете получить к ним доступ.",
   AppString.someThingWrong: "Что-то пошло не так",
   AppString.tryAgain: "Попробовать снова",
   AppString.phoneNumber: "Номер телефона",
@@ -71,10 +71,10 @@ Map<String, String> russian = {
   AppString.noInternetConnection: "Нет подключения к интернету",
   AppString.badResponseRequest: "Неверный ответ на запрос",
   AppString.requestTimeOut: "Время ожидания запроса истекло",
-  AppString.thisFieldIsRequired: "Это поле обязательно",
+  AppString.thisFieldIsRequired: "Это поле обязательно для заполнения.",
   AppString.enterValidEmail: "Введите действительный адрес электронной почты",
-  AppString
-      .passwordMustBeeEightCharacters: "Пароль должен содержать 8 символов и включать как буквы, так и цифры",
+  AppString.passwordMustBeeEightCharacters:
+      "Пароль должен содержать минимум 8 символов, а также буквы и цифры.",
   AppString.thePasswordDoesNotMatch: "Пароль не совпадает",
   AppString.startServer: "Пожалуйста, запустите сервер",
   AppString.unknownError: "Неизвестная ошибка",
@@ -116,8 +116,8 @@ Map<String, String> russian = {
   AppString.otpTitle: "Подтвердите вашу электронную почту",
 
   // Enter your email to reset password
-  AppString
-      .enterYourEmailToResetPassword: "\"Мы отправили одноразовый пароль (OTP) на вашу электронную почту. Пожалуйста, введите его ниже, чтобы продолжить.\"",
+  AppString.enterYourEmailToResetPassword:
+      "\"Мы отправили одноразовый пароль (OTP) на вашу электронную почту. Пожалуйста, введите его ниже, чтобы продолжить.\"",
 
   // On boarding text
   AppString.onboarding_text: "Velodora ",
@@ -149,25 +149,25 @@ Map<String, String> russian = {
 
   // Forget Password
   AppString.forget_password_text: "Забыли пароль?",
-  AppString
-      .forget_password_details_text: "Введите ваш адрес электронной почты, и мы отправим\nвам OTP для сброса пароля.",
+  AppString.forget_password_details_text:
+      "Введите ваш адрес электронной почты, и мы отправим\nвам OTP для сброса пароля.",
   AppString.verify_button: "Проверить сейчас",
 
   // Verify Screen
   AppString.verify_email_text: "Подтвердите ваш OTP",
-  AppString
-      .verify_email_details: "Мы отправили одноразовый пароль (OTP) на вашу электронную почту. Пожалуйста, введите его ниже, чтобы продолжить",
+  AppString.verify_email_details:
+      "Мы отправили одноразовый пароль (OTP) на вашу электронную почту. Пожалуйста, введите его ниже, чтобы продолжить",
   AppString.continue_button: "Продолжить",
   AppString.resend_button: "Отправить OTP повторно",
 
   // Create Password
   AppString.create_password_text: "Создать новый пароль",
-  AppString
-      .create_password_details_text: "Пожалуйста, введите новый пароль для вашей учетной записи. Убедитесь, что он содержит не менее 8 символов и включает сочетание букв, цифр и символов для безопасности",
+  AppString.create_password_details_text:
+      "Пожалуйста, введите новый пароль для вашей учетной записи. Убедитесь, что он содержит не менее 8 символов и включает сочетание букв, цифр и символов для безопасности",
   AppString.new_passowrd_text: "Новый пароль",
   AppString.confirm_password_text: "Подтвердите пароль",
   AppString.hint_new_password: "Введите новый пароль",
-  AppString.hint_confirm_password: "Введите подтверждение пароля",
+  AppString.hint_confirm_password: "Подтвердите пароль",
   AppString.confirm_button: "Подтвердить",
   AppString.add_primary_locatiopn: "Добавить основное местоположение",
   AppString.password_change_now: "Ваш пароль был\nизменен",
@@ -180,6 +180,7 @@ Map<String, String> russian = {
   AppString.type_first: "Введите...",
   AppString.service_text: "Тип услуги",
   AppString.service: "Услуга",
+  AppString.services: "Услуга",
   AppString.service_hint: "Тип услуги",
   AppString.additional_service_text: "Дополнительный тип услуги",
   AppString.additional_service_hints: "Тип услуг",
@@ -190,14 +191,18 @@ Map<String, String> russian = {
   AppString.price_text: "Цена",
   AppString.price_hints: "Введите ваше местоположение",
   AppString.price_hours: "Цена (за час)",
-  AppString
-      .add_new: "Пожалуйста, прикрепите фотографии вашей работы (необязательно) Максимум 10 изображений",
+  AppString.add_new:
+      "Пожалуйста, прикрепите фотографии вашей работы (необязательно) Максимум 10 изображений",
   AppString.upload_image_text: "Загрузить изображение",
   AppString.add_text: "Добавить",
-  AppString.continue_by: "Продолжая",
-  AppString.privacy_policy_text: "Политика конфиденциальности",
-  AppString.and_text: "И",
-  AppString.term_condition_text: "Положения и условия",
+  AppString.continue_by: "Продолжая, вы соглашаетесь с нашей ",
+  AppString.privacy_policy_text: "Политикой конфиденциальности",
+  AppString.privacy_policy_name: "Политикой конфиденциальности и Условиями использования ",
+  AppString.delete_account_android: "Da li želite da obrišete nalog?",
+  AppString.delete_after: "Через 30 дней ваш аккаунт будет удален. Все данные будут удалены из вашего аккауnta.",
+  AppString.and_text: "и ",
+  AppString.term_condition_text: "Условиями использования",
+  AppString.review_not: "На данный момент нет отзывов",
   AppString.complete_booking: "Завершенные бронирования",
   AppString.complete_booking_photo: "Пока нет завершенных бронирований.",
 
@@ -274,7 +279,8 @@ Map<String, String> russian = {
   AppString.customer_text: "Клиент",
   AppString.status: "Статус",
   AppString.close_button: "Закрыть",
-  AppString.minutes_duration_text: "Продолжительность в минутах",
+  AppString.minutes_duration_text: "минут продолжительность",
+  AppString.hour_text: "час",
   AppString.error: "Ошибка",
   AppString.subCategory: "Подкатегория",
   AppString.valid_booking_id: "Недействительный ID бронирования",
@@ -295,9 +301,9 @@ Map<String, String> russian = {
   AppString.done_button: "Готово",
   AppString.select_time: "Выберите временные интервалы",
   AppString.available_date: "Нет доступных дат",
-  AppString
-      .provider_available: "У поставщика нет доступных дат\nв данный момент",
-  AppString.spoken: "Разговорный",
+  AppString.provider_available:
+      "У поставщика нет доступных дат\nв данный момент",
+  AppString.spoken: "Языки",
   AppString.subService: "Тип услуги",
   AppString.failed_fetch_booking: "Не удалось получить детали бронирования",
   AppString.failed_booking: "Не удалось отменить бронирование",
@@ -307,22 +313,22 @@ Map<String, String> russian = {
   AppString.noSubcategory: "Подкатегории отсутствуют",
   AppString.select_subtype: "Выберите подкатегорию",
   AppString.service_selected: "Услуга не выбрана",
-  AppString
-      .select_date_work: "Пожалуйста, выберите дату перед выбором временных интервалов",
+  AppString.select_date_work:
+      "Пожалуйста, выберите дату перед выбором временных интервалов",
   AppString.select_service: "Пожалуйста, выберите хотя бы одну услугу",
   AppString.limit_here_show: "Достигнут лимит интервалов",
   AppString.failed_image: "Не удалось выбрать изображение",
   AppString.select_date_easy: "Пожалуйста, выберите дату",
   AppString.availibility_here: "Нет доступности",
   AppString.invalid_time_slot: "Недействительные временные интервалы",
-  AppString
-      .time_slot_available: "Нет доступных временных интервалов для этой даты",
+  AppString.time_slot_available:
+      "Нет доступных временных интервалов для этой даты",
   AppString.time_slot_avaibales: "Временные интервалы недоступны",
   AppString.select_different: "Пожалуйста, выберите другую дату",
   AppString.valid_time_slot: "Недействительные временные интервалы",
   AppString.image_available: "Изображение недоступно",
-  AppString
-      .booking_confirmed: "Детали бронирования подготовлены. Пожалуйста, проверьте и подтвердите оплату.",
+  AppString.booking_confirmed:
+      "Детали бронирования подготовлены. Пожалуйста, проверьте и подтвердите оплату.",
   AppString.available: "Доступно",
   AppString.booked: "забронировано",
   AppString.select: "Выбрать",
@@ -336,7 +342,8 @@ Map<String, String> russian = {
   AppString.service_fee: "Плата за обслуживание",
   AppString.appointment_text: "Назначение",
   AppString.booking_here: "Бронирования не найдены",
-  AppString.cancel_booking_detail: "Вы уверены, что хотите отменить эту услугу? Обратите внимание, что будет применён штраф за отмену в размере 30%. Если вы хотите продолжить, нажмите «ДА», чтобы отменить.",
+  AppString.cancel_booking_detail:
+      "Вы уверены, что хотите отменить эту услугу? Обратите внимание, что будет применён штраф за отмену в размере 30%. Если вы хотите продолжить, нажмите «ДА», чтобы отменить.",
   AppString.booking_id_here: "ID бронирования",
   AppString.status_show: "Просмотр статуса",
   AppString.home: "Главная",
@@ -380,8 +387,8 @@ Map<String, String> russian = {
   AppString.personal_information: "Личная информация",
   AppString.service_information: "Моя услуга",
   AppString.language_text: "Язык",
-  AppString
-      .contact_support_text: "Пожалуйста, свяжитесь с нами по\nэлектронной почте для любых ваших нужд",
+  AppString.contact_support_text:
+      "Пожалуйста, свяжитесь с нами по\nэлектронной почте для любых ваших нужд",
   AppString.contact_support_button: "Связаться по электронной почте",
   AppString.setting: "Настройки ",
   AppString.complete_service: "Завершенные услуги ",
@@ -410,6 +417,8 @@ Map<String, String> russian = {
   AppString.select_date: "Выберите дату",
   AppString.russian_language: "Русский",
   AppString.serbian_language: "Сербский",
+  AppString.noteText:
+      "Примечание: Результаты поиска основаны на вашем текущем местоположении, чтобы найти лучших исполнителей рядом s вами.",
   AppString.change_password: "Изменить пароль",
   AppString.privacy_policy: "Политика конфиденциальности",
   AppString.terms_conditions: "Положения и условия",
@@ -427,7 +436,7 @@ Map<String, String> russian = {
   AppString.no_comment: "Нет комментариев",
   AppString.payment_successful: "Оплата прошла успешно",
   AppString.payment_cancel: "Оплата отменена",
-  AppString.sub_total: "Промежуточный итог",
+  AppString.sub_total: "Услуга",
   AppString.weather_fee: "Погодная плата",
   AppString.convineance_fee: "Плата за услугу",
   AppString.arrival_fee: "Плата за прибытие",
@@ -450,10 +459,10 @@ Map<String, String> russian = {
 
   // QR Scan
   AppString.qr_text: "QR-код",
-  AppString
-      .qr_details: "Услуга выполнена? Пожалуйста, разрешите поставщику отсканировать ваш QR-код",
-  AppString
-      .scan_qr: "Услуга выполнена? Пожалуйста, разрешите PRO отсканировать ваш QR-код",
+  AppString.qr_details:
+      "Услуга выполнена? Пожалуйста, разрешите поставщику отсканировать ваш QR-код",
+  AppString.scan_qr:
+      "Услуга выполнена? Пожалуйста, разрешите PRO отсканировать ваш QR-код",
   AppString.barcode_text: "Введите ID поставщика услуг",
   AppString.qr_name: "MD Камран Хан",
   AppString.feedback_text: "Оставьте ваш отзыв",
@@ -461,7 +470,8 @@ Map<String, String> russian = {
   AppString.qr_id: "ID пользователя : ",
   AppString.feed_back: "Оставьте ваш отзыв",
   AppString.type_review: "Введите отзыв",
-  AppString.password_show: "Введите ваш пароль, чтобы подтвердить вашу учетную запись.",
+  AppString.password_show:
+      "Через 30 дней ваш аккаунт будет удален. Все данные будут удалены из вашего аккауnta.",
   AppString.enter_password: "Введите ваш пароль",
 
   AppString.mon: "Пн",

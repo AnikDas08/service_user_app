@@ -2,11 +2,12 @@ class AppString {
   static const String dataEmpty = "Data Empty";
   static const String noInternet = "No Internet";
   static const String checkInternet = "Check Internet";
+  static const String noteText = "Note: Search results are based on your current location to find the best providers near you.";
   static const String back = "Back";
   static const String youSureWantToLogout = "You sure want to logout";
   static const String no = "No";
   static const String yes = "Yes";
-  static const String areYouSure = "Are you sure";
+  static const String areYouSure = "Do you want to Delete your Account?";
   static const String enterYouPassword = "Enter you password";
   static const String cancel = "Cancel";
   static const String done = "Done";
@@ -175,6 +176,7 @@ class AppString {
   static const String type_first = "Type...";
   static const String service_text = "Service Type";
   static const String service = "Service";
+  static const String services = "Service";
   static const String service_hint = "Type of Service";
   static const String additional_service_text = "Additional Service Type";
   static const String additional_service_hints = "Type of Services";
@@ -188,10 +190,14 @@ class AppString {
   static const String add_new = "Please Attach Your Work Photos (Not Mandatory) Maximum 10 Image";
   static const String upload_image_text = "Upload Image";
   static const String add_text = "Add";
-  static const String continue_by = "By Continue";
-  static const String privacy_policy_text = "Privacy Policy";
-  static const String and_text = "And";
-  static const String term_condition_text = "Terms & Condition";
+  static const String continue_by = "By continuing, you agree to our ";
+  static const String privacy_policy_text = "Privacy Policy ";
+  static const String privacy_policy_name = "Privacy Policy and Terms & Conditions";
+  static const String delete_account_android="Do you want to Delete you Account?";
+  static const String delete_after="After 30 days your account will be deleted. All data will be removed from your account. ";
+  static const String and_text = "and";
+  static const String term_condition_text = "Terms & Conditions ";
+  static const String review_not = "No reviews at the moment";
   static const String complete_booking = "Completed Bookings";
   static const String complete_booking_photo = "No completed bookings yet.";
 
@@ -269,6 +275,7 @@ class AppString {
   static const String status = "Status";
   static const String close_button = "Close";
   static const String minutes_duration_text = "Minutes Duration";
+  static const String hour_text = "Hour";
   static const String error = "Error";
   static const String subCategory = "Sub Category";
   static const String valid_booking_id = "Invalid booking ID";
@@ -419,7 +426,7 @@ class AppString {
   static const String no_comment = "No comment";
   static const String payment_successful = "Payment successful";
   static const String payment_cancel = "Payment cancelled";
-  static const String sub_total = "Sub Total";
+  static const String sub_total = "Service";
   static const String weather_fee = "Weather Fee";
   static const String convineance_fee = "Service fee";
   static const String arrival_fee = "Arrival Fee";
@@ -454,7 +461,7 @@ class AppString {
   static const String type_review = "Type Review";
   //static const String privacy_policy_texts = "Lorem ipsum dolor sit amet consectetur. Eget imperdiet ultrices adipiscing et vitae adipiscing ornare. Vel tristique lorem viverra lorem sem consequat cras dui. Nisl libero nisl nec vulputate quam quis. Orci tempor pulvinar amet mi at et ac ipsum. Sed non massa accumsan dolor venenatis eleifend. Netus semper integer purus praesent nulla porttitor nibh. Lobortis ornare feugiat dictum eu cursus a platea fermentum. Tellus dolor a sit morbi. Elementum diam tortor est erat ultricies quam sed nibh. Eros pellentesque eu est lectus. Nunc facilisi ipsum senectus dolor adipiscing id pretium consectetur. Hendrerit aliquam lectus urna at commodo ultrices volutpat pulvinar donec. In ut sagittis placerat ut in. Sit erat accumsan eget libero fringilla metus. Est venenatis commodo ut velit non aenean in pulvinar. Pretium pretium aliquet at nec ut malesuada augue sed a. Turpis vestibulum dolor leo aliquam rhoncus fermentum. Elit congue diam euismod tempus nunc bibendum. Tempus sit dis sem non dignissim.";
 
-  static const String password_show="Give your password to confirm your account.";
+  static const String password_show="After 30 days your account will be deleted. All data will be removed from your account.";
   static const String enter_password="Enter Your Password";
 
 

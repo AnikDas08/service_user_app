@@ -96,11 +96,12 @@ class SignInController extends GetxController {
           LocalStorage.myEmail = profileModel.data?.email ?? "";
           LocalStorage.myImage = profileModel.data?.image ?? "";
         } else {
-          ///rtrfgg
-          Utils.errorSnackBar(response.statusCode, response.message);
+
+          Utils.errorSnackBar("Invalid Credentials", response.message);
         }
       } catch (e) {
         Utils.errorSnackBar(0, e.toString());
+        debugPrint("================================${e.toString()}========================================");
       }
 
       emailController.clear();

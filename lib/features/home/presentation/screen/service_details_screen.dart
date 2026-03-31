@@ -270,7 +270,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             ),
             SizedBox(width: 4.w),
             CommonText(
-              text: "${AppString.distance} :${controller.newDistance}",
+              text: "${AppString.distance.tr} :${controller.newDistance}",
               fontSize: 12,
               fontWeight: FontWeight.w400,
               color: AppColors.black300,
@@ -285,7 +285,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CommonText(
-              text: "${AppString.spoken} : ",
+              text: "${AppString.spoken.tr} : ",
               fontSize: 16,
               fontWeight: FontWeight.w500,
               color: AppColors.black400,
@@ -763,7 +763,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 CommonText(
-                  text: "No reviews at the moment",
+                  text: AppString.review_not,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: AppColors.black200,
@@ -784,7 +784,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CommonText(
-                text: "${AppString.review} (${controller.totalReviews.value})",
+                text: "${AppString.review.tr} (${controller.totalReviews.value})",
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.black400,

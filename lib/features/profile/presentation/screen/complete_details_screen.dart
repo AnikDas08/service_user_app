@@ -103,6 +103,7 @@ class CompleteDetailsScreen extends StatelessWidget {
                                       width: 16.w,
                                       height: 16.h,
                                       color: AppColors.black400,
+                                      colorFilter: ColorFilter.mode(AppColors.black400, BlendMode.srcIn),
                                     ),
                                     SizedBox(width: 4.w),
                                     CommonText(

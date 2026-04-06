@@ -215,7 +215,7 @@ Map<String, String> english = {
   AppString.message_view: "Type......",
   AppString.start_message: "No messages yet\nStart a conversation!",
   AppString.profile_text: "Profile",
-  AppString.upcoming_button: "UpComing",
+  AppString.upcoming_button: "Upcoming",
   AppString.pending_button: "Pending",
   AppString.view_details_text: "View Details",
   AppString.contact_details_text: "Contact Details",
@@ -273,7 +273,7 @@ Map<String, String> english = {
   AppString.status: "Status",
   AppString.close_button: "Close",
   AppString.minutes_duration_text: "Minutes Duration",
-  AppString.hour_text: "Hour",
+  AppString.hour_text: "Hour Duration",
   AppString.error: "Error",
   AppString.subCategory: "Sub Category",
   AppString.valid_booking_id: "Invalid booking ID",
@@ -370,7 +370,7 @@ Map<String, String> english = {
 
   // Message Screen
   AppString.search_text: "Search here",
-  AppString.noteText: "Note: Search results are based on your current location to find the best providers near you.",
+  AppString.noteText: "Note: Search results are based on your saved Location to find the best providers near you.",
 
   // Profile Screen
   AppString.personal_information: "Personal Information",

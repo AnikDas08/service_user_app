@@ -280,7 +280,7 @@ Map<String, String> russian = {
   AppString.status: "Статус",
   AppString.close_button: "Закрыть",
   AppString.minutes_duration_text: "минут продолжительность",
-  AppString.hour_text: "час",
+  AppString.hour_text: "час длительности",
   AppString.error: "Ошибка",
   AppString.subCategory: "Подкатегория",
   AppString.valid_booking_id: "Недействительный ID бронирования",
@@ -418,7 +418,7 @@ Map<String, String> russian = {
   AppString.russian_language: "Русский",
   AppString.serbian_language: "Сербский",
   AppString.noteText:
-      "Примечание: Результаты поиска основаны на вашем текущем местоположении, чтобы найти лучших исполнителей рядом s вами.",
+      "Примечание: Результаты поиска основаны на вашем cохраненное местоположение, чтобы найти лучших исполнителей рядом s вами.",
   AppString.change_password: "Изменить пароль",
   AppString.privacy_policy: "Политика конфиденциальности",
   AppString.terms_conditions: "Положения и условия",

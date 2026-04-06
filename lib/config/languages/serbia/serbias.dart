@@ -31,7 +31,7 @@ Map<String, String> serbian = {
   AppString.createYourNewPassword: "Kreirajte vašu novu lozinku",
   AppString.password: "Lozinka",
   AppString.continues: "Nastavi",
-  AppString.email: "Email",
+  AppString.email: "Imejl",
   AppString.messagenot: "Poruke nisu pronađene",
   AppString.codeHasBeenSendTo: "Kod je poslat na",
   AppString.otpIsInValid: "OTP nije važeći",
@@ -124,7 +124,7 @@ Map<String, String> serbian = {
 
   // Login text
   AppString.login_text: "Prijavite se",
-  AppString.email_text: "Email",
+  AppString.email_text: "Imejl",
   AppString.password_text: "Lozinka",
   AppString.hint_email_text: "Unesite vaš email...",
   AppString.hint_password_text: "Unesite lozinku",
@@ -281,7 +281,7 @@ Map<String, String> serbian = {
   AppString.status: "Status",
   AppString.close_button: "Zatvori",
   AppString.minutes_duration_text: "minuta trajanje",
-  AppString.hour_text: "sat",
+  AppString.hour_text: "sat trajanja",
   AppString.error: "Greška",
   AppString.subCategory: "Potkategorija",
   AppString.valid_booking_id: "Nevažeći ID rezervacije",
@@ -430,7 +430,7 @@ Map<String, String> serbian = {
   AppString.yes_button: "Da",
   AppString.no_button: "Ne",
   AppString.noteText:
-      "Napomena: Rezultati pretrage su zasnovani na Vašoj trenutnoj lokaciji kako biste lakše pronašli najbolje pružaoce usluga u blizini.",
+      "Napomena: Rezultati pretrage su zasnovani na Vašoj sačuvana lokacija kako biste lakše pronašli najbolje pružaoce usluga u blizini.",
   AppString.scan_now: "Skeniraj",
   AppString.review: "Recenzije",
   AppString.minutes: "minuta",

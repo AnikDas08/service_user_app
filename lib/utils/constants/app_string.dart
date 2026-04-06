@@ -2,7 +2,7 @@ class AppString {
   static const String dataEmpty = "Data Empty";
   static const String noInternet = "No Internet";
   static const String checkInternet = "Check Internet";
-  static const String noteText = "Note: Search results are based on your current location to find the best providers near you.";
+  static const String noteText = "Note: Search results are based on your saved Location to find the best providers near you.";
   static const String back = "Back";
   static const String youSureWantToLogout = "You sure want to logout";
   static const String no = "No";
@@ -217,7 +217,7 @@ class AppString {
   static const String message_view = "Type......";
   static const String start_message = "No messages yet\nStart a conversation!";
   static const String profile_text = "Profile";
-  static const String upcoming_button = "UpComing";
+  static const String upcoming_button = "Upcoming";
   static const String pending_button = "Pending";
   static const String view_details_text = "View Details";
   static const String contact_details_text = "Contact Details";
@@ -275,7 +275,7 @@ class AppString {
   static const String status = "Status";
   static const String close_button = "Close";
   static const String minutes_duration_text = "Minutes Duration";
-  static const String hour_text = "Hour";
+  static const String hour_text = "Hour Duration";
   static const String error = "Error";
   static const String subCategory = "Sub Category";
   static const String valid_booking_id = "Invalid booking ID";
@@ -385,7 +385,7 @@ class AppString {
   static const String setting = "Settings ";
   static const String complete_service = "Complete Services ";
   static const String contact_support = "Contact and Support";
-  static const String favourite_list = "All Favourite List";
+  static const String favourite_list = "All Favorite List";
   static const String favourite_item = "No favourite providers found";
   static const String present_credit = "Present Credit ";
   static const String one_credit = "One Credit equal";

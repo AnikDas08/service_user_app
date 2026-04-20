@@ -29,6 +29,10 @@
     <string>Velodora needs your location to show nearby service providers.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>Velodora needs your location to provide better service recommendations.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Velodora needs camera access to take profile pictures.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Velodora needs photo library access to upload profile pictures.</string>
 
     <key>LSApplicationQueriesSchemes</key>
     <array>

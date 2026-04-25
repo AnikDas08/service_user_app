@@ -36,9 +36,7 @@ class FavouriteScreen extends StatelessWidget {
                     child: Obx(() {
                       if (controller.isLoading.value) {
                         return Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                          ),
+                          child: CircularProgressIndicator.adaptive(),
                         );
                       }
                       if (controller.serviceProviders.isEmpty) {

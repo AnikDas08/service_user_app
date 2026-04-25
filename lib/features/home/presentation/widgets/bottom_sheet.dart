@@ -215,9 +215,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             child: SizedBox(
               height: 20.h,
               width: 20.w,
-              child: CircularProgressIndicator(
+              child: CircularProgressIndicator.adaptive(
                 strokeWidth: 2,
-                color: AppColors.primaryColor,
               ),
             ),
           ),
@@ -300,9 +299,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             child: SizedBox(
               height: 20.h,
               width: 20.w,
-              child: CircularProgressIndicator(
+              child: CircularProgressIndicator.adaptive(
                 strokeWidth: 2,
-                color: AppColors.primaryColor,
               ),
             ),
           ),
@@ -472,9 +470,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 child: SizedBox(
                   height: 20.h,
                   width: 20.w,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: AppColors.primaryColor,
                   ),
                 ),
               )

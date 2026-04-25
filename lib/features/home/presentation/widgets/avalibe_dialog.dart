@@ -216,9 +216,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: AppColors.primaryColor,
-              ),
+              CircularProgressIndicator.adaptive(),
               SizedBox(height: 16.h),
               CommonText(
                 text: "Loading schedule...",
@@ -428,9 +426,7 @@ class _AvailabilityDialogState extends State<AvailabilityDialog> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              color: AppColors.primaryColor,
-            ),
+            CircularProgressIndicator.adaptive(),
             SizedBox(height: 16.h),
             CommonText(
               text: "Loading time slots...",

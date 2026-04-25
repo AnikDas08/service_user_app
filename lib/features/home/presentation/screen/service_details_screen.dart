@@ -30,9 +30,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 // Show loading indicator
                 if (controller.isLoading.value) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ),
+                    child: CircularProgressIndicator.adaptive(),
                   );
                 }
                 return SafeArea(
@@ -703,8 +701,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                           height: 115.h,
                           color: AppColors.black50,
                           child: Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
+                            child: CircularProgressIndicator.adaptive(
                               strokeWidth: 2,
                               value: loadingProgress.expectedTotalBytes != null
                                   ? loadingProgress.cumulativeBytesLoaded /
@@ -742,9 +739,7 @@ class ServiceDetailsScreen extends StatelessWidget {
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 20.h),
-            child: CircularProgressIndicator(
-              color: AppColors.primaryColor,
-            ),
+            child: CircularProgressIndicator.adaptive(),
           ),
         );
       }

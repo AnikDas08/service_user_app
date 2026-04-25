@@ -75,11 +75,10 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Center(
-              child: CircularProgressIndicator(
+              child: CircularProgressIndicator.adaptive(
                 value: loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                     : null,
-                color: Colors.white,
               ),
             );
           },
@@ -213,7 +212,7 @@ class ImageGridExample extends StatelessWidget {
                   if (progress == null) return child;
                   return Container(
                     color: Colors.grey[300],
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CircularProgressIndicator.adaptive()),
                   );
                 },
               ),

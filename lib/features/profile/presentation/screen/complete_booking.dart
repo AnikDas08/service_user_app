@@ -21,9 +21,7 @@ class CompleteBooking extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16.h),
       child: Center(
-        child: CircularProgressIndicator(
-          color: AppColors.primaryColor,
-        ),
+        child: CircularProgressIndicator.adaptive(),
       ),
     );
   }
@@ -202,9 +200,7 @@ class CompleteBooking extends StatelessWidget {
               Expanded(
                 child: controller.isLoading
                     ? Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.primaryColor,
-                  ),
+                  child: CircularProgressIndicator.adaptive(),
                 )
                     : controller.getFilteredBookings().isEmpty
                     ? Center(

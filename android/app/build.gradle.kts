@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.haircutmen_app"
+    namespace = "com.example.user_velodora"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 

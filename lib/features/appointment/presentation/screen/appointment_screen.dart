@@ -211,9 +211,7 @@ class AppointmentScreen extends StatelessWidget {
                 Expanded(
                   child: controller.isLoading
                       ? Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ),
+                    child: CircularProgressIndicator.adaptive(),
                   )
                       : controller.getFilteredBookings().isEmpty
                       ? Center(
@@ -277,9 +275,8 @@ class AppointmentScreen extends StatelessWidget {
           SizedBox(
             width: 24.w,
             height: 24.h,
-            child: CircularProgressIndicator(
+            child: CircularProgressIndicator.adaptive(
               strokeWidth: 2,
-              color: AppColors.primaryColor,
             ),
           ),
           SizedBox(height: 8.h),

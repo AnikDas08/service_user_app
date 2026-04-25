@@ -28,7 +28,7 @@ class DetailsCategoryScreen extends StatelessWidget {
                     // Show loading indicator
                     if (controller.isLoading.value) {
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator.adaptive(),
                       );
                     }
                     //hjsdhfjsdfdsf

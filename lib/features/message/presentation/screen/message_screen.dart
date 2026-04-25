@@ -252,7 +252,7 @@ class MessageScreen extends StatelessWidget {
                     height: 200.w,
                     color: AppColors.black50,
                     child: Center(
-                      child: CircularProgressIndicator(
+                      child: CircularProgressIndicator.adaptive(
                         value: loadingProgress.expectedTotalBytes != null
                             ? loadingProgress.cumulativeBytesLoaded /
                             loadingProgress.expectedTotalBytes!

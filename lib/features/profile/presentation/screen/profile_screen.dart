@@ -69,7 +69,7 @@ class ProfileScreen extends StatelessWidget {
                                         return SizedBox(
                                           width: 30,
                                           height: 30,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                          child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                                         );
                                       },
                                     ),

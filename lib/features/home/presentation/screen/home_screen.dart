@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                       ),
                     );
                   },
@@ -294,9 +294,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     return SizedBox(
                       width: 18.sp,
                       height: 18.sp,
-                      child: CircularProgressIndicator(
+                      child: CircularProgressIndicator.adaptive(
                         strokeWidth: 2,
-                        color: AppColors.primaryColor,
                       ),
                     );
                   } else if (controller.searchController.text.isNotEmpty) {
@@ -352,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
-                child: CircularProgressIndicator(color: AppColors.primaryColor),
+                child: CircularProgressIndicator.adaptive(),
               ),
             );
           }
@@ -469,9 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Center(
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 40.h),
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ),
+                    child: CircularProgressIndicator.adaptive(),
                   ),
                 );
               }
@@ -601,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 20.h),
-            child: CircularProgressIndicator(color: AppColors.primaryColor),
+            child: CircularProgressIndicator.adaptive(),
           ),
         );
       }

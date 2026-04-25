@@ -402,9 +402,7 @@ class _BookingDialogState extends State<BookingDialog> {
                     return SizedBox(
                       height: 300.h,
                       child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryColor,
-                        ),
+                        child: CircularProgressIndicator.adaptive(),
                       ),
                     );
                   }
@@ -761,9 +759,7 @@ class _BookingDialogState extends State<BookingDialog> {
         return SizedBox(
           height: 200.h,
           child: Center(
-            child: CircularProgressIndicator(
-              color: AppColors.primaryColor,
-            ),
+            child: CircularProgressIndicator.adaptive(),
           ),
         );
       }

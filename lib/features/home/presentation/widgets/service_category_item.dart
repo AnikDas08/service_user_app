@@ -70,9 +70,8 @@ class ServiceCategoryItem extends StatelessWidget {
           placeholderBuilder: (context) => SizedBox(
             width: 20,
             height: 20,
-            child: CircularProgressIndicator(
+            child: CircularProgressIndicator.adaptive(
               strokeWidth: 2,
-              color: AppColors.primaryColor,
             ),
           ),
         );
@@ -90,9 +89,8 @@ class ServiceCategoryItem extends StatelessWidget {
               return SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
+                child: CircularProgressIndicator.adaptive(
                   strokeWidth: 2,
-                  color: AppColors.primaryColor,
                   value: loadingProgress.expectedTotalBytes != null
                       ? loadingProgress.cumulativeBytesLoaded /
                       loadingProgress.expectedTotalBytes!

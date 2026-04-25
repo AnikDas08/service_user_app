@@ -72,17 +72,17 @@ class HomeNavScreen extends StatelessWidget {
                 unselectedItemColor: Colors.black,
                 selectedLabelStyle: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 14.sp, // Bigger text for selected item
+                  fontSize: 12.sp, // Reduced slightly to fit
                 ),
                 unselectedLabelStyle: TextStyle(
                   fontWeight: FontWeight.w400,
-                  fontSize: 10.sp, // Smaller text for unselected item
+                  fontSize: 10.sp,
                 ),
                 iconSize: 22,
                 items: List.generate(_navItems.length, (index) {
                   return BottomNavigationBarItem(
                     icon: Padding(
-                      padding: const EdgeInsets.only(bottom: 10, top: 10),
+                      padding: const EdgeInsets.only(bottom: 4, top: 10), // Reduced bottom padding
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [

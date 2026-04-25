@@ -249,7 +249,7 @@ class InvoiceController extends GetxController {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(color: AppColors.primaryColor),
+                CircularProgressIndicator.adaptive(),
                 /*SizedBox(height: 16),
                 Text(
                   AppString.validat_promo_code,
@@ -386,7 +386,7 @@ class InvoiceController extends GetxController {
               ),
             ),
             child: isProcessing.value
-                ? CircularProgressIndicator()
+                ? CircularProgressIndicator.adaptive()
                 : Text(AppString.payConfirm, style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -569,7 +569,7 @@ class InvoiceController extends GetxController {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircularProgressIndicator(color: AppColors.primaryColor),
+                  CircularProgressIndicator.adaptive(),
                   SizedBox(height: 16),
                 ],
               ),

@@ -97,9 +97,7 @@ class _EditProfileState extends State<EditProfile> {
           body: SafeArea(
             child: controller.isProfileLoading
                 ? Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primaryColor,
-              ),
+              child: CircularProgressIndicator.adaptive(),
             )
                 : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -145,8 +143,7 @@ class _EditProfileState extends State<EditProfile> {
                                   if (loadingProgress == null)
                                     return child;
                                   return Center(
-                                    child:
-                                    CircularProgressIndicator(
+                                    child: CircularProgressIndicator.adaptive(
                                       value: loadingProgress
                                           .expectedTotalBytes !=
                                           null
@@ -236,9 +233,7 @@ class _EditProfileState extends State<EditProfile> {
                           SizedBox(height: 20.h),
                           controller.isLoading
                               ? Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
-                            ),
+                            child: CircularProgressIndicator.adaptive(),
                           )
                               : CustomButton(
                             text: AppString.confirm_button,
@@ -382,9 +377,8 @@ class _EditProfileState extends State<EditProfile> {
                 child: SizedBox(
                   height: 20.h,
                   width: 20.w,
-                  child: CircularProgressIndicator(
+                  child: CircularProgressIndicator.adaptive(
                     strokeWidth: 2,
-                    color: AppColors.primaryColor,
                   ),
                 ),
               )

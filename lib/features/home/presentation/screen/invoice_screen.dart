@@ -266,7 +266,7 @@ class InvoiceScreen extends StatelessWidget {
         ? Center(
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 20.h),
-        child: CircularProgressIndicator(color: AppColors.primaryColor),
+        child: CircularProgressIndicator.adaptive(),
       ),
     )
         : Column(

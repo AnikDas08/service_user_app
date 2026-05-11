@@ -16,7 +16,6 @@ class StripeWebViewScreen extends StatefulWidget {
 class _StripeWebViewScreenState extends State<StripeWebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();

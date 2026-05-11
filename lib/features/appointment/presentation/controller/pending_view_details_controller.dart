@@ -321,11 +321,11 @@ class PendingViewDetailsController extends GetxController {
   String _minutesToDurationLabel(int minutes) {
     switch (minutes) {
       case 30: return '30 ${AppString.minutes_duration_text.tr}';
-      case 60: return '1 ${AppString.hour_text.tr}';
+      case 60: return '1 ${AppString.hour.tr}';
       case 90: return '1 ${AppString.hour_text.tr} 30 ${AppString.minutes_duration_text.tr}';
-      case 120: return '2 ${AppString.hour_text.tr}';
+      case 120: return '2 ${AppString.hour.tr}';
       case 150: return '2 ${AppString.hour_text.tr} 30 ${AppString.minutes_duration_text.tr}';
-      case 180: return '3 ${AppString.hour_text.tr}';
+      case 180: return '3 ${AppString.hour.tr}';
       default: return '$minutes ${AppString.minutes_duration_text.tr}';
     }
   }

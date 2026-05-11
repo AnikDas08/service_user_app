@@ -655,9 +655,8 @@ class InvoiceController extends GetxController {
           Get.offAllNamed(AppRoutes.homeNav);
         } else if (result == 'failed') {
           Utils.errorSnackBar("Error", "Payment failed. Please try again.");
-        } else if (result == 'cancelled') {
-          Utils.errorSnackBar("Error", "Payment cancelled. Please try again.");
         }
+        // When result == 'cancelled' or null, user just went back - stay on invoice screen silently
       } else {
         Get.snackbar(
           'Booking Failed',

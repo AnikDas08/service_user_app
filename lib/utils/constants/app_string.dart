@@ -275,7 +275,8 @@ class AppString {
   static const String status = "Status";
   static const String close_button = "Close";
   static const String minutes_duration_text = "Minutes Duration";
-  static const String hour_text = "Hour Duration";
+  static const String hour_text = "Hour";
+  static const String hour = "Hour Duration";
   static const String error = "Error";
   static const String subCategory = "Sub Category";
   static const String valid_booking_id = "Invalid booking ID";

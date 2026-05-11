@@ -33,6 +33,8 @@
     <string>Velodora needs camera access to take profile pictures.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Velodora needs photo library access to upload profile pictures.</string>
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>Velodora needs to send you notifications about appointments and updates.</string>
 
     <key>LSApplicationQueriesSchemes</key>
     <array>

@@ -17,15 +17,17 @@ class TermsOfServicesScreen extends StatelessWidget {
         child: SafeArea(
           child: GetBuilder<TermsOfServicesController>(
             init: TermsOfServicesController(),
-           builder: (controller) => Column(
-              children: [
-                CustomAppBar(title: AppString.term_condition_text,),
-                SizedBox(height: 20,),
-                Html(
-                  data: controller.data.content,
-                ),
-              ],
-            ),
+           builder: (controller) => SingleChildScrollView(
+             child: Column(
+                children: [
+                  CustomAppBar(title: AppString.term_condition_text,),
+                  SizedBox(height: 20,),
+                  Html(
+                    data: controller.data.content,
+                  ),
+                ],
+              ),
+           ),
           ),
         ),
       ),

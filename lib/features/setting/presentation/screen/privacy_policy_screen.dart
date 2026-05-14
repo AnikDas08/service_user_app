@@ -17,21 +17,23 @@ class PrivacyPolicyScreen extends StatelessWidget {
           init: PrivacyPolicyController(),
           builder: (controller) => Padding(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                AppBar(
-                  title: Text(AppString.privacy_policy),
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                    onPressed: () => Get.back(),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  AppBar(
+                    title: Text(AppString.privacy_policy),
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                      onPressed: () => Get.back(),
+                    ),
+                    centerTitle: true,
                   ),
-                  centerTitle: true,
-                ),
-                SizedBox(height: 20,),
-                Html(
-                  data: controller.data.content,
-                ),
-              ],
+                  SizedBox(height: 20,),
+                  Html(
+                    data: controller.data.content,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -178,8 +178,10 @@ For bug reports and feature requests, please use the GitHub issue tracker.
 
 ## 📞 Contact
 
-For any inquiries or support, please contact the development team.
+For any inquiries or support, please contact.
+email: anikd5656@gmail.com
 
 ---
 
 **Note**: This is a customer-facing application for booking services from various service providers. It works alongside a separate service provider app. Ensure proper backend API endpoints are configured for full functionality.
+This is the github link of provider app: https://github.com/AnikDas08/provider_part

@@ -43,8 +43,6 @@ class OnboardingScreen extends StatelessWidget {
 
               40.height,
 
-              _buildSocialIcon(),
-
               // Bottom spacing
               40.height,
             ],
@@ -151,37 +149,4 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSocialIcon() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      spacing: 24,
-      children: [
-        Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.black50,
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: CommonImage(imageSrc: AppImages.google, size: 24),
-        ),
-        Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.black50,
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: CommonImage(imageSrc: AppImages.facebook, size: 24),
-        ),
-       /* Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.black50,
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: CommonImage(imageSrc: AppImages.apple, size: 24),
-        ),*/
-      ],
-    );
-  }
 }

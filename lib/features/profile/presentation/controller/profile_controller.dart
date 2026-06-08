@@ -109,7 +109,7 @@ class ProfileController extends GetxController {
         email.value = profileData?.email ?? "";
         location.value = profileData?.location ?? "";
         imageUser.value = profileData?.image ?? "";
-        countrCode.value = response.data["data"]["countryCode"];
+        countrCode.value = response.data["data"]["countryCode"]??"";
         credit.value = (profileData?.credits ?? 0).toDouble();
         fullNumber.value = countrCode.value +" "+ number.value;
         LocalStorage.myName = profileData?.name ?? "";

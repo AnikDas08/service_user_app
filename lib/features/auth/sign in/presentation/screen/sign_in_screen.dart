@@ -4,8 +4,10 @@ import '../../../../../../utils/extensions/extension.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../../../../component/button/common_button.dart';
+import '../../../../../component/image/common_image.dart';
 import '../../../../../component/text/common_text.dart';
 import '../../../../../component/text_field/common_text_field.dart';
+import '../../../../../utils/constants/app_images.dart';
 import '../../../../../utils/custom_appbar/custom_appbar.dart';
 import '../controller/sign_in_controller.dart';
 
@@ -94,6 +96,7 @@ class SignInScreen extends StatelessWidget {
                           CommonTextField(
                             controller: controller.passwordController,
                             isPassword: true,
+                            textInputAction: TextInputAction.done,
                             hintText: AppString.hint_password_text.tr,
                             hintTextColor: AppColors.black100,
                             validator: OtherHelper.passwordValidator,
@@ -133,12 +136,56 @@ class SignInScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(height: 40,),
+                  _buildSocialIcon(controller)
                 ],
               ),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _buildSocialIcon(SignInController controller) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 24,
+      children: [
+        if (GetPlatform.isAndroid)
+        GestureDetector(
+          onTap: (){
+            if (!controller.isLoading) {
+              controller.signInWithGoogleFirebase();
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.black50,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: CommonImage(imageSrc: AppImages.google, size: 24),
+          ),
+        ),
+        if (GetPlatform.isIOS)
+        GestureDetector(
+          onTap: (){
+            if (!controller.isLoading) {
+              controller.signInWithAppleFirebase();
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.black50,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: CommonImage(imageSrc: AppImages.apple, size: 24),
+          ),
+        ),
+      ],
     );
   }
 }

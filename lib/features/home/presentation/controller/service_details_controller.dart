@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';import 'package:get/get.dart';
 import 'package:haircutmen_user_app/features/home/data/model/provider_response.dart';
 import 'package:haircutmen_user_app/features/home/presentation/controller/home_controller.dart';
 import 'package:haircutmen_user_app/services/api/api_service.dart';

@@ -26,7 +26,6 @@ class CompleteDetailsScreen extends StatelessWidget {
           if (controller.isLoading.value) {
             return Center(child: CircularProgressIndicator.adaptive());
           }
-
           return Column(
             children: [
               Padding(

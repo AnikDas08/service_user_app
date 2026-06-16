@@ -61,6 +61,8 @@ class ServiceDetailsController extends GetxController {
 
     if (Get.arguments != null) {
       id = Get.arguments;
+    } else if (Get.parameters['id'] != null) {
+      id = Get.parameters['id'];
     }
 
     _loadStaticData();

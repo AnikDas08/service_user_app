@@ -30,6 +30,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.201498296151-cnlol5okdichb6mata94l3ltje6qv2o4</string>
+				<string>velodora</string>
 			</array>
 		</dict>
 	</array>

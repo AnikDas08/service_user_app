@@ -26,6 +26,7 @@ import '../../features/profile/presentation/screen/profile_screen.dart';
 import '../../features/setting/presentation/screen/setting_screen.dart';
 import '../../features/setting/presentation/screen/terms_of_services_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../../features/home/presentation/screen/service_details_screen.dart';
 import '../../features/home/presentation/screen/home_screen.dart';
 import '../../features/home/presentation/screen/home_nav_screen.dart';
 import '../../features/appointment/presentation/screen/appointment_screen.dart';
@@ -65,6 +66,7 @@ class AppRoutes {
   static const String complete_screen_appointment = "/complete_screen_appointment";
   static const String complete_details_screen = "/complete_details_screen";
   static const String complete_scredefdn_appointment = "/complete_screen_appointment";
+  static const String service_details = "/provider_view_details";
 
   static List<GetPage> routes = [
     GetPage(name: splash, page: () => const SplashScreen()),
@@ -98,6 +100,7 @@ class AppRoutes {
     GetPage(name: favourite_screen, page: () => FavouriteScreen()),
     GetPage(name: invoice, page: () => InvoiceScreen()),
     GetPage(name: complete_screen_appointment, page:()=>CompleteBooking()),
-    GetPage(name: complete_details_screen, page:()=>CompleteDetailsScreen())
+    GetPage(name: complete_details_screen, page:()=>CompleteDetailsScreen()),
+    GetPage(name: service_details, page: () => const ServiceDetailsScreen()),
   ];
 }

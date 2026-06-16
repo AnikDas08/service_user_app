@@ -27,13 +27,14 @@ class MyApp extends StatelessWidget {
           getPages: AppRoutes.routes,
           builder: (context, child) {
             return MediaQuery(
-              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data: MediaQuery.of(
+                context,
+              ).copyWith(alwaysUse24HourFormat: true),
               child: child!,
             );
           },
         );
       },
     );
-
   }
 }

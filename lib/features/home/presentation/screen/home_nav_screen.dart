@@ -28,7 +28,6 @@ class HomeNavScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final homeController=Get.find<HomeController>();
     return GetBuilder<HomeNavController>(
-      init: HomeNavController(),
       builder: (controller) {
         return Scaffold(
           body: IndexedStack(

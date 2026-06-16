@@ -8,6 +8,7 @@ import 'package:haircutmen_user_app/utils/custom_appbar/custom_appbar.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../component/image_view/imageview_class.dart';
 import '../../../../component/text/common_text.dart';
+import '../../../../config/route/app_routes.dart';
 import '../../../../utils/constants/app_colors.dart';
 import '../../../../utils/constants/app_string.dart';
 import '../controller/service_details_controller.dart';
@@ -44,11 +45,23 @@ class ServiceDetailsScreen extends StatelessWidget {
                             title: AppString.view_profile_text,
                             rightIcon: Icons.share,
                             showRightButton: true,
+                              onBackTap: () {
+                                if (Get.previousRoute.isEmpty) {
+                                  Get.offAllNamed(AppRoutes.homeNav);
+                                } else {
+                                  Get.back();
+                                }
+                              },
                               onRightButtonTap: () {
-                                final String shareUrl = '${ApiEndPoint.imageUrl}/${controller.providerData?.id}';
-                                // Or use a universal link format
+                                final String providerId = controller.providerData?.id ?? "";
+                                if (providerId.isEmpty) return;
+
+                                // This link is now clickable (HTTPS)
+                                // It will go to your server, and we will put a script there to open the app
+                                final String shareLink = 'https://velodora.com/service_details?id=$providerId';
+
                                 Share.share(
-                                  'Check out ${controller.providerName} on our app! $shareUrl',
+                                  'Check out ${controller.providerName} on our app! $shareLink',
                                   subject: 'Service Provider Recommendation',
                                 );
                               }

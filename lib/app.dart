@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:haircutmen_user_app/features/splash/splash_screen.dart';
 
 import 'config/languages/language_transtators.dart';
 import 'config/route/app_routes.dart';
@@ -25,12 +26,16 @@ class MyApp extends StatelessWidget {
           transitionDuration: const Duration(milliseconds: 300),
           initialRoute: AppRoutes.splash,
           getPages: AppRoutes.routes,
+          unknownRoute: GetPage(
+            name: AppRoutes.splash,
+            page: () => const SplashScreen(),
+          ),
           builder: (context, child) {
             return MediaQuery(
               data: MediaQuery.of(
                 context,
               ).copyWith(alwaysUse24HourFormat: true),
-              child: child!,
+              child: child ?? const SizedBox.shrink(),
             );
           },
         );

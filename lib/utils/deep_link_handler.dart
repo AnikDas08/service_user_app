@@ -4,6 +4,7 @@ import '../services/storage/storage_services.dart';
 
 class DeepLinkHandler {
   static String? pendingId;
+  static bool isAppInitialized = false;
 
   static void handle(String? id) {
     if (id == null || id.isEmpty) return;
@@ -11,6 +12,13 @@ class DeepLinkHandler {
     // যদি ইউজার লগইন করা না থাকে, তবে কিছুই করবে না
     if (!LocalStorage.isLogIn) {
       pendingId = id; // লগইন করার পর ব্যবহারের জন্য সেভ করে রাখা যেতে পারে
+      return;
+    }
+
+    // যদি অ্যাপ এখনও ইনিশিয়ালাইজ না হয়ে থাকে (যেমন স্প্ল্যাশ স্ক্রিনে আছে),
+    // তাহলে শুধুমাত্র pendingId হিসেবে সেভ করে রাখব। স্প্ল্যাশ স্ক্রিন এটি হ্যান্ডেল করবে।
+    if (!isAppInitialized) {
+      pendingId = id;
       return;
     }
 

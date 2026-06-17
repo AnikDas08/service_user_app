@@ -39,14 +39,18 @@ class _SplashScreenState extends State<SplashScreen> {
           if (DeepLinkHandler.pendingId != null) {
             String id = DeepLinkHandler.pendingId!;
             DeepLinkHandler.pendingId = null; // Clear it
+            DeepLinkHandler.isAppInitialized = true; // ✅ Mark app as initialized
             DeepLinkHandler.handle(id);
           } else {
+            DeepLinkHandler.isAppInitialized = true; // ✅ Mark app as initialized
             Get.offAllNamed(AppRoutes.homeNav);
           }
         } else {
+          DeepLinkHandler.isAppInitialized = true; // ✅ Mark app as initialized
           Get.offAllNamed(AppRoutes.onboarding);
         }
       } else {
+        DeepLinkHandler.isAppInitialized = true; // ✅ Mark app as initialized
         Get.offAllNamed(AppRoutes.onboarding);
       }
       //Get.offAllNamed(AppRoutes.onboarding);

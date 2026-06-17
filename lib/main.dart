@@ -28,14 +28,7 @@ Future<void> main() async {
   appLinks.uriLinkStream.listen((uri) {
     String? id = uri.queryParameters['id'];
     if (id != null) {
-      if (LocalStorage.isLogIn) {
-        // If already logged in, navigate immediately
-        Get.offAllNamed(AppRoutes.homeNav);
-        Get.toNamed(AppRoutes.service_details, parameters: {'id': id});
-      } else {
-        // If not logged in, just save the ID
-        DeepLinkHandler.pendingId = id;
-      }
+      DeepLinkHandler.handle(id);
     }
   });
 

@@ -86,10 +86,7 @@ class InvoiceScreen extends StatelessWidget {
                     onTap: () {
                       controller.processPayment();
                     },
-                  ),
-                  //payment add here
-                  //add payment
-
+                  ),//payment add here
                   SizedBox(height: 30.h),
                 ],
               ),

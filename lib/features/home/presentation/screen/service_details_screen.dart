@@ -55,11 +55,9 @@ class ServiceDetailsScreen extends StatelessWidget {
                               onRightButtonTap: () {
                                 final String providerId = controller.providerData?.id ?? "";
                                 if (providerId.isEmpty) return;
-
                                 // This link is now clickable (HTTPS)
                                 // It will go to your server, and we will put a script there to open the app
                                 final String shareLink = 'https://velodora.com/service_details?id=$providerId';
-
                                 Share.share(
                                   'Check out ${controller.providerName} on our app! $shareLink',
                                   subject: 'Service Provider Recommendation',

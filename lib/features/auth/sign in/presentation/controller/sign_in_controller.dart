@@ -37,8 +37,7 @@ class SignInController extends GetxController {
 
       if (response.statusCode == 200) {
         return true;
-      }
-      else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401) {
         // Session expired → logout
         //AppAuthStorage().clear(); // if available
         LocalStorage.isLogIn = false;
@@ -90,7 +89,6 @@ class SignInController extends GetxController {
 
       Get.offAllNamed(AppRoutes.homeNav);
 
-
       try {
         final response = await ApiService.get(
           ApiEndPoint.user,
@@ -102,12 +100,13 @@ class SignInController extends GetxController {
           LocalStorage.myEmail = profileModel.data?.email ?? "";
           LocalStorage.myImage = profileModel.data?.image ?? "";
         } else {
-
           Utils.errorSnackBar("Invalid Credentials", response.message);
         }
       } catch (e) {
         Utils.errorSnackBar(0, e.toString());
-        debugPrint("================================${e.toString()}========================================");
+        debugPrint(
+          "================================${e.toString()}========================================",
+        );
       }
 
       emailController.clear();
@@ -136,7 +135,8 @@ class SignInController extends GetxController {
       }
 
       // ২. গুগল অ্যাকাউন্ট থেকে সিকিউরিটি টোকেন নেওয়া
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       // ৩. ফায়ারবেসের জন্য ক্রেডেনশিয়াল (Credential) তৈরি করা
       final AuthCredential credential = GoogleAuthProvider.credential(
@@ -145,7 +145,9 @@ class SignInController extends GetxController {
       );
 
       // ৪. ফায়ারবেস অথেনটিকেশনে সাইন-ইন সম্পন্ন করা
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
+      final UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
       final User? firebaseUser = userCredential.user;
 
       if (firebaseUser != null) {
@@ -164,13 +166,13 @@ class SignInController extends GetxController {
           "role": "USER",
           "provider": "google",
           "providerUserId": firebaseIdToken,
-          "name": "",
+          "name": firebaseUser.displayName ?? "",
           "email": firebaseUser.email ?? "",
         };
 
         // কাস্টম ব্যাকএন্ডের এপিআই কল (আপনার আগের সিস্টেমের রেসপন্স হ্যান্ডেলিং ফলো করা হয়েছে)
         var response = await ApiService.post(
-          ApiEndPoint.signIn, // সোশ্যাল লগইনের জন্য আলাদা এন্ডপয়েন্ট থাকলে তা এখানে বসাবেন
+          "auth/social-login", // ✅ সোশ্যাল লগইনের জন্য সঠিক এন্ডপয়েন্ট
           body: body,
         ).timeout(const Duration(seconds: 30));
 
@@ -207,7 +209,9 @@ class SignInController extends GetxController {
             }
           } catch (e) {
             Utils.errorSnackBar(0, e.toString());
-            debugPrint("================================${e.toString()}========================================");
+            debugPrint(
+              "================================${e.toString()}========================================",
+            );
           }
         } else {
           Get.snackbar(response.statusCode.toString(), response.message);
@@ -215,7 +219,9 @@ class SignInController extends GetxController {
       }
     } catch (e) {
       Utils.errorSnackBar("Google Auth Failed", e.toString());
-      debugPrint("=================== GOOGLE AUTH ERROR: $e ===================");
+      debugPrint(
+        "=================== GOOGLE AUTH ERROR: $e ===================",
+      );
     }
 
     isLoading = false;
@@ -233,7 +239,9 @@ class SignInController extends GetxController {
       appleProvider.addScope('email');
       appleProvider.addScope('name');
 
-      final UserCredential userCredential = await _auth.signInWithProvider(appleProvider);
+      final UserCredential userCredential = await _auth.signInWithProvider(
+        appleProvider,
+      );
       final User? firebaseUser = userCredential.user;
 
       if (firebaseUser != null) {
@@ -250,7 +258,7 @@ class SignInController extends GetxController {
           "role": "USER",
           "provider": "apple",
           "providerUserId": firebaseIdToken,
-          "name": "dsf",
+          "name": firebaseUser.displayName ?? "",
           "email": firebaseUser.email ?? "",
         };
 
@@ -285,8 +293,11 @@ class SignInController extends GetxController {
               LocalStorage.myEmail = profileModel.data?.email ?? "";
               LocalStorage.myImage = profileModel.data?.image ?? "";
             }
-            if(response.statusCode==404){
-              Utils.errorSnackBar("Need to Registration", "Account not found. Please sign up first.");
+            if (response.statusCode == 404) {
+              Utils.errorSnackBar(
+                "Need to Registration",
+                "Account not found. Please sign up first.",
+              );
             }
           } catch (e) {
             Utils.errorSnackBar("Error", e.toString());
@@ -298,7 +309,9 @@ class SignInController extends GetxController {
       }
     } catch (e) {
       Utils.errorSnackBar("Apple Auth Failed", e.toString());
-      debugPrint("=================== APPLE AUTH ERROR: $e ===================");
+      debugPrint(
+        "=================== APPLE AUTH ERROR: $e ===================",
+      );
     }
 
     isLoading = false;

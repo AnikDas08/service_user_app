@@ -137,7 +137,7 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 40,),
-                  _buildSocialIcon(controller)
+                  //_buildSocialIcon(controller)
                 ],
               ),
             ),
@@ -153,7 +153,6 @@ class SignInScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       spacing: 24,
       children: [
-        if (GetPlatform.isAndroid)
         GestureDetector(
           onTap: (){
             if (!controller.isLoading) {

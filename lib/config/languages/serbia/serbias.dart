@@ -201,7 +201,7 @@ Map<String, String> serbian = {
   AppString.delete_account_android: "Da li želite da obrišete nalog?",
   AppString.delete_after: "Vaš nalog će biti obrisan nakon 30 dana. Svi podaci će biti uklonjeni sa vašeg naloga.",
   AppString.and_text: "i",
-  AppString.term_condition_text: "Uslovima korišćenja",
+  AppString.term_condition_text: "Uslovi korišćenja",
   AppString.review_not: "Trenutno nema recenzija",
   AppString.complete_booking: "Završene rezervacije",
   AppString.complete_booking_photo: "Još nema završenih rezervacija.",
